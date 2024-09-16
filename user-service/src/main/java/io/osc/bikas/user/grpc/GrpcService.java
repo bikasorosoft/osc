@@ -1,4 +1,4 @@
-package io.osc.bikas.user;
+package io.osc.bikas.user.grpc;
 
 import com.osc.bikas.proto.UserDataServicesGrpc;
 import com.osc.bikas.proto.UserExistsRequest;
