@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package common;
+
+option java_multiple_files = true;
+option java_package = "com.osc.bikas.proto";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+// Defines the User message
+message User {
+  // Unique identifier for the user
+  string id = 1;
+  // Email of the user
+  string email = 2;
+  // Contact number of the user
+  string contactNumber = 3;
+  // Date of birth of the user as a timestamp
+  google.protobuf.Timestamp dateOfBirth = 4;
+  // Password of the user
+  string password = 5;
+}
+
+message UserExistsRequest {
+  string email = 1;
+}
+
+message UserExistsResponse {
+  bool userExists = 1;
+}
+
+message CreateUserRequest {
+  User user = 1;
+}
+
+service UserDataServices {
+  rpc UserExists(UserExistsRequest) returns (UserExistsResponse);
+  rpc CreateUser(CreateUserRequest) returns (google.protobuf.Empty);
+}

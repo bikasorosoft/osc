@@ -1,0 +1,17 @@
+server:
+  port: 9100
+
+spring:
+  application:
+    name: bikas-user-data-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/osc
+    username: postgres
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect

@@ -1,0 +1,9 @@
+spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: bikas.orosoft@gmail.com
+    password: yzmwsalglaerqdhi
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
