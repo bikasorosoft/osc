@@ -20,7 +20,7 @@ public class UserService {
      */
     public Boolean userExists(String email){
         var user = userRepository.findByEmail(email);
-        return user.isEmpty()? Boolean.TRUE: Boolean.FALSE;
+        return user.isEmpty() ? Boolean.FALSE: Boolean.TRUE;
     }
 
     /*

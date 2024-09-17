@@ -1,0 +1,12 @@
+{
+  "type": "record",
+  "name": "OTPAvro",
+  "namespace": "com.osc.bikas.avro",
+  "fields": [
+    {"name": "userId", "type": "string"},
+    {"name": "OTP", "type": "int"},
+    {"name": "Attempts", "type": "int"},
+    {"name": "name", "type": "string"},
+    {"name": "email", "type": "string"}
+  ]
+}

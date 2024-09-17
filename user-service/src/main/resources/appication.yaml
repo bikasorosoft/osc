@@ -1,5 +1,0 @@
-grpc:
-  client:
-    user-data-service:
-      address: localhost:9010
-      negotiation-type: plaintext

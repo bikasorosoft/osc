@@ -1,5 +1,6 @@
-server:
-  port: 9100
+grpc:
+  server:
+    port: 9090
 
 spring:
   application:
@@ -12,6 +13,3 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
