@@ -16,8 +16,8 @@ public class OTPProducer {
 
     private static final String TOPIC = "bikas-OTP-topic";
 
-    public void sendMessage(OTPAvro otp) {
-        kafkaTemplate.send(TOPIC, otp.getUserId().toString(), otp);
-        log.info("Published otp message: {}", otp);
+    public void sendMessage(String key, OTPAvro value) {
+        kafkaTemplate.send(TOPIC, key, value);
+        log.info("Published otp event [ key: {}, value:{} ]", key, value);
     }
 }

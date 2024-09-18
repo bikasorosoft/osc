@@ -3,11 +3,15 @@ package io.osc.bikas.user.service;
 import com.osc.bikas.avro.OTPAvro;
 import com.osc.bikas.avro.RegistrationUserAvro;
 import io.osc.bikas.user.dto.SignupRequest;
+import io.osc.bikas.user.dto.ValidateOTPRequest;
 import io.osc.bikas.user.exception.UserAlreadyExists;
 import io.osc.bikas.user.grpc.UserDataServiceGrpcClient;
 import io.osc.bikas.user.kafka.producer.OTPProducer;
 import io.osc.bikas.user.kafka.producer.RegistrationUserProducer;
 import lombok.RequiredArgsConstructor;
+import org.apache.kafka.streams.state.QueryableStoreTypes;
+import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
+import org.springframework.kafka.streams.KafkaStreamsInteractiveQueryService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -21,6 +25,8 @@ public class UserService {
     private final OTPProducer otpEvenProducer;
 
     private final UserDataServiceGrpcClient userDataServiceGrpcClient;
+
+    private final KafkaStreamsInteractiveQueryService interactiveQueryService;
 
     public String signup(SignupRequest signupRequest) {
 
@@ -42,7 +48,7 @@ public class UserService {
                 .setEmail(signupRequest.getEmail())
                 .setDOB(signupRequest.getDOB())
                 .build();
-        registrationEventProducer.sendMessage(registrationEvent);
+        registrationEventProducer.sendMessage(userId, registrationEvent);
         // Generate OTP and publish to OTP topic
         Integer otp = generateOTP();
         OTPAvro otpEvent = OTPAvro.newBuilder()
@@ -52,7 +58,7 @@ public class UserService {
                 .setName(signupRequest.getName())
                 .setEmail(signupRequest.getEmail())
                 .build();
-        otpEvenProducer.sendMessage(otpEvent);
+        otpEvenProducer.sendMessage(userId, otpEvent);
 
         // Return success response
         return userId;
@@ -67,4 +73,17 @@ public class UserService {
         return "user"+ num;// Generate random user id
     }
 
+    public void validateOTP(ValidateOTPRequest validateOTPRequest) {
+        ReadOnlyKeyValueStore<String, OTPAvro> appStore =
+                interactiveQueryService
+                        .retrieveQueryableStore(
+                                "OTP-store",
+                                QueryableStoreTypes.keyValueStore()
+                        );
+
+        OTPAvro otpData = appStore.get(validateOTPRequest.getUserId());
+
+        //TODO
+
+    }
 }

@@ -16,8 +16,8 @@ public class RegistrationUserProducer {
 
     private static final String TOPIC = "bikas-registration-topic";
 
-    public void sendMessage(RegistrationUserAvro user) {
-        kafkaTemplate.send(TOPIC, user.getUserId().toString(), user);
-        log.info("Published user message: {}", user);
+    public void sendMessage(String key, RegistrationUserAvro value) {
+        kafkaTemplate.send(TOPIC, key, value);
+        log.info("Published registration event [ key: {}, value: {} ]", key, value);
     }
 }
