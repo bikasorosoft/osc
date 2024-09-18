@@ -20,14 +20,12 @@ public class KafkaCleanupConfig {
     public void cleanUpTopic() {
         try {
             adminClient.deleteTopics(
-                    Set.of("registration-topic", "OTP-topic")
+                    Set.of("bikas-registration-topic", "bikas-OTP-topic")
             ).all().get();
             log.info("topic deleted successfully!");
         } catch (InterruptedException e) {
-            e.printStackTrace();
             throw new RuntimeException(e);
         } catch (ExecutionException e) {
-            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }

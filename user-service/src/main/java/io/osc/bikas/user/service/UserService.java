@@ -10,6 +10,7 @@ import io.osc.bikas.user.kafka.producer.RegistrationUserProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Random;
 
 @Service
@@ -39,11 +40,10 @@ public class UserService {
                 .setName(signupRequest.getName())
                 .setContact(signupRequest.getContact())
                 .setEmail(signupRequest.getEmail())
-                .setDOB(signupRequest.getDOB().toInstant())
+                .setDOB(signupRequest.getDOB())
                 .build();
         registrationEventProducer.sendMessage(registrationEvent);
         // Generate OTP and publish to OTP topic
-        //TODO
         Integer otp = generateOTP();
         OTPAvro otpEvent = OTPAvro.newBuilder()
                 .setUserId(userId)

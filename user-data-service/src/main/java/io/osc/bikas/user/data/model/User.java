@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.Tags;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -26,7 +27,7 @@ public class User {
 
     private String contactNumber;
 
-    private Date dateOfBirth;
+    private LocalDate dateOfBirth;
 
     private String password;
 

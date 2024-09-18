@@ -14,13 +14,13 @@ import org.apache.avro.message.SchemaStore;
 
 @org.apache.avro.specific.AvroGenerated
 public class RegistrationUserAvro extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = 4312189086538057769L;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"RegistrationUserAvro\",\"namespace\":\"com.osc.bikas.avro\",\"fields\":[{\"name\":\"userId\",\"type\":\"string\"},{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"email\",\"type\":\"string\"},{\"name\":\"contact\",\"type\":\"string\"},{\"name\":\"DOB\",\"type\":{\"type\":\"long\",\"logicalType\":\"timestamp-millis\"}}]}");
+  private static final long serialVersionUID = 308906154529091070L;
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"RegistrationUserAvro\",\"namespace\":\"com.osc.bikas.avro\",\"fields\":[{\"name\":\"userId\",\"type\":\"string\"},{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"email\",\"type\":\"string\"},{\"name\":\"contact\",\"type\":\"string\"},{\"name\":\"DOB\",\"type\":{\"type\":\"int\",\"logicalType\":\"date\"}}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static SpecificData MODEL$ = new SpecificData();
 static {
-    MODEL$.addLogicalTypeConversion(new org.apache.avro.data.TimeConversions.TimestampMillisConversion());
+    MODEL$.addLogicalTypeConversion(new org.apache.avro.data.TimeConversions.DateConversion());
   }
 
   private static final BinaryMessageEncoder<RegistrationUserAvro> ENCODER =
@@ -78,7 +78,7 @@ static {
    private java.lang.CharSequence name;
    private java.lang.CharSequence email;
    private java.lang.CharSequence contact;
-   private java.time.Instant DOB;
+   private java.time.LocalDate DOB;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -95,12 +95,12 @@ static {
    * @param contact The new value for contact
    * @param DOB The new value for DOB
    */
-  public RegistrationUserAvro(java.lang.CharSequence userId, java.lang.CharSequence name, java.lang.CharSequence email, java.lang.CharSequence contact, java.time.Instant DOB) {
+  public RegistrationUserAvro(java.lang.CharSequence userId, java.lang.CharSequence name, java.lang.CharSequence email, java.lang.CharSequence contact, java.time.LocalDate DOB) {
     this.userId = userId;
     this.name = name;
     this.email = email;
     this.contact = contact;
-    this.DOB = DOB.truncatedTo(java.time.temporal.ChronoUnit.MILLIS);
+    this.DOB = DOB;
   }
 
   public org.apache.avro.specific.SpecificData getSpecificData() { return MODEL$; }
@@ -123,7 +123,7 @@ static {
       null,
       null,
       null,
-      new org.apache.avro.data.TimeConversions.TimestampMillisConversion(),
+      new org.apache.avro.data.TimeConversions.DateConversion(),
       null
   };
 
@@ -140,7 +140,7 @@ static {
     case 1: name = (java.lang.CharSequence)value$; break;
     case 2: email = (java.lang.CharSequence)value$; break;
     case 3: contact = (java.lang.CharSequence)value$; break;
-    case 4: DOB = (java.time.Instant)value$; break;
+    case 4: DOB = (java.time.LocalDate)value$; break;
     default: throw new IndexOutOfBoundsException("Invalid index: " + field$);
     }
   }
@@ -217,7 +217,7 @@ static {
    * Gets the value of the 'DOB' field.
    * @return The value of the 'DOB' field.
    */
-  public java.time.Instant getDOB() {
+  public java.time.LocalDate getDOB() {
     return DOB;
   }
 
@@ -226,8 +226,8 @@ static {
    * Sets the value of the 'DOB' field.
    * @param value the value to set.
    */
-  public void setDOB(java.time.Instant value) {
-    this.DOB = value.truncatedTo(java.time.temporal.ChronoUnit.MILLIS);
+  public void setDOB(java.time.LocalDate value) {
+    this.DOB = value;
   }
 
   /**
@@ -275,7 +275,7 @@ static {
     private java.lang.CharSequence name;
     private java.lang.CharSequence email;
     private java.lang.CharSequence contact;
-    private java.time.Instant DOB;
+    private java.time.LocalDate DOB;
 
     /** Creates a new Builder */
     private Builder() {
@@ -502,7 +502,7 @@ static {
       * Gets the value of the 'DOB' field.
       * @return The value.
       */
-    public java.time.Instant getDOB() {
+    public java.time.LocalDate getDOB() {
       return DOB;
     }
 
@@ -512,9 +512,9 @@ static {
       * @param value The value of 'DOB'.
       * @return This builder.
       */
-    public com.osc.bikas.avro.RegistrationUserAvro.Builder setDOB(java.time.Instant value) {
+    public com.osc.bikas.avro.RegistrationUserAvro.Builder setDOB(java.time.LocalDate value) {
       validate(fields()[4], value);
-      this.DOB = value.truncatedTo(java.time.temporal.ChronoUnit.MILLIS);
+      this.DOB = value;
       fieldSetFlags()[4] = true;
       return this;
     }
@@ -546,7 +546,7 @@ static {
         record.name = fieldSetFlags()[1] ? this.name : (java.lang.CharSequence) defaultValue(fields()[1]);
         record.email = fieldSetFlags()[2] ? this.email : (java.lang.CharSequence) defaultValue(fields()[2]);
         record.contact = fieldSetFlags()[3] ? this.contact : (java.lang.CharSequence) defaultValue(fields()[3]);
-        record.DOB = fieldSetFlags()[4] ? this.DOB : (java.time.Instant) defaultValue(fields()[4]);
+        record.DOB = fieldSetFlags()[4] ? this.DOB : (java.time.LocalDate) defaultValue(fields()[4]);
         return record;
       } catch (org.apache.avro.AvroMissingFieldException e) {
         throw e;

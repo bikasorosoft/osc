@@ -31,8 +31,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
                 <type>pom</type>
-                <version>3.2.4
-                </version>
+                <version>3.2.5</version>
                 <scope>import</scope>
             </dependency>
             <dependency>
@@ -63,6 +62,11 @@
             <dependency>
                 <groupId>io.confluent</groupId>
                 <artifactId>kafka-avro-serializer</artifactId>
+                <version>${confluent.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.confluent</groupId>
+                <artifactId>kafka-streams-avro-serde</artifactId>
                 <version>${confluent.version}</version>
             </dependency>
         </dependencies>

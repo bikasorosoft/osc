@@ -10,11 +10,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleException(Exception e) {
+        e.printStackTrace();
         return new ResponseEntity<>("An unexpected error occurred: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(UserAlreadyExists.class)
     public ResponseEntity<String> handleUserAlreadyExistsException(Exception e) {
+        e.printStackTrace();
         return new ResponseEntity<>(e.getMessage(), HttpStatus.valueOf(30));
     }
 

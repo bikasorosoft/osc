@@ -11,6 +11,8 @@ import io.osc.bikas.user.data.service.UserService;
 import lombok.RequiredArgsConstructor;
 import net.devh.boot.grpc.server.service.GrpcService;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Date;
 
 @GrpcService
@@ -33,7 +35,11 @@ public class GrpcUserService extends UserDataServicesGrpc.UserDataServicesImplBa
                 .email(user.getEmail())
                 .contactNumber(user.getContactNumber())
                 .dateOfBirth(
-                        new Date(user.getDateOfBirth().getSeconds() * 1_000)
+                        LocalDateTime.ofEpochSecond(
+                                user.getDateOfBirth().getSeconds(),
+                                user.getDateOfBirth().getNanos(),
+                                ZoneOffset.UTC
+                        ).toLocalDate()
                 )
                 .password(user.getPassword()).build();
         userService.create(user1);
