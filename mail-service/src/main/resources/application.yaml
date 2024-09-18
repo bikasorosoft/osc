@@ -13,7 +13,10 @@ spring:
   kafka:
     bootstrap-servers: 192.168.99.223:19092
     consumer:
+      group-id: mail-service
+      auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
     properties:
       schema.registry.url: http://192.168.99.223:18081
+      specific.avro.reader: true

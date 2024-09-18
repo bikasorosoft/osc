@@ -1,5 +1,6 @@
 package io.osc.bikas.user.kafka.config;
 
+import com.osc.bikas.avro.OTPAvro;
 import com.osc.bikas.avro.RegistrationUserAvro;
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
 import org.apache.kafka.common.serialization.Serdes;
@@ -60,10 +61,10 @@ public class KafkaStreamsConfig {
     }
 
     @Bean
-    public KTable<String, RegistrationUserAvro> otpKTable(StreamsBuilder builder) {
-        KTable<String, RegistrationUserAvro> registrationKTable =
+    public KTable<String, OTPAvro> otpKTable(StreamsBuilder builder) {
+        KTable<String, OTPAvro> registrationKTable =
                 builder.table("bikas-OTP-topic",
-                        Materialized.<String, RegistrationUserAvro, KeyValueStore<Bytes, byte[]>>as("OTP-store"));
+                        Materialized.<String, OTPAvro, KeyValueStore<Bytes, byte[]>>as("OTP-store"));
         return registrationKTable;
     }
 

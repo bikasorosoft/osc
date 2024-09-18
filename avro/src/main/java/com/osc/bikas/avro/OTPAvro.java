@@ -14,8 +14,8 @@ import org.apache.avro.message.SchemaStore;
 
 @org.apache.avro.specific.AvroGenerated
 public class OTPAvro extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = 4537177423912429434L;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"OTPAvro\",\"namespace\":\"com.osc.bikas.avro\",\"fields\":[{\"name\":\"userId\",\"type\":\"string\"},{\"name\":\"OTP\",\"type\":\"int\"},{\"name\":\"Attempts\",\"type\":\"int\"},{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"email\",\"type\":\"string\"}]}");
+  private static final long serialVersionUID = 4987783919748678214L;
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"OTPAvro\",\"namespace\":\"com.osc.bikas.avro\",\"fields\":[{\"name\":\"userId\",\"type\":\"string\"},{\"name\":\"otp\",\"type\":\"int\"},{\"name\":\"attempts\",\"type\":\"int\"},{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"email\",\"type\":\"string\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static SpecificData MODEL$ = new SpecificData();
@@ -72,8 +72,8 @@ public class OTPAvro extends org.apache.avro.specific.SpecificRecordBase impleme
   }
 
    private java.lang.CharSequence userId;
-   private int OTP;
-   private int Attempts;
+   private int otp;
+   private int attempts;
    private java.lang.CharSequence name;
    private java.lang.CharSequence email;
 
@@ -87,15 +87,15 @@ public class OTPAvro extends org.apache.avro.specific.SpecificRecordBase impleme
   /**
    * All-args constructor.
    * @param userId The new value for userId
-   * @param OTP The new value for OTP
-   * @param Attempts The new value for Attempts
+   * @param otp The new value for otp
+   * @param attempts The new value for attempts
    * @param name The new value for name
    * @param email The new value for email
    */
-  public OTPAvro(java.lang.CharSequence userId, java.lang.Integer OTP, java.lang.Integer Attempts, java.lang.CharSequence name, java.lang.CharSequence email) {
+  public OTPAvro(java.lang.CharSequence userId, java.lang.Integer otp, java.lang.Integer attempts, java.lang.CharSequence name, java.lang.CharSequence email) {
     this.userId = userId;
-    this.OTP = OTP;
-    this.Attempts = Attempts;
+    this.otp = otp;
+    this.attempts = attempts;
     this.name = name;
     this.email = email;
   }
@@ -106,8 +106,8 @@ public class OTPAvro extends org.apache.avro.specific.SpecificRecordBase impleme
   public java.lang.Object get(int field$) {
     switch (field$) {
     case 0: return userId;
-    case 1: return OTP;
-    case 2: return Attempts;
+    case 1: return otp;
+    case 2: return attempts;
     case 3: return name;
     case 4: return email;
     default: throw new IndexOutOfBoundsException("Invalid index: " + field$);
@@ -119,8 +119,8 @@ public class OTPAvro extends org.apache.avro.specific.SpecificRecordBase impleme
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
     case 0: userId = (java.lang.CharSequence)value$; break;
-    case 1: OTP = (java.lang.Integer)value$; break;
-    case 2: Attempts = (java.lang.Integer)value$; break;
+    case 1: otp = (java.lang.Integer)value$; break;
+    case 2: attempts = (java.lang.Integer)value$; break;
     case 3: name = (java.lang.CharSequence)value$; break;
     case 4: email = (java.lang.CharSequence)value$; break;
     default: throw new IndexOutOfBoundsException("Invalid index: " + field$);
@@ -145,37 +145,37 @@ public class OTPAvro extends org.apache.avro.specific.SpecificRecordBase impleme
   }
 
   /**
-   * Gets the value of the 'OTP' field.
-   * @return The value of the 'OTP' field.
+   * Gets the value of the 'otp' field.
+   * @return The value of the 'otp' field.
    */
-  public int getOTP() {
-    return OTP;
+  public int getOtp() {
+    return otp;
   }
 
 
   /**
-   * Sets the value of the 'OTP' field.
+   * Sets the value of the 'otp' field.
    * @param value the value to set.
    */
-  public void setOTP(int value) {
-    this.OTP = value;
+  public void setOtp(int value) {
+    this.otp = value;
   }
 
   /**
-   * Gets the value of the 'Attempts' field.
-   * @return The value of the 'Attempts' field.
+   * Gets the value of the 'attempts' field.
+   * @return The value of the 'attempts' field.
    */
   public int getAttempts() {
-    return Attempts;
+    return attempts;
   }
 
 
   /**
-   * Sets the value of the 'Attempts' field.
+   * Sets the value of the 'attempts' field.
    * @param value the value to set.
    */
   public void setAttempts(int value) {
-    this.Attempts = value;
+    this.attempts = value;
   }
 
   /**
@@ -254,8 +254,8 @@ public class OTPAvro extends org.apache.avro.specific.SpecificRecordBase impleme
     implements org.apache.avro.data.RecordBuilder<OTPAvro> {
 
     private java.lang.CharSequence userId;
-    private int OTP;
-    private int Attempts;
+    private int otp;
+    private int attempts;
     private java.lang.CharSequence name;
     private java.lang.CharSequence email;
 
@@ -274,12 +274,12 @@ public class OTPAvro extends org.apache.avro.specific.SpecificRecordBase impleme
         this.userId = data().deepCopy(fields()[0].schema(), other.userId);
         fieldSetFlags()[0] = other.fieldSetFlags()[0];
       }
-      if (isValidValue(fields()[1], other.OTP)) {
-        this.OTP = data().deepCopy(fields()[1].schema(), other.OTP);
+      if (isValidValue(fields()[1], other.otp)) {
+        this.otp = data().deepCopy(fields()[1].schema(), other.otp);
         fieldSetFlags()[1] = other.fieldSetFlags()[1];
       }
-      if (isValidValue(fields()[2], other.Attempts)) {
-        this.Attempts = data().deepCopy(fields()[2].schema(), other.Attempts);
+      if (isValidValue(fields()[2], other.attempts)) {
+        this.attempts = data().deepCopy(fields()[2].schema(), other.attempts);
         fieldSetFlags()[2] = other.fieldSetFlags()[2];
       }
       if (isValidValue(fields()[3], other.name)) {
@@ -302,12 +302,12 @@ public class OTPAvro extends org.apache.avro.specific.SpecificRecordBase impleme
         this.userId = data().deepCopy(fields()[0].schema(), other.userId);
         fieldSetFlags()[0] = true;
       }
-      if (isValidValue(fields()[1], other.OTP)) {
-        this.OTP = data().deepCopy(fields()[1].schema(), other.OTP);
+      if (isValidValue(fields()[1], other.otp)) {
+        this.otp = data().deepCopy(fields()[1].schema(), other.otp);
         fieldSetFlags()[1] = true;
       }
-      if (isValidValue(fields()[2], other.Attempts)) {
-        this.Attempts = data().deepCopy(fields()[2].schema(), other.Attempts);
+      if (isValidValue(fields()[2], other.attempts)) {
+        this.attempts = data().deepCopy(fields()[2].schema(), other.attempts);
         fieldSetFlags()[2] = true;
       }
       if (isValidValue(fields()[3], other.name)) {
@@ -361,68 +361,68 @@ public class OTPAvro extends org.apache.avro.specific.SpecificRecordBase impleme
     }
 
     /**
-      * Gets the value of the 'OTP' field.
+      * Gets the value of the 'otp' field.
       * @return The value.
       */
-    public int getOTP() {
-      return OTP;
+    public int getOtp() {
+      return otp;
     }
 
 
     /**
-      * Sets the value of the 'OTP' field.
-      * @param value The value of 'OTP'.
+      * Sets the value of the 'otp' field.
+      * @param value The value of 'otp'.
       * @return This builder.
       */
-    public com.osc.bikas.avro.OTPAvro.Builder setOTP(int value) {
+    public com.osc.bikas.avro.OTPAvro.Builder setOtp(int value) {
       validate(fields()[1], value);
-      this.OTP = value;
+      this.otp = value;
       fieldSetFlags()[1] = true;
       return this;
     }
 
     /**
-      * Checks whether the 'OTP' field has been set.
-      * @return True if the 'OTP' field has been set, false otherwise.
+      * Checks whether the 'otp' field has been set.
+      * @return True if the 'otp' field has been set, false otherwise.
       */
-    public boolean hasOTP() {
+    public boolean hasOtp() {
       return fieldSetFlags()[1];
     }
 
 
     /**
-      * Clears the value of the 'OTP' field.
+      * Clears the value of the 'otp' field.
       * @return This builder.
       */
-    public com.osc.bikas.avro.OTPAvro.Builder clearOTP() {
+    public com.osc.bikas.avro.OTPAvro.Builder clearOtp() {
       fieldSetFlags()[1] = false;
       return this;
     }
 
     /**
-      * Gets the value of the 'Attempts' field.
+      * Gets the value of the 'attempts' field.
       * @return The value.
       */
     public int getAttempts() {
-      return Attempts;
+      return attempts;
     }
 
 
     /**
-      * Sets the value of the 'Attempts' field.
-      * @param value The value of 'Attempts'.
+      * Sets the value of the 'attempts' field.
+      * @param value The value of 'attempts'.
       * @return This builder.
       */
     public com.osc.bikas.avro.OTPAvro.Builder setAttempts(int value) {
       validate(fields()[2], value);
-      this.Attempts = value;
+      this.attempts = value;
       fieldSetFlags()[2] = true;
       return this;
     }
 
     /**
-      * Checks whether the 'Attempts' field has been set.
-      * @return True if the 'Attempts' field has been set, false otherwise.
+      * Checks whether the 'attempts' field has been set.
+      * @return True if the 'attempts' field has been set, false otherwise.
       */
     public boolean hasAttempts() {
       return fieldSetFlags()[2];
@@ -430,7 +430,7 @@ public class OTPAvro extends org.apache.avro.specific.SpecificRecordBase impleme
 
 
     /**
-      * Clears the value of the 'Attempts' field.
+      * Clears the value of the 'attempts' field.
       * @return This builder.
       */
     public com.osc.bikas.avro.OTPAvro.Builder clearAttempts() {
@@ -524,8 +524,8 @@ public class OTPAvro extends org.apache.avro.specific.SpecificRecordBase impleme
       try {
         OTPAvro record = new OTPAvro();
         record.userId = fieldSetFlags()[0] ? this.userId : (java.lang.CharSequence) defaultValue(fields()[0]);
-        record.OTP = fieldSetFlags()[1] ? this.OTP : (java.lang.Integer) defaultValue(fields()[1]);
-        record.Attempts = fieldSetFlags()[2] ? this.Attempts : (java.lang.Integer) defaultValue(fields()[2]);
+        record.otp = fieldSetFlags()[1] ? this.otp : (java.lang.Integer) defaultValue(fields()[1]);
+        record.attempts = fieldSetFlags()[2] ? this.attempts : (java.lang.Integer) defaultValue(fields()[2]);
         record.name = fieldSetFlags()[3] ? this.name : (java.lang.CharSequence) defaultValue(fields()[3]);
         record.email = fieldSetFlags()[4] ? this.email : (java.lang.CharSequence) defaultValue(fields()[4]);
         return record;
@@ -562,9 +562,9 @@ public class OTPAvro extends org.apache.avro.specific.SpecificRecordBase impleme
   {
     out.writeString(this.userId);
 
-    out.writeInt(this.OTP);
+    out.writeInt(this.otp);
 
-    out.writeInt(this.Attempts);
+    out.writeInt(this.attempts);
 
     out.writeString(this.name);
 
@@ -579,9 +579,9 @@ public class OTPAvro extends org.apache.avro.specific.SpecificRecordBase impleme
     if (fieldOrder == null) {
       this.userId = in.readString(this.userId instanceof Utf8 ? (Utf8)this.userId : null);
 
-      this.OTP = in.readInt();
+      this.otp = in.readInt();
 
-      this.Attempts = in.readInt();
+      this.attempts = in.readInt();
 
       this.name = in.readString(this.name instanceof Utf8 ? (Utf8)this.name : null);
 
@@ -595,11 +595,11 @@ public class OTPAvro extends org.apache.avro.specific.SpecificRecordBase impleme
           break;
 
         case 1:
-          this.OTP = in.readInt();
+          this.otp = in.readInt();
           break;
 
         case 2:
-          this.Attempts = in.readInt();
+          this.attempts = in.readInt();
           break;
 
         case 3:

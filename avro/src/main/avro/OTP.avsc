@@ -4,8 +4,8 @@
   "namespace": "com.osc.bikas.avro",
   "fields": [
     {"name": "userId", "type": "string"},
-    {"name": "OTP", "type": "int"},
-    {"name": "Attempts", "type": "int"},
+    {"name": "otp", "type": "int"},
+    {"name": "attempts", "type": "int"},
     {"name": "name", "type": "string"},
     {"name": "email", "type": "string"}
   ]

@@ -59,7 +59,7 @@ public class UserService {
         Integer otp = generateOTP();
         OTPAvro otpEvent = OTPAvro.newBuilder()
                 .setUserId(userId)
-                .setOTP(otp)
+                .setOtp(otp)
                 .setAttempts(0)
                 .setName(signupRequest.getName())
                 .setEmail(signupRequest.getEmail())
@@ -95,7 +95,7 @@ public class UserService {
         }
 
         int attempts = otpData.getAttempts();
-        boolean isOtpValid = otpData.getOTP() == validateOTPRequest.getOtp();
+        boolean isOtpValid = otpData.getOtp() == validateOTPRequest.getOtp();
 
         /*
         if(attempts >= 2 && !isOtpValid) {
