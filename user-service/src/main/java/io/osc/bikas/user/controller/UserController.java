@@ -1,16 +1,13 @@
 package io.osc.bikas.user.controller;
 
-import com.osc.bikas.avro.RegistrationUserAvro;
 import io.osc.bikas.user.dto.SignupRequest;
 import io.osc.bikas.user.dto.SignupResponse;
+import io.osc.bikas.user.dto.ValidateOTPRequest;
 import io.osc.bikas.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.streams.state.QueryableStoreTypes;
-import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.kafka.streams.KafkaStreamsInteractiveQueryService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -27,7 +24,7 @@ public class UserController {
         return ResponseEntity.ok(new SignupResponse(userId));
     }
 
-    private final KafkaStreamsInteractiveQueryService interactiveQueryService;
+//    private final KafkaStreamsInteractiveQueryService interactiveQueryService;
 
 //    @GetMapping("/get/{userId}")
 //    public void get(@PathVariable("userId") String userId) {
@@ -39,4 +36,11 @@ public class UserController {
 //                        );
 //        log.info("{}", appStore.get(userId));
 //    }
+
+    @PostMapping("/validateotp")
+    public ResponseEntity validateOTP(@RequestBody ValidateOTPRequest validateOTPRequest) {
+        userService.validateOTP(validateOTPRequest);
+        return new ResponseEntity<>(HttpStatusCode.valueOf(500));
+    }
+
 }

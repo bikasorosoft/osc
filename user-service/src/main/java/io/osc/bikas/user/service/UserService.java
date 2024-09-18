@@ -4,11 +4,15 @@ import com.osc.bikas.avro.OTPAvro;
 import com.osc.bikas.avro.RegistrationUserAvro;
 import io.osc.bikas.user.dto.SignupRequest;
 import io.osc.bikas.user.dto.ValidateOTPRequest;
+import io.osc.bikas.user.exception.InvalidOTPException;
+import io.osc.bikas.user.exception.MaxOTPAttemptsExceededException;
 import io.osc.bikas.user.exception.UserAlreadyExists;
+import io.osc.bikas.user.exception.UserIdNotFoundException;
 import io.osc.bikas.user.grpc.UserDataServiceGrpcClient;
 import io.osc.bikas.user.kafka.producer.OTPProducer;
 import io.osc.bikas.user.kafka.producer.RegistrationUserProducer;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
 import org.springframework.kafka.streams.KafkaStreamsInteractiveQueryService;
@@ -19,8 +23,10 @@ import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
 
+    private static final int MAX_ATTEMPT = 2;
     private final RegistrationUserProducer registrationEventProducer;
     private final OTPProducer otpEvenProducer;
 
@@ -81,9 +87,53 @@ public class UserService {
                                 QueryableStoreTypes.keyValueStore()
                         );
 
-        OTPAvro otpData = appStore.get(validateOTPRequest.getUserId());
+        String userId = validateOTPRequest.getUserId();
+        OTPAvro otpData = appStore.get(userId);
 
-        //TODO
+        if(otpData == null) {
+            throw new UserIdNotFoundException(userId);
+        }
 
+        int attempts = otpData.getAttempts();
+        boolean isOtpValid = otpData.getOTP() == validateOTPRequest.getOtp();
+
+        /*
+        if(attempts >= 2 && !isOtpValid) {
+            registrationEventProducer.sendMessage(userId, null);
+            otpEvenProducer.sendMessage(userId, null);
+            throw new MaxOTPAttemptsExceededException(userId);
+        }
+
+        if(attempts < 2 && !isOtpValid) {
+            otpData.setAttempts(otpData.getAttempts()+1);
+            otpEvenProducer.sendMessage(userId, otpData);
+            throw new InvalidOTPException(userId);
+        }
+
+        if(attempts < 2 && isOtpValid) {
+            registrationEventProducer.sendMessage(userId, null);
+            otpEvenProducer.sendMessage(userId, null);
+            log.info("OTP validated successfully for user {}", userId);
+        }
+         */
+        if(!isOtpValid) {
+            if(attempts >= MAX_ATTEMPT) {
+                publishCleanupEvent(userId);
+                throw new MaxOTPAttemptsExceededException(userId);
+            } else {
+                otpData.setAttempts(otpData.getAttempts()+1);
+                otpEvenProducer.sendMessage(userId, otpData);
+                log.info("update attempt count for user{}", userId);
+                throw new InvalidOTPException(userId);
+            }
+        } else {
+            otpEvenProducer.sendMessage(userId, null);
+            log.info("OTP validated successfully for user {}", userId);
+        }
+    }
+    private void publishCleanupEvent(String userId) {
+        registrationEventProducer.sendMessage(userId, null);
+        otpEvenProducer.sendMessage(userId, null);
+        log.info("clean data for user {}", userId);
     }
 }
