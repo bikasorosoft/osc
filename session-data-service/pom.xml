@@ -9,14 +9,15 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>io.osc.bikas.user.data</groupId>
-    <artifactId>user-data-service</artifactId>
+    <groupId>io.osc.bikas.session.data</groupId>
+    <artifactId>session-data-service</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
 
     <dependencies>
 
@@ -29,6 +30,30 @@
             <groupId>io.osc.bikas.proto</groupId>
             <artifactId>proto</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.osc.bikas.avro</groupId>
+            <artifactId>avro</artifactId>
+        </dependency>
+
+        <!--kafka related dependencies-->
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+            <version>${spring.kafka.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-streams</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.confluent</groupId>
+            <artifactId>kafka-avro-serializer</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.confluent</groupId>
+            <artifactId>kafka-streams-avro-serde</artifactId>
+        </dependency>
+
 
         <!--database related dependencies-->
         <dependency>
@@ -66,5 +91,6 @@
             </plugin>
         </plugins>
     </build>
+
 
 </project>

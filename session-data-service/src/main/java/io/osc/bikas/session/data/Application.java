@@ -1,4 +1,4 @@
-package io.osc.bikas;
+package io.osc.bikas.session.data;
 
 
 import org.springframework.boot.SpringApplication;

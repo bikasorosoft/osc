@@ -27,7 +27,7 @@ public class UserDataServiceGrpcClient {
     }
 
     public void updatePassword(UpdatePasswordRequest request) {
-        stub.updatePassword(request);
+            stub.updatePassword(request);
     }
 
 }

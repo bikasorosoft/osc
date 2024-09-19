@@ -192,7 +192,7 @@ public class UserService {
         if(!isOtpValid) {
             if(attempts >= MAX_ATTEMPT) {
                 otpEvenProducer.sendMessage(email, null);
-                throw new TooManyFailedOTPAttemptsException(email);
+                throw new ForgotPasswordTooManyFailedOTPAttemptsException(email);
             } else {
                 otpData.setAttempts(otpData.getAttempts()+1);
                 otpEvenProducer.sendMessage(email, otpData);
@@ -213,7 +213,10 @@ public class UserService {
                 .setEmail(email)
                 .setPassword(password)
                 .build();
-
+//        try{
         userDataServiceGrpcClient.updatePassword(request);
+//        } catch (Exception ex) {
+//            throw new ForgotPasswordUnexpectedErrorException(email);
+//        }
     }
 }

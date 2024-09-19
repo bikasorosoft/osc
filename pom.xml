@@ -14,7 +14,7 @@
         <module>mail-service</module>
         <module>user-service</module>
         <module>avro</module>
-        <module>session-service</module>
+        <module>session-data-service</module>
     </modules>
 
     <properties>
@@ -24,6 +24,7 @@
         <grpc.spring.version>3.1.0.RELEASE</grpc.spring.version>
         <apache.avro.version>1.10.1</apache.avro.version>
         <confluent.version>7.0.1</confluent.version>
+        <spring.kafka.version>3.2.0</spring.kafka.version>
     </properties>
 
     <dependencyManagement>
