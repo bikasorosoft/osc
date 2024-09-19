@@ -49,6 +49,7 @@ public class GrpcUserService extends UserDataServicesGrpc.UserDataServicesImplBa
     @Override
     public void updatePassword(UpdatePasswordRequest request, StreamObserver<Empty> responseObserver) {
         log.info("update user password");
+        userService.updatePassword(request.getEmail(), request.getPassword());
         responseObserver.onNext(Empty.newBuilder().build());
         responseObserver.onCompleted();
     }
