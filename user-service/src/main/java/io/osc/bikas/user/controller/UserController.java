@@ -1,9 +1,6 @@
 package io.osc.bikas.user.controller;
 
-import io.osc.bikas.user.dto.AddUserDetailsRequest;
-import io.osc.bikas.user.dto.SignupRequest;
-import io.osc.bikas.user.dto.SignupResponse;
-import io.osc.bikas.user.dto.ValidateOTPRequest;
+import io.osc.bikas.user.dto.*;
 import io.osc.bikas.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +32,18 @@ public class UserController {
     public ResponseEntity addUserDetails(@RequestBody AddUserDetailsRequest addUserDetailsRequest) {
         userService.addUserDetails(addUserDetailsRequest);
         return new ResponseEntity(HttpStatusCode.valueOf(200));
+    }
+
+//    @PostMapping("/forgotPassword ")
+//    public ResponseEntity forgotPassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest) {
+//        userService.forgotPassword(forgotPasswordRequest);
+//        return ResponseEntity.ok("Otp Send");
+//    }
+
+    @PostMapping("/forgotPassword")
+    public ResponseEntity forgotPassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest) {
+        userService.forgotPassword(forgotPasswordRequest);
+        return ResponseEntity.ok("Otp Send");
     }
 
 }

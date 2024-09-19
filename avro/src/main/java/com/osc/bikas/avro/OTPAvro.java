@@ -14,8 +14,8 @@ import org.apache.avro.message.SchemaStore;
 
 @org.apache.avro.specific.AvroGenerated
 public class OTPAvro extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = 4987783919748678214L;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"OTPAvro\",\"namespace\":\"com.osc.bikas.avro\",\"fields\":[{\"name\":\"userId\",\"type\":\"string\"},{\"name\":\"otp\",\"type\":\"int\"},{\"name\":\"attempts\",\"type\":\"int\"},{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"email\",\"type\":\"string\"}]}");
+  private static final long serialVersionUID = 593004738095565589L;
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"OTPAvro\",\"namespace\":\"com.osc.bikas.avro\",\"fields\":[{\"name\":\"userId\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"otp\",\"type\":\"int\"},{\"name\":\"attempts\",\"type\":\"int\",\"default\":0},{\"name\":\"name\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"email\",\"type\":\"string\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static SpecificData MODEL$ = new SpecificData();
@@ -560,13 +560,25 @@ public class OTPAvro extends org.apache.avro.specific.SpecificRecordBase impleme
   @Override public void customEncode(org.apache.avro.io.Encoder out)
     throws java.io.IOException
   {
-    out.writeString(this.userId);
+    if (this.userId == null) {
+      out.writeIndex(0);
+      out.writeNull();
+    } else {
+      out.writeIndex(1);
+      out.writeString(this.userId);
+    }
 
     out.writeInt(this.otp);
 
     out.writeInt(this.attempts);
 
-    out.writeString(this.name);
+    if (this.name == null) {
+      out.writeIndex(0);
+      out.writeNull();
+    } else {
+      out.writeIndex(1);
+      out.writeString(this.name);
+    }
 
     out.writeString(this.email);
 
@@ -577,13 +589,23 @@ public class OTPAvro extends org.apache.avro.specific.SpecificRecordBase impleme
   {
     org.apache.avro.Schema.Field[] fieldOrder = in.readFieldOrderIfDiff();
     if (fieldOrder == null) {
-      this.userId = in.readString(this.userId instanceof Utf8 ? (Utf8)this.userId : null);
+      if (in.readIndex() != 1) {
+        in.readNull();
+        this.userId = null;
+      } else {
+        this.userId = in.readString(this.userId instanceof Utf8 ? (Utf8)this.userId : null);
+      }
 
       this.otp = in.readInt();
 
       this.attempts = in.readInt();
 
-      this.name = in.readString(this.name instanceof Utf8 ? (Utf8)this.name : null);
+      if (in.readIndex() != 1) {
+        in.readNull();
+        this.name = null;
+      } else {
+        this.name = in.readString(this.name instanceof Utf8 ? (Utf8)this.name : null);
+      }
 
       this.email = in.readString(this.email instanceof Utf8 ? (Utf8)this.email : null);
 
@@ -591,7 +613,12 @@ public class OTPAvro extends org.apache.avro.specific.SpecificRecordBase impleme
       for (int i = 0; i < 5; i++) {
         switch (fieldOrder[i].pos()) {
         case 0:
-          this.userId = in.readString(this.userId instanceof Utf8 ? (Utf8)this.userId : null);
+          if (in.readIndex() != 1) {
+            in.readNull();
+            this.userId = null;
+          } else {
+            this.userId = in.readString(this.userId instanceof Utf8 ? (Utf8)this.userId : null);
+          }
           break;
 
         case 1:
@@ -603,7 +630,12 @@ public class OTPAvro extends org.apache.avro.specific.SpecificRecordBase impleme
           break;
 
         case 3:
-          this.name = in.readString(this.name instanceof Utf8 ? (Utf8)this.name : null);
+          if (in.readIndex() != 1) {
+            in.readNull();
+            this.name = null;
+          } else {
+            this.name = in.readString(this.name instanceof Utf8 ? (Utf8)this.name : null);
+          }
           break;
 
         case 4:

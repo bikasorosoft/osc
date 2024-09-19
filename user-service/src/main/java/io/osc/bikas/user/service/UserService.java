@@ -6,6 +6,7 @@ import com.osc.bikas.avro.RegistrationUserAvro;
 import com.osc.bikas.proto.CreateUserRequest;
 import com.osc.bikas.proto.User;
 import io.osc.bikas.user.dto.AddUserDetailsRequest;
+import io.osc.bikas.user.dto.ForgotPasswordRequest;
 import io.osc.bikas.user.dto.SignupRequest;
 import io.osc.bikas.user.dto.ValidateOTPRequest;
 import io.osc.bikas.user.exception.InvalidOTPException;
@@ -159,5 +160,19 @@ public class UserService {
 
         registrationEventProducer.sendMessage(userId, null);
 
+    }
+
+    public void forgotPassword(ForgotPasswordRequest forgotPasswordRequest) {
+        String email = forgotPasswordRequest.getEmail();
+        boolean emailExists = userDataServiceGrpcClient.checkEmailExists(email);
+        if (!emailExists) {
+            throw new UserIdNotFoundException(email);
+        }
+        OTPAvro otpEvent = OTPAvro.newBuilder()
+                .setEmail(email)
+                .setOtp(generateOTP())
+                .setAttempts(0)
+                .build();
+        otpEvenProducer.sendMessage(email, otpEvent);
     }
 }

@@ -1,6 +1,7 @@
 logging:
   level:
-    io.grpc: DEBUG
+    org.springframework.web: DEBUG
+#    io.grpc: DEBUG
 
 grpc:
   client:

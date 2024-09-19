@@ -22,10 +22,15 @@ public class OTPConsumer {
         var value = record.value();
         if(value != null) {
             if(value.getAttempts() == 0) {
-                String emailText = EmailTemplate.generateOtpEmail(
-                        value.getUserId().toString(),
-                        value.getOtp()
-                );
+                String emailText;
+                if(value.getUserId() == null) {
+                    emailText = EmailTemplate.generateOtpEmail(
+                            value.getOtp());
+                } else {
+                    emailText = EmailTemplate.generateOtpEmail(
+                            value.getUserId().toString(),
+                            value.getOtp());
+                }
                 senderService.sendEmail(
                         value.getEmail().toString(),
                         "Validation OTP",

@@ -3,10 +3,10 @@
   "name": "OTPAvro",
   "namespace": "com.osc.bikas.avro",
   "fields": [
-    {"name": "userId", "type": "string"},
-    {"name": "otp", "type": "int"},
-    {"name": "attempts", "type": "int"},
-    {"name": "name", "type": "string"},
+    {"name": "userId", "type": ["null", "string"], "default": null},
+    {"name": "otp", "type":"int"},
+    {"name": "attempts", "type": "int", "default": 0},
+    {"name": "name", "type": ["null", "string"], "default": null},
     {"name": "email", "type": "string"}
   ]
 }

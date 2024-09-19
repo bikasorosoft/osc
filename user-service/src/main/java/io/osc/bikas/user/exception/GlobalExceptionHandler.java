@@ -13,8 +13,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception e) {
-        log.error("{}", e.getStackTrace());
-        ErrorResponse errResponse = new ErrorResponse(500, e.getMessage());
+        e.printStackTrace();
+        ErrorResponse errResponse = new ErrorResponse(0, e.getMessage());
         return new ResponseEntity<>(errResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UserIdNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleUserIdNotFoundException(Exception e) {
         log.error("{}", e.getStackTrace());
-        ErrorResponse errResponse = new ErrorResponse(1999, e.getMessage());
+        ErrorResponse errResponse = new ErrorResponse(199, e.getMessage());
         return new ResponseEntity<>(errResponse, HttpStatus.NOT_FOUND);
     }
 

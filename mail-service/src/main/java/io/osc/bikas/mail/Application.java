@@ -16,14 +16,4 @@ public class Application {
 
     @Autowired
     EmailSenderService emailSender;
-
-//    @EventListener(ApplicationReadyEvent.class)
-//    public void sendEmail() {
-//        var body = EmailTemplate.generateOtpEmail("Bikas", 100000+"");
-//        emailSender.sendEmail(
-//                "bikas23m@gmail.com",
-//                "This is subject of email",
-//                body
-//        );
-//    }
 }
