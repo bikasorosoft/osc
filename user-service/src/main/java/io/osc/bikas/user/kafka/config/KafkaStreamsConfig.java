@@ -55,16 +55,16 @@ public class KafkaStreamsConfig {
     @Bean
     public KTable<String, RegistrationUserAvro> registrationKTable(StreamsBuilder builder) {
         KTable<String, RegistrationUserAvro> registrationKTable =
-                builder.table("bikas-registration-topic",
-                        Materialized.<String, RegistrationUserAvro, KeyValueStore<Bytes, byte[]>>as("registration-store"));
+                builder.table(KafkaConstants.REGISTRATION_TOPIC,
+                        Materialized.<String, RegistrationUserAvro, KeyValueStore<Bytes, byte[]>>as(KafkaConstants.REGISTRATION_STORE));
         return registrationKTable;
     }
 
     @Bean
     public KTable<String, OTPAvro> otpKTable(StreamsBuilder builder) {
         KTable<String, OTPAvro> registrationKTable =
-                builder.table("bikas-OTP-topic",
-                        Materialized.<String, OTPAvro, KeyValueStore<Bytes, byte[]>>as("OTP-store"));
+                builder.table(KafkaConstants.OTP_TOPIC,
+                        Materialized.<String, OTPAvro, KeyValueStore<Bytes, byte[]>>as(KafkaConstants.OTP_STORE));
         return registrationKTable;
     }
 

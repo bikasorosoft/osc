@@ -27,22 +27,42 @@ public class GrpcUserService extends UserDataServicesGrpc.UserDataServicesImplBa
         responseObserver.onCompleted();
     }
 
+//    @Override
+//    public void createUser(CreateUserRequest request, StreamObserver<Empty> responseObserver) {
+//        var user = request.getUser();
+//        User user1 = User.builder()
+//                .id(user.getId())
+//                .email(user.getEmail())
+//                .contactNumber(user.getContactNumber())
+//                .dateOfBirth(
+//                        LocalDateTime.ofEpochSecond(
+//                                user.getDateOfBirth().getSeconds(),
+//                                user.getDateOfBirth().getNanos(),
+//                                ZoneOffset.UTC
+//                        ).toLocalDate()
+//                )
+//                .password(user.getPassword()).build();
+//        userService.create(user1);
+//        responseObserver.onNext(Empty.newBuilder().build());
+//        responseObserver.onCompleted();
+//    }
+
     @Override
     public void createUser(CreateUserRequest request, StreamObserver<Empty> responseObserver) {
-        var user = request.getUser();
-        User user1 = User.builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .contactNumber(user.getContactNumber())
+        User user = User.builder()
+                .id(request.getId())
+                .name(request.getName())
+                .email(request.getEmail())
+                .contactNumber(request.getContactNumber())
                 .dateOfBirth(
                         LocalDateTime.ofEpochSecond(
-                                user.getDateOfBirth().getSeconds(),
-                                user.getDateOfBirth().getNanos(),
+                                request.getDateOfBirth().getSeconds(),
+                                request.getDateOfBirth().getNanos(),
                                 ZoneOffset.UTC
                         ).toLocalDate()
                 )
-                .password(user.getPassword()).build();
-        userService.create(user1);
+                .password(request.getPassword()).build();
+        userService.create(user);
         responseObserver.onNext(Empty.newBuilder().build());
         responseObserver.onCompleted();
     }

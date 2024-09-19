@@ -20,7 +20,7 @@ public class KafkaCleanupConfig {
     public void cleanUpTopic() {
         try {
             adminClient.deleteTopics(
-                    Set.of("bikas-registration-topic", "bikas-OTP-topic")
+                    Set.of(KafkaConstants.REGISTRATION_TOPIC, KafkaConstants.OTP_TOPIC)
             ).all().get();
             log.info("topic deleted successfully!");
         } catch (InterruptedException e) {

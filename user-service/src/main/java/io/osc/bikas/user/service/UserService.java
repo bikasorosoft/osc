@@ -1,7 +1,11 @@
 package io.osc.bikas.user.service;
 
+import com.google.protobuf.Timestamp;
 import com.osc.bikas.avro.OTPAvro;
 import com.osc.bikas.avro.RegistrationUserAvro;
+import com.osc.bikas.proto.CreateUserRequest;
+import com.osc.bikas.proto.User;
+import io.osc.bikas.user.dto.AddUserDetailsRequest;
 import io.osc.bikas.user.dto.SignupRequest;
 import io.osc.bikas.user.dto.ValidateOTPRequest;
 import io.osc.bikas.user.exception.InvalidOTPException;
@@ -9,6 +13,7 @@ import io.osc.bikas.user.exception.MaxOTPAttemptsExceededException;
 import io.osc.bikas.user.exception.UserAlreadyExists;
 import io.osc.bikas.user.exception.UserIdNotFoundException;
 import io.osc.bikas.user.grpc.UserDataServiceGrpcClient;
+import io.osc.bikas.user.kafka.config.KafkaConstants;
 import io.osc.bikas.user.kafka.producer.OTPProducer;
 import io.osc.bikas.user.kafka.producer.RegistrationUserProducer;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +23,9 @@ import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
 import org.springframework.kafka.streams.KafkaStreamsInteractiveQueryService;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.Random;
 
 @Service
@@ -83,7 +90,7 @@ public class UserService {
         ReadOnlyKeyValueStore<String, OTPAvro> appStore =
                 interactiveQueryService
                         .retrieveQueryableStore(
-                                "OTP-store",
+                                KafkaConstants.OTP_STORE,
                                 QueryableStoreTypes.keyValueStore()
                         );
 
@@ -97,25 +104,6 @@ public class UserService {
         int attempts = otpData.getAttempts();
         boolean isOtpValid = otpData.getOtp() == validateOTPRequest.getOtp();
 
-        /*
-        if(attempts >= 2 && !isOtpValid) {
-            registrationEventProducer.sendMessage(userId, null);
-            otpEvenProducer.sendMessage(userId, null);
-            throw new MaxOTPAttemptsExceededException(userId);
-        }
-
-        if(attempts < 2 && !isOtpValid) {
-            otpData.setAttempts(otpData.getAttempts()+1);
-            otpEvenProducer.sendMessage(userId, otpData);
-            throw new InvalidOTPException(userId);
-        }
-
-        if(attempts < 2 && isOtpValid) {
-            registrationEventProducer.sendMessage(userId, null);
-            otpEvenProducer.sendMessage(userId, null);
-            log.info("OTP validated successfully for user {}", userId);
-        }
-         */
         if(!isOtpValid) {
             if(attempts >= MAX_ATTEMPT) {
                 publishCleanupEvent(userId);
@@ -135,5 +123,39 @@ public class UserService {
         registrationEventProducer.sendMessage(userId, null);
         otpEvenProducer.sendMessage(userId, null);
         log.info("clean data for user {}", userId);
+    }
+
+    public void addUserDetails(AddUserDetailsRequest addUserDetailsRequest) {
+        ReadOnlyKeyValueStore<String, RegistrationUserAvro> appStore =
+                interactiveQueryService
+                        .retrieveQueryableStore(
+                                KafkaConstants.REGISTRATION_STORE,
+                                QueryableStoreTypes.keyValueStore()
+                        );
+        String userId = addUserDetailsRequest.getUserId();
+        String password = addUserDetailsRequest.getPassword();
+
+        RegistrationUserAvro userAvro = appStore.get(userId);
+
+        if(userAvro == null ) {
+            //throw exception
+        }
+
+        Instant instant = userAvro.getDOB().atStartOfDay().toInstant(ZoneOffset.UTC);
+
+        CreateUserRequest createUserRequest = CreateUserRequest.newBuilder()
+                .setId(userId)
+                .setName(userAvro.getName().toString())
+                .setEmail(userAvro.getEmail().toString())
+                .setContactNumber(userAvro.getContact().toString())
+                .setDateOfBirth(Timestamp.newBuilder()
+                        .setSeconds(instant.getEpochSecond())
+                        .setNanos(instant.getNano())
+                        .build())
+                .setPassword(password)
+                .build();
+
+        userDataServiceGrpcClient.createUser(createUserRequest);
+
     }
 }

@@ -1,5 +1,6 @@
 package io.osc.bikas.user.controller;
 
+import io.osc.bikas.user.dto.AddUserDetailsRequest;
 import io.osc.bikas.user.dto.SignupRequest;
 import io.osc.bikas.user.dto.SignupResponse;
 import io.osc.bikas.user.dto.ValidateOTPRequest;
@@ -24,23 +25,16 @@ public class UserController {
         return ResponseEntity.ok(new SignupResponse(userId));
     }
 
-//    private final KafkaStreamsInteractiveQueryService interactiveQueryService;
-
-//    @GetMapping("/get/{userId}")
-//    public void get(@PathVariable("userId") String userId) {
-//        ReadOnlyKeyValueStore<String, RegistrationUserAvro> appStore =
-//                interactiveQueryService
-//                        .retrieveQueryableStore(
-//                                "registration-store",
-//                                QueryableStoreTypes.keyValueStore()
-//                        );
-//        log.info("{}", appStore.get(userId));
-//    }
-
     @PostMapping("/validateotp")
     public ResponseEntity validateOTP(@RequestBody ValidateOTPRequest validateOTPRequest) {
         userService.validateOTP(validateOTPRequest);
         return new ResponseEntity<>(HttpStatusCode.valueOf(500));
+    }
+
+    @PostMapping("/addUserDetails")
+    public ResponseEntity addUserDetails(@RequestBody AddUserDetailsRequest addUserDetailsRequest) {
+        userService.addUserDetails(addUserDetailsRequest);
+        return new ResponseEntity(HttpStatusCode.valueOf(200));
     }
 
 }

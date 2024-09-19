@@ -8,19 +8,7 @@ option java_package = "com.osc.bikas.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 
-// Defines the User message
-message User {
-  // Unique identifier for the user
-  string id = 1;
-  // Email of the user
-  string email = 2;
-  // Contact number of the user
-  string contactNumber = 3;
-  // Date of birth of the user as a timestamp
-  google.protobuf.Timestamp dateOfBirth = 4;
-  // Password of the user
-  string password = 5;
-}
+
 
 message UserExistsRequest {
   string email = 1;
@@ -31,7 +19,18 @@ message UserExistsResponse {
 }
 
 message CreateUserRequest {
-  User user = 1;
+  // Unique identifier for the user
+  string id = 1;
+  //Name of user
+  string name = 2;
+  // Email of the user
+  string email = 3;
+  // Contact number of the user
+  string contactNumber = 4;
+  // Date of birth of the user as a timestamp
+  google.protobuf.Timestamp dateOfBirth = 5;
+  // Password of the user
+  string password = 6;
 }
 
 service UserDataServices {

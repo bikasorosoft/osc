@@ -22,12 +22,12 @@ public class KafkaConfig {
 
     @Bean
     public NewTopic registrationTopic() {
-        return TopicBuilder.name("bikas-registration-topic").build();
+        return TopicBuilder.name(KafkaConstants.REGISTRATION_TOPIC).build();
     }
 
     @Bean
     public NewTopic OTPTopic() {
-        return TopicBuilder.name("bikas-OTP-topic").build();
+        return TopicBuilder.name(KafkaConstants.REGISTRATION_TOPIC).build();
     }
 
 
