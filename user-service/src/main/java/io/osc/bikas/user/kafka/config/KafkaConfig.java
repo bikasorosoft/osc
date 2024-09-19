@@ -27,7 +27,7 @@ public class KafkaConfig {
 
     @Bean
     public NewTopic OTPTopic() {
-        return TopicBuilder.name(KafkaConstants.REGISTRATION_TOPIC).build();
+        return TopicBuilder.name(KafkaConstants.OTP_TOPIC).build();
     }
 
 

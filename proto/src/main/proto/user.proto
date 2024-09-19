@@ -33,7 +33,13 @@ message CreateUserRequest {
   string password = 6;
 }
 
+message UpdatePasswordRequest {
+  string email = 1;
+  string password = 2;
+}
+
 service UserDataServices {
   rpc UserExists(UserExistsRequest) returns (UserExistsResponse);
   rpc CreateUser(CreateUserRequest) returns (google.protobuf.Empty);
+  rpc UpdatePassword(UpdatePasswordRequest) returns (google.protobuf.Empty);
 }

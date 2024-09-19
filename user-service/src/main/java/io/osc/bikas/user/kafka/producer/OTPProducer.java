@@ -2,6 +2,7 @@ package io.osc.bikas.user.kafka.producer;
 
 import com.osc.bikas.avro.OTPAvro;
 import com.osc.bikas.avro.RegistrationUserAvro;
+import io.osc.bikas.user.kafka.config.KafkaConstants;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -14,7 +15,7 @@ public class OTPProducer {
 
     private final KafkaTemplate<String, OTPAvro> kafkaTemplate;
 
-    private static final String TOPIC = "bikas-OTP-topic";
+    private static final String TOPIC = KafkaConstants.OTP_TOPIC;
 
     public void sendMessage(String key, OTPAvro value) {
         kafkaTemplate.send(TOPIC, key, value);

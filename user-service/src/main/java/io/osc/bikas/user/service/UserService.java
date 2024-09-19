@@ -138,7 +138,7 @@ public class UserService {
         RegistrationUserAvro userAvro = appStore.get(userId);
 
         if(userAvro == null ) {
-            //throw exception
+            throw new UserIdNotFoundException(userId);
         }
 
         Instant instant = userAvro.getDOB().atStartOfDay().toInstant(ZoneOffset.UTC);
@@ -156,6 +156,8 @@ public class UserService {
                 .build();
 
         userDataServiceGrpcClient.createUser(createUserRequest);
+
+        registrationEventProducer.sendMessage(userId, null);
 
     }
 }

@@ -17,7 +17,7 @@ public class OTPConsumer {
 
     private final EmailSenderService senderService;
 
-    @KafkaListener(topics = "bikas-OTP-topic", groupId = "message-service")
+    @KafkaListener(topics = "bikas-otp-topic", groupId = "message-service")
     public void consumeMessage(ConsumerRecord<String, OTPAvro> record) {
         var value = record.value();
         if(value != null) {
