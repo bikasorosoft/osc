@@ -6,10 +6,7 @@ import com.osc.bikas.avro.RegistrationUserAvro;
 import com.osc.bikas.proto.CreateUserRequest;
 import com.osc.bikas.proto.UpdatePasswordRequest;
 import io.osc.bikas.user.dto.*;
-import io.osc.bikas.user.exception.InvalidOTPException;
-import io.osc.bikas.user.exception.MaxOTPAttemptsExceededException;
-import io.osc.bikas.user.exception.UserAlreadyExists;
-import io.osc.bikas.user.exception.UserNotFoundException;
+import io.osc.bikas.user.exception.*;
 import io.osc.bikas.user.grpc.UserDataServiceGrpcClient;
 import io.osc.bikas.user.kafka.config.KafkaConstants;
 import io.osc.bikas.user.kafka.producer.OTPProducer;
@@ -44,7 +41,7 @@ public class UserService {
         boolean emailExists = userDataServiceGrpcClient.checkEmailExists(signupRequest.getEmail());
 
         if(emailExists) {
-            throw new UserAlreadyExists(signupRequest.getEmail());
+            throw new EmailAlreadyInUseException(signupRequest.getEmail());
         }
 
         //generate user id
@@ -95,7 +92,7 @@ public class UserService {
         OTPAvro otpData = appStore.get(userId);
 
         if(otpData == null) {
-            throw new UserNotFoundException(userId);
+            throw new RegistrationUserNotFoundException(userId);
         }
 
         int attempts = otpData.getAttempts();
@@ -104,7 +101,7 @@ public class UserService {
         if(!isOtpValid) {
             if(attempts >= MAX_ATTEMPT) {
                 publishCleanupEvent(userId);
-                throw new MaxOTPAttemptsExceededException(userId);
+                throw new TooManyFailedOTPAttemptsException(userId);
             } else {
                 otpData.setAttempts(otpData.getAttempts()+1);
                 otpEvenProducer.sendMessage(userId, otpData);
@@ -135,7 +132,7 @@ public class UserService {
         RegistrationUserAvro userAvro = appStore.get(userId);
 
         if(userAvro == null ) {
-            throw new UserNotFoundException(userId);
+            throw new RuntimeException("Unknown user "+userId);
         }
 
         Instant instant = userAvro.getDOB().atStartOfDay().toInstant(ZoneOffset.UTC);
@@ -162,7 +159,7 @@ public class UserService {
         String email = forgotPasswordRequest.getEmail();
         boolean emailExists = userDataServiceGrpcClient.checkEmailExists(email);
         if (!emailExists) {
-            throw new UserNotFoundException(email);
+            throw new ForgotPasswordUserNotFoundException(email);
         }
         OTPAvro otpEvent = OTPAvro.newBuilder()
                 .setEmail(email)
@@ -184,7 +181,7 @@ public class UserService {
         OTPAvro otpData = appStore.get(email);
 
         if(otpData == null) {
-            throw new UserNotFoundException(email);
+            throw new ForgotPasswordUserNotFoundException(email);
         }
 
         Integer otp = validateOTPForForgotPasswordRequest.getOtp();
@@ -195,12 +192,12 @@ public class UserService {
         if(!isOtpValid) {
             if(attempts >= MAX_ATTEMPT) {
                 otpEvenProducer.sendMessage(email, null);
-                throw new MaxOTPAttemptsExceededException(email);
+                throw new TooManyFailedOTPAttemptsException(email);
             } else {
                 otpData.setAttempts(otpData.getAttempts()+1);
                 otpEvenProducer.sendMessage(email, otpData);
                 log.info("update attempt count for user {}", email);
-                throw new InvalidOTPException(email);
+                throw new ForgotPasswordInvalidOTPException(email);
             }
         } else {
             otpEvenProducer.sendMessage(email, null);

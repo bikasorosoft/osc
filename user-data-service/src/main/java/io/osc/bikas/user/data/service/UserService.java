@@ -1,5 +1,6 @@
 package io.osc.bikas.user.data.service;
 
+import io.osc.bikas.user.data.exception.UnknownUserException;
 import io.osc.bikas.user.data.model.User;
 import io.osc.bikas.user.data.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,32 +16,24 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    /*
-    verify user email if it already exists in system during user registration
-     */
     public Boolean userExists(String email){
         var user = userRepository.findByEmail(email);
         return user.isEmpty() ? Boolean.FALSE: Boolean.TRUE;
     }
 
-    /*
-    create user into db in the end of user registration process
-     */
     public User create(User user){
         return userRepository.save(user);
     }
 
-    /*
-    return user password for password verification during login
-     */
     public String getUserPasswordById(String userId) {
-        Optional<User> user = userRepository.findById(userId);
-        return user.get().getPassword();
+        var user = userRepository.findById(userId)
+                .orElseThrow(()-> new UnknownUserException(userId));
+        return user.getPassword();
     }
 
-
     public User updatePassword(String email, String password) {
-        User user = userRepository.findByEmail(email).get();
+        var user = userRepository.findByEmail(email).orElseThrow(
+                () -> new UnknownUserException(email));
         user.setPassword(password);
         return userRepository.save(user);
     }
