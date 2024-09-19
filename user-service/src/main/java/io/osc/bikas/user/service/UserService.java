@@ -4,15 +4,12 @@ import com.google.protobuf.Timestamp;
 import com.osc.bikas.avro.OTPAvro;
 import com.osc.bikas.avro.RegistrationUserAvro;
 import com.osc.bikas.proto.CreateUserRequest;
-import com.osc.bikas.proto.User;
-import io.osc.bikas.user.dto.AddUserDetailsRequest;
-import io.osc.bikas.user.dto.ForgotPasswordRequest;
-import io.osc.bikas.user.dto.SignupRequest;
-import io.osc.bikas.user.dto.ValidateOTPRequest;
+import com.osc.bikas.proto.UpdatePasswordRequest;
+import io.osc.bikas.user.dto.*;
 import io.osc.bikas.user.exception.InvalidOTPException;
 import io.osc.bikas.user.exception.MaxOTPAttemptsExceededException;
 import io.osc.bikas.user.exception.UserAlreadyExists;
-import io.osc.bikas.user.exception.UserIdNotFoundException;
+import io.osc.bikas.user.exception.UserNotFoundException;
 import io.osc.bikas.user.grpc.UserDataServiceGrpcClient;
 import io.osc.bikas.user.kafka.config.KafkaConstants;
 import io.osc.bikas.user.kafka.producer.OTPProducer;
@@ -25,7 +22,6 @@ import org.springframework.kafka.streams.KafkaStreamsInteractiveQueryService;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.Random;
 
@@ -99,7 +95,7 @@ public class UserService {
         OTPAvro otpData = appStore.get(userId);
 
         if(otpData == null) {
-            throw new UserIdNotFoundException(userId);
+            throw new UserNotFoundException(userId);
         }
 
         int attempts = otpData.getAttempts();
@@ -139,7 +135,7 @@ public class UserService {
         RegistrationUserAvro userAvro = appStore.get(userId);
 
         if(userAvro == null ) {
-            throw new UserIdNotFoundException(userId);
+            throw new UserNotFoundException(userId);
         }
 
         Instant instant = userAvro.getDOB().atStartOfDay().toInstant(ZoneOffset.UTC);
@@ -166,7 +162,7 @@ public class UserService {
         String email = forgotPasswordRequest.getEmail();
         boolean emailExists = userDataServiceGrpcClient.checkEmailExists(email);
         if (!emailExists) {
-            throw new UserIdNotFoundException(email);
+            throw new UserNotFoundException(email);
         }
         OTPAvro otpEvent = OTPAvro.newBuilder()
                 .setEmail(email)
@@ -174,5 +170,53 @@ public class UserService {
                 .setAttempts(0)
                 .build();
         otpEvenProducer.sendMessage(email, otpEvent);
+    }
+
+    public void validateOTPForForgotPassword(ValidateOTPForForgotPasswordRequest validateOTPForForgotPasswordRequest) {
+        ReadOnlyKeyValueStore<String, OTPAvro> appStore =
+                interactiveQueryService
+                        .retrieveQueryableStore(
+                                KafkaConstants.OTP_STORE,
+                                QueryableStoreTypes.keyValueStore()
+                        );
+
+        String email = validateOTPForForgotPasswordRequest.getEmail();
+        OTPAvro otpData = appStore.get(email);
+
+        if(otpData == null) {
+            throw new UserNotFoundException(email);
+        }
+
+        Integer otp = validateOTPForForgotPasswordRequest.getOtp();
+        boolean isOtpValid = otpData.getOtp() == otp;
+
+        int attempts = otpData.getAttempts();
+
+        if(!isOtpValid) {
+            if(attempts >= MAX_ATTEMPT) {
+                otpEvenProducer.sendMessage(email, null);
+                throw new MaxOTPAttemptsExceededException(email);
+            } else {
+                otpData.setAttempts(otpData.getAttempts()+1);
+                otpEvenProducer.sendMessage(email, otpData);
+                log.info("update attempt count for user {}", email);
+                throw new InvalidOTPException(email);
+            }
+        } else {
+            otpEvenProducer.sendMessage(email, null);
+            log.info("OTP validated successfully for user {}", email);
+        }
+    }
+
+    public void changePassword(ChangePasswordRequest changePasswordRequest) {
+        String email = changePasswordRequest.getEmail();
+        String password = changePasswordRequest.getPassword();
+
+        var request = UpdatePasswordRequest.newBuilder()
+                .setEmail(email)
+                .setPassword(password)
+                .build();
+
+        userDataServiceGrpcClient.updatePassword(request);
     }
 }

@@ -4,9 +4,10 @@ import io.osc.bikas.user.dto.*;
 import io.osc.bikas.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -17,33 +18,55 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<SignupResponse> signup(@RequestBody SignupRequest signupRequest) {
+    public ResponseEntity<Response> signup(@RequestBody SignupRequest signupRequest) {
+        log.info("User signup request received: {}", signupRequest);
         String userId = userService.signup(signupRequest);
-        return ResponseEntity.ok(new SignupResponse(userId));
+        Response response = new Response();
+        response.setCode(200);
+        response.setDataObject(Map.of(
+                "userId", userId
+        ));
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/validateotp")
-    public ResponseEntity validateOTP(@RequestBody ValidateOTPRequest validateOTPRequest) {
+    public ResponseEntity<Response> validateOTP(@RequestBody ValidateOTPRequest validateOTPRequest) {
+        log.info("OTP validation request for userId: {}", validateOTPRequest.getUserId());
         userService.validateOTP(validateOTPRequest);
-        return new ResponseEntity<>(HttpStatusCode.valueOf(500));
+        Response response = new Response(500, null);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/addUserDetails")
-    public ResponseEntity addUserDetails(@RequestBody AddUserDetailsRequest addUserDetailsRequest) {
+    public ResponseEntity<Response> addUserDetails(@RequestBody AddUserDetailsRequest addUserDetailsRequest) {
+        log.info("Adding user details for userId: {}", addUserDetailsRequest.getUserId());
         userService.addUserDetails(addUserDetailsRequest);
-        return new ResponseEntity(HttpStatusCode.valueOf(200));
+        Response response = new Response(200, null);
+        return ResponseEntity.ok(response);
     }
 
-//    @PostMapping("/forgotPassword ")
-//    public ResponseEntity forgotPassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest) {
-//        userService.forgotPassword(forgotPasswordRequest);
-//        return ResponseEntity.ok("Otp Send");
-//    }
-
     @PostMapping("/forgotPassword")
-    public ResponseEntity forgotPassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest) {
+    public ResponseEntity<Response> forgotPassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest) {
+        log.info("Forgot password request received for email: {}", forgotPasswordRequest.getEmail());
         userService.forgotPassword(forgotPasswordRequest);
-        return ResponseEntity.ok("Otp Send");
+        Response response = new Response(200, null);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/validateOTPForForgotPassword")
+    public ResponseEntity<Response> validateOTPForForgotPassword(@RequestBody ValidateOTPForForgotPasswordRequest request) {
+        log.info("OTP validation request for forgot password for email: {}", request.getEmail());
+        userService.validateOTPForForgotPassword(request);
+        Response response = new Response(200, null);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/changePassword")
+    public ResponseEntity<Response> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
+        log.info("change password request for forgot password for email: {}", changePasswordRequest.getEmail());
+        userService.changePassword(changePasswordRequest);
+        Response response = new Response(200, null);
+        return ResponseEntity.ok(response);
     }
 
 }

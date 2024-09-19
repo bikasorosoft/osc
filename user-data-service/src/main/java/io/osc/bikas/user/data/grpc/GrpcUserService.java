@@ -1,14 +1,12 @@
 package io.osc.bikas.user.data.grpc;
 
 import com.google.protobuf.Empty;
-import com.osc.bikas.proto.CreateUserRequest;
-import com.osc.bikas.proto.UserDataServicesGrpc;
-import com.osc.bikas.proto.UserExistsRequest;
-import com.osc.bikas.proto.UserExistsResponse;
+import com.osc.bikas.proto.*;
 import io.grpc.stub.StreamObserver;
 import io.osc.bikas.user.data.model.User;
 import io.osc.bikas.user.data.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
 
 import java.time.LocalDateTime;
@@ -17,6 +15,7 @@ import java.util.Date;
 
 @GrpcService
 @RequiredArgsConstructor
+@Slf4j
 public class GrpcUserService extends UserDataServicesGrpc.UserDataServicesImplBase {
 
     private final UserService userService;
@@ -26,26 +25,6 @@ public class GrpcUserService extends UserDataServicesGrpc.UserDataServicesImplBa
         responseObserver.onNext(UserExistsResponse.newBuilder().setUserExists(userService.userExists(request.getEmail())).build());
         responseObserver.onCompleted();
     }
-
-//    @Override
-//    public void createUser(CreateUserRequest request, StreamObserver<Empty> responseObserver) {
-//        var user = request.getUser();
-//        User user1 = User.builder()
-//                .id(user.getId())
-//                .email(user.getEmail())
-//                .contactNumber(user.getContactNumber())
-//                .dateOfBirth(
-//                        LocalDateTime.ofEpochSecond(
-//                                user.getDateOfBirth().getSeconds(),
-//                                user.getDateOfBirth().getNanos(),
-//                                ZoneOffset.UTC
-//                        ).toLocalDate()
-//                )
-//                .password(user.getPassword()).build();
-//        userService.create(user1);
-//        responseObserver.onNext(Empty.newBuilder().build());
-//        responseObserver.onCompleted();
-//    }
 
     @Override
     public void createUser(CreateUserRequest request, StreamObserver<Empty> responseObserver) {
@@ -63,6 +42,13 @@ public class GrpcUserService extends UserDataServicesGrpc.UserDataServicesImplBa
                 )
                 .password(request.getPassword()).build();
         userService.create(user);
+        responseObserver.onNext(Empty.newBuilder().build());
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void updatePassword(UpdatePasswordRequest request, StreamObserver<Empty> responseObserver) {
+        log.info("update user password");
         responseObserver.onNext(Empty.newBuilder().build());
         responseObserver.onCompleted();
     }

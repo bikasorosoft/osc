@@ -2,7 +2,6 @@ package io.osc.bikas.user.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -20,16 +19,30 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserAlreadyExists.class)
     public ResponseEntity<ErrorResponse> handleUserAlreadyExistsException(Exception e) {
-        log.error("{}", e.getStackTrace());
+        log.error("{}", e.getMessage());
         ErrorResponse errResponse = new ErrorResponse(30, e.getMessage());
-        return new ResponseEntity<>(errResponse, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errResponse, HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler(UserIdNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleUserIdNotFoundException(Exception e) {
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUserNotFoundException(Exception e) {
         log.error("{}", e.getStackTrace());
         ErrorResponse errResponse = new ErrorResponse(199, e.getMessage());
         return new ResponseEntity<>(errResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(MaxOTPAttemptsExceededException.class)
+    public ResponseEntity<ErrorResponse> handleMaxOTPAttemptsExceededException(Exception e) {
+        log.error("{}", e.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(301, e.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.OK);
+    }
+
+    @ExceptionHandler(InvalidOTPException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidOTPException(Exception e) {
+        log.error("{}", e.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(199, e.getMessage());
+        return new ResponseEntity<>(errorResponse, HttpStatus.OK);
     }
 
 }
