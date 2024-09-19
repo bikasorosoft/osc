@@ -21,11 +21,7 @@ public class UserController {
     public ResponseEntity<Response> signup(@RequestBody SignupRequest signupRequest) {
         log.info("User signup request received: {}", signupRequest);
         String userId = userService.signup(signupRequest);
-        Response response = new Response();
-        response.setCode(200);
-        response.setDataObject(Map.of(
-                "userId", userId
-        ));
+        Response response = new Response(200, Map.of("userId", userId));
         return ResponseEntity.ok(response);
     }
 
