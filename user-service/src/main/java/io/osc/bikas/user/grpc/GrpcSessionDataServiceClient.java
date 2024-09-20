@@ -2,6 +2,7 @@ package io.osc.bikas.user.grpc;
 
 import com.google.protobuf.BoolValue;
 import com.osc.bikas.proto.CreateSessionRequest;
+import com.osc.bikas.proto.LogoutSessionRequest;
 import com.osc.bikas.proto.SessionDataServiceGrpc;
 import com.osc.bikas.proto.SessionExistsRequest;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -27,5 +28,13 @@ public class GrpcSessionDataServiceClient {
                 .setDeviceType(deviceType)
                 .build();
         stub.createSession(createSessionRequest);
+    }
+
+    public void logout(String userId, String sessionId) {
+        LogoutSessionRequest logoutSessionRequest = LogoutSessionRequest.newBuilder()
+                .setUserId(userId)
+                .setSessionId(sessionId)
+                .build();
+        stub.logoutSession(logoutSessionRequest);
     }
 }

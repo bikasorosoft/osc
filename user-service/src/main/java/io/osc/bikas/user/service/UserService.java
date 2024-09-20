@@ -17,6 +17,7 @@ import io.osc.bikas.user.kafka.producer.OTPProducer;
 import io.osc.bikas.user.kafka.producer.RegistrationUserProducer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
 import org.springframework.kafka.streams.KafkaStreamsInteractiveQueryService;
@@ -265,5 +266,11 @@ public class UserService {
     private String generateSessionId() {
         var num = new Random().nextInt(900000) + 100000;
         return "session"+ num;// Generate random user id
+    }
+
+    public void logout(LogoutRequest logoutRequest) {
+        String userId = logoutRequest.getUserId();
+        String sessionId = logoutRequest.getSessionId();
+        grpcSessionDataServiceClient.logout(userId, sessionId);
     }
 }
