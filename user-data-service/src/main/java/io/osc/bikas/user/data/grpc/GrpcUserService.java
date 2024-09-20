@@ -1,6 +1,7 @@
 package io.osc.bikas.user.data.grpc;
 
 import com.google.protobuf.Empty;
+import com.google.protobuf.StringValue;
 import com.osc.bikas.proto.*;
 import io.grpc.stub.StreamObserver;
 import io.osc.bikas.user.data.model.User;
@@ -52,5 +53,11 @@ public class GrpcUserService extends UserDataServicesGrpc.UserDataServicesImplBa
         userService.updatePassword(request.getEmail(), request.getPassword());
         responseObserver.onNext(Empty.newBuilder().build());
         responseObserver.onCompleted();
+    }
+
+    @Override
+    public void getUserPasswordById(StringValue request, StreamObserver<GetUserPasswordByIdResponse> responseObserver) {
+        String userId = request.getValue();
+        userService.findById(userId);
     }
 }

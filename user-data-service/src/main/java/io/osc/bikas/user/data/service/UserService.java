@@ -4,8 +4,6 @@ import io.osc.bikas.user.data.exception.UnknownUserException;
 import io.osc.bikas.user.data.model.User;
 import io.osc.bikas.user.data.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.val;
-import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -38,4 +36,8 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public User findById(String userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(()-> new UnknownUserException(userId));
+    }
 }

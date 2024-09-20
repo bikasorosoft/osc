@@ -1,5 +1,6 @@
 package io.osc.bikas.user.controller;
 
+import io.osc.bikas.user.dto.LoginRequest;
 import io.osc.bikas.user.dto.*;
 import io.osc.bikas.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -63,6 +64,13 @@ public class UserController {
         userService.changePassword(changePasswordRequest);
         Response response = new Response(200, null);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<Response> login(@RequestBody LoginRequest loginRequest) {
+        log.info("login request for user: {}", loginRequest.getUserId());
+        Map<String, Object> response = userService.login(loginRequest);
+        return ResponseEntity.ok(new Response(200, response));
     }
 
 }

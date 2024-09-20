@@ -7,6 +7,7 @@ option java_package = "com.osc.bikas.proto";
 
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
 
 
 
@@ -38,8 +39,14 @@ message UpdatePasswordRequest {
   string password = 2;
 }
 
+message GetUserPasswordByIdResponse {
+  string name = 1;
+  string password = 2;
+}
+
 service UserDataServices {
   rpc UserExists(UserExistsRequest) returns (UserExistsResponse);
   rpc CreateUser(CreateUserRequest) returns (google.protobuf.Empty);
   rpc UpdatePassword(UpdatePasswordRequest) returns (google.protobuf.Empty);
+  rpc GetUserPasswordById(google.protobuf.StringValue) returns (GetUserPasswordByIdResponse);
 }

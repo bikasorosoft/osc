@@ -66,4 +66,18 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.OK);
     }
 
+    @ExceptionHandler(LoginUserIdInvalidException.class)
+    public ResponseEntity<ErrorResponse> handleLoginUserIdInvalidException(Exception e) {
+        log.error("{}",e);
+        ErrorResponse errorResponse = new ErrorResponse(201, e.getMessage());
+        return ResponseEntity.ok(errorResponse);
+    }
+
+    @ExceptionHandler(LoginPasswordInvalidException.class)
+    public ResponseEntity<ErrorResponse> handleLoginPasswordInvalidException(Exception e) {
+        log.error("{}",e);
+        ErrorResponse errorResponse = new ErrorResponse(202, e.getMessage());
+        return ResponseEntity.ok(errorResponse);
+    }
+
 }

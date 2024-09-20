@@ -1,15 +1,14 @@
 package io.osc.bikas.user.grpc;
 
-import com.google.protobuf.Empty;
-import com.osc.bikas.proto.CreateUserRequest;
-import com.osc.bikas.proto.UpdatePasswordRequest;
-import com.osc.bikas.proto.UserDataServicesGrpc;
-import com.osc.bikas.proto.UserExistsRequest;
+import com.google.protobuf.StringValue;
+import com.osc.bikas.proto.*;
+import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserDataServiceGrpcClient {
+@Slf4j
+public class GrpcUserDataServiceClient {
 
     @GrpcClient("user-data-service")
     private UserDataServicesGrpc.UserDataServicesBlockingStub stub;
@@ -28,6 +27,13 @@ public class UserDataServiceGrpcClient {
 
     public void updatePassword(UpdatePasswordRequest request) {
             stub.updatePassword(request);
+    }
+
+    public GetUserPasswordByIdResponse getUserPasswordById(String userId) {
+
+        GetUserPasswordByIdResponse response = stub.getUserPasswordById(StringValue.newBuilder().setValue(userId).build());
+
+        return  response;
     }
 
 }

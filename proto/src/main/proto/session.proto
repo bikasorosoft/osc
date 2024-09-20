@@ -5,22 +5,27 @@ package common;
 option java_multiple_files = true;
 option java_package = "com.osc.bikas.proto";
 
-import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/empty.proto";
 
-// Defines the Session message
-message Session {
-  // Session ID (primary key)
+message SessionExistsRequest{
+  string user_id = 1;
+  string device_type = 2;
+}
+
+message CreateSessionRequest {
   string session_id = 1;
-
-  // User ID associated with the session
   string user_id = 2;
+  string device_type = 3;
+}
 
-  // Name of the device used in the session
-  string device_name = 3;
+message LogoutSessionRequest {
+  string user_id = 1;
+  string session_id = 2;
+}
 
-  // Timestamp for the login time
-  google.protobuf.Timestamp login_time = 4;
-
-  // Timestamp for the logout time
-  google.protobuf.Timestamp logout_time = 5;
+service SessionDataService {
+  rpc SessionExists(SessionExistsRequest) returns (google.protobuf.BoolValue);
+  rpc CreateSession(CreateSessionRequest) returns (google.protobuf.Empty);
+  rpc LogoutSession(LogoutSessionRequest) returns (google.protobuf.Empty);
 }

@@ -4,10 +4,14 @@ import com.google.protobuf.Timestamp;
 import com.osc.bikas.avro.OTPAvro;
 import com.osc.bikas.avro.RegistrationUserAvro;
 import com.osc.bikas.proto.CreateUserRequest;
+import com.osc.bikas.proto.GetUserPasswordByIdResponse;
 import com.osc.bikas.proto.UpdatePasswordRequest;
+import io.grpc.StatusRuntimeException;
+import io.osc.bikas.user.dto.LoginRequest;
 import io.osc.bikas.user.dto.*;
 import io.osc.bikas.user.exception.*;
-import io.osc.bikas.user.grpc.UserDataServiceGrpcClient;
+import io.osc.bikas.user.grpc.GrpcSessionDataServiceClient;
+import io.osc.bikas.user.grpc.GrpcUserDataServiceClient;
 import io.osc.bikas.user.kafka.config.KafkaConstants;
 import io.osc.bikas.user.kafka.producer.OTPProducer;
 import io.osc.bikas.user.kafka.producer.RegistrationUserProducer;
@@ -20,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.ZoneOffset;
+import java.util.Map;
 import java.util.Random;
 
 @Service
@@ -31,14 +36,15 @@ public class UserService {
     private final RegistrationUserProducer registrationEventProducer;
     private final OTPProducer otpEvenProducer;
 
-    private final UserDataServiceGrpcClient userDataServiceGrpcClient;
+    private final GrpcUserDataServiceClient grpcUserDataServiceClient;
+    private final GrpcSessionDataServiceClient grpcSessionDataServiceClient;
 
     private final KafkaStreamsInteractiveQueryService interactiveQueryService;
 
     public String signup(SignupRequest signupRequest) {
 
         // Check if email exists in user-data-service
-        boolean emailExists = userDataServiceGrpcClient.checkEmailExists(signupRequest.getEmail());
+        boolean emailExists = grpcUserDataServiceClient.checkEmailExists(signupRequest.getEmail());
 
         if(emailExists) {
             throw new EmailAlreadyInUseException(signupRequest.getEmail());
@@ -149,7 +155,7 @@ public class UserService {
                 .setPassword(password)
                 .build();
 
-        userDataServiceGrpcClient.createUser(createUserRequest);
+        grpcUserDataServiceClient.createUser(createUserRequest);
 
         registrationEventProducer.sendMessage(userId, null);
 
@@ -157,7 +163,7 @@ public class UserService {
 
     public void forgotPassword(ForgotPasswordRequest forgotPasswordRequest) {
         String email = forgotPasswordRequest.getEmail();
-        boolean emailExists = userDataServiceGrpcClient.checkEmailExists(email);
+        boolean emailExists = grpcUserDataServiceClient.checkEmailExists(email);
         if (!emailExists) {
             throw new ForgotPasswordUserNotFoundException(email);
         }
@@ -214,9 +220,50 @@ public class UserService {
                 .setPassword(password)
                 .build();
 //        try{
-        userDataServiceGrpcClient.updatePassword(request);
+        grpcUserDataServiceClient.updatePassword(request);
 //        } catch (Exception ex) {
 //            throw new ForgotPasswordUnexpectedErrorException(email);
 //        }
+    }
+
+    public Map<String, Object> login(LoginRequest loginRequest) {
+
+        //password verification
+        String userId = loginRequest.getUserId();
+        String password = loginRequest.getPassword();
+        String deviceType = loginRequest.getDeviceType();
+        GetUserPasswordByIdResponse userPasswordAndName;
+        try{
+            userPasswordAndName = grpcUserDataServiceClient.getUserPasswordById(userId);
+        } catch (StatusRuntimeException e) {
+            switch (e.getStatus().getCode()) {
+                case NOT_FOUND -> throw new LoginUserIdInvalidException(userId);
+                default -> throw new RuntimeException(e);
+            }
+        }
+        boolean passwordValid = userPasswordAndName.getPassword() == password;
+        if(!passwordValid) {
+            throw new LoginPasswordInvalidException(userId);
+        }
+        //session verification
+        Boolean sessionExists = grpcSessionDataServiceClient.sessionExists(userId, deviceType);
+
+        if(sessionExists) {
+            //throw exception
+        }
+
+        //create new session
+        String sessionId = generateSessionId();
+        grpcSessionDataServiceClient.createSession(sessionId, userId, deviceType);
+
+        String name = userPasswordAndName.getName();
+        Map<String, Object> response = Map.of("name", name, "sessionId", sessionId);
+
+        return response;
+    }
+
+    private String generateSessionId() {
+        var num = new Random().nextInt(900000) + 100000;
+        return "session"+ num;// Generate random user id
     }
 }

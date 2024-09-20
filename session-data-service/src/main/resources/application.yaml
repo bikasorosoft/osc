@@ -5,7 +5,7 @@ grpc:
 spring:
   application:
     name: bikas-session-data-service
-
+#database specific configuration
   datasource:
     url: jdbc:postgresql://localhost:5432/osc
     username: postgres
@@ -16,3 +16,11 @@ spring:
     show-sql: true
     properties:
       format_sql: true
+#Kafka specific configuration
+  kafka:
+    bootstrap-servers: 192.168.99.223:19092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    properties:
+      schema.registry.url: http://192.168.99.223:18081
