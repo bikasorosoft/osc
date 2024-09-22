@@ -24,6 +24,7 @@ import org.springframework.kafka.streams.KafkaStreamsInteractiveQueryService;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.Map;
 import java.util.Random;
@@ -42,39 +43,42 @@ public class UserService {
 
     private final KafkaStreamsInteractiveQueryService interactiveQueryService;
 
-    public String signup(SignupRequest signupRequest) {
+    public String signup(String name, String email, String contact, LocalDate dob) {
 
         // Check if email exists in user-data-service
-        boolean emailExists = grpcUserDataServiceClient.checkEmailExists(signupRequest.getEmail());
+        boolean emailExists = grpcUserDataServiceClient.checkEmailExists(email);
 
         if(emailExists) {
-            throw new EmailAlreadyInUseException(signupRequest.getEmail());
+            throw new EmailAlreadyInUseException(email);
         }
 
         //generate user id
         String userId = generateUserId();
 
-        // Publish registration data to the registration topic
+        // build a registration event and publish it to registration topic
         RegistrationUserAvro registrationEvent = RegistrationUserAvro.newBuilder()
                 .setUserId(userId)
-                .setName(signupRequest.getName())
-                .setContact(signupRequest.getContact())
-                .setEmail(signupRequest.getEmail())
-                .setDOB(signupRequest.getDOB())
+                .setName(name)
+                .setContact(contact)
+                .setEmail(email)
+                .setDOB(dob)
                 .build();
         registrationEventProducer.sendMessage(userId, registrationEvent);
-        // Generate OTP and publish to OTP topic
+
+        //generate 6 digit otp
         Integer otp = generateOTP();
+
+        // build an otp event and publish it to otp topic
         OTPAvro otpEvent = OTPAvro.newBuilder()
                 .setUserId(userId)
                 .setOtp(otp)
                 .setAttempts(0)
-                .setName(signupRequest.getName())
-                .setEmail(signupRequest.getEmail())
+                .setName(name)
+                .setEmail(email)
                 .build();
         otpEvenProducer.sendMessage(userId, otpEvent);
 
-        // Return success response
+        // Return user id
         return userId;
     }
 
@@ -87,7 +91,7 @@ public class UserService {
         return "user"+ num;// Generate random user id
     }
 
-    public void validateOTP(ValidateOTPRequest validateOTPRequest) {
+    public void validateOTP(String userId, Integer otp) {
         ReadOnlyKeyValueStore<String, OTPAvro> appStore =
                 interactiveQueryService
                         .retrieveQueryableStore(
@@ -95,7 +99,6 @@ public class UserService {
                                 QueryableStoreTypes.keyValueStore()
                         );
 
-        String userId = validateOTPRequest.getUserId();
         OTPAvro otpData = appStore.get(userId);
 
         if(otpData == null) {
@@ -103,7 +106,7 @@ public class UserService {
         }
 
         int attempts = otpData.getAttempts();
-        boolean isOtpValid = otpData.getOtp() == validateOTPRequest.getOtp();
+        boolean isOtpValid = otpData.getOtp() == otp;
 
         if(!isOtpValid) {
             if(attempts >= MAX_ATTEMPT) {
@@ -120,21 +123,21 @@ public class UserService {
             log.info("OTP validated successfully for user {}", userId);
         }
     }
+
     private void publishCleanupEvent(String userId) {
         registrationEventProducer.sendMessage(userId, null);
         otpEvenProducer.sendMessage(userId, null);
         log.info("clean data for user {}", userId);
     }
 
-    public void addUserDetails(AddUserDetailsRequest addUserDetailsRequest) {
+    public void addUserDetails(String userId, String password) {
+
         ReadOnlyKeyValueStore<String, RegistrationUserAvro> appStore =
                 interactiveQueryService
                         .retrieveQueryableStore(
                                 KafkaConstants.REGISTRATION_STORE,
                                 QueryableStoreTypes.keyValueStore()
                         );
-        String userId = addUserDetailsRequest.getUserId();
-        String password = addUserDetailsRequest.getPassword();
 
         RegistrationUserAvro userAvro = appStore.get(userId);
 
@@ -162,21 +165,25 @@ public class UserService {
 
     }
 
-    public void forgotPassword(ForgotPasswordRequest forgotPasswordRequest) {
-        String email = forgotPasswordRequest.getEmail();
+    public void forgotPassword(String email) {
+
         boolean emailExists = grpcUserDataServiceClient.checkEmailExists(email);
+
         if (!emailExists) {
             throw new ForgotPasswordUserNotFoundException(email);
         }
+
         OTPAvro otpEvent = OTPAvro.newBuilder()
                 .setEmail(email)
                 .setOtp(generateOTP())
                 .setAttempts(0)
                 .build();
+
         otpEvenProducer.sendMessage(email, otpEvent);
+
     }
 
-    public void validateOTPForForgotPassword(ValidateOTPForForgotPasswordRequest validateOTPForForgotPasswordRequest) {
+    public void validateOTPForForgotPassword(String email, Integer otp) {
         ReadOnlyKeyValueStore<String, OTPAvro> appStore =
                 interactiveQueryService
                         .retrieveQueryableStore(
@@ -184,14 +191,12 @@ public class UserService {
                                 QueryableStoreTypes.keyValueStore()
                         );
 
-        String email = validateOTPForForgotPasswordRequest.getEmail();
         OTPAvro otpData = appStore.get(email);
 
         if(otpData == null) {
             throw new ForgotPasswordUserNotFoundException(email);
         }
 
-        Integer otp = validateOTPForForgotPasswordRequest.getOtp();
         boolean isOtpValid = otpData.getOtp() == otp;
 
         int attempts = otpData.getAttempts();
@@ -212,9 +217,7 @@ public class UserService {
         }
     }
 
-    public void changePassword(ChangePasswordRequest changePasswordRequest) {
-        String email = changePasswordRequest.getEmail();
-        String password = changePasswordRequest.getPassword();
+    public void changePassword(String email, String password) {
 
         var request = UpdatePasswordRequest.newBuilder()
                 .setEmail(email)
@@ -227,12 +230,9 @@ public class UserService {
 //        }
     }
 
-    public Map<String, Object> login(LoginRequest loginRequest) {
+    public Map<String, Object> login(String userId, String password, String deviceType) {
 
         //password verification
-        String userId = loginRequest.getUserId();
-        String password = loginRequest.getPassword();
-        String deviceType = loginRequest.getDeviceType();
         GetUserPasswordByIdResponse userPasswordAndName;
         try{
             userPasswordAndName = grpcUserDataServiceClient.getUserPasswordById(userId);
@@ -242,7 +242,8 @@ public class UserService {
                 default -> throw new RuntimeException(e);
             }
         }
-        boolean passwordValid = userPasswordAndName.getPassword() == password;
+        String password1 = userPasswordAndName.getPassword();
+        boolean passwordValid = password1.equals(password);
         if(!passwordValid) {
             throw new LoginPasswordInvalidException(userId);
         }
@@ -268,9 +269,7 @@ public class UserService {
         return "session"+ num;// Generate random user id
     }
 
-    public void logout(LogoutRequest logoutRequest) {
-        String userId = logoutRequest.getUserId();
-        String sessionId = logoutRequest.getSessionId();
+    public void logout(String userId, String sessionId) {
         grpcSessionDataServiceClient.logout(userId, sessionId);
     }
 }

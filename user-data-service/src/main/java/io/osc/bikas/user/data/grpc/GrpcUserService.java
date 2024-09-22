@@ -58,6 +58,15 @@ public class GrpcUserService extends UserDataServicesGrpc.UserDataServicesImplBa
     @Override
     public void getUserPasswordById(StringValue request, StreamObserver<GetUserPasswordByIdResponse> responseObserver) {
         String userId = request.getValue();
-        userService.findById(userId);
+        User user = userService.findById(userId);
+        GetUserPasswordByIdResponse response = GetUserPasswordByIdResponse.newBuilder()
+                .setPassword(user.getPassword())
+                .setName(user.getName())
+                .build();
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
     }
+
+
+
 }
