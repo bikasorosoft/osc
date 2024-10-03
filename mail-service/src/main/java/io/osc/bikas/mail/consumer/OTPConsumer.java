@@ -28,7 +28,7 @@ public class OTPConsumer {
                 yield EmailTemplate.generateOtpEmail(key, value.getOtp());
             }
         };
-        senderService.sendEmail(value.getEmail().toString(), "Reset OTP", body);
+        senderService.sendEmail(value.getEmail().toString(), "Verification OTP", body);
         log.info("record consumer :{}", record);
     }
 

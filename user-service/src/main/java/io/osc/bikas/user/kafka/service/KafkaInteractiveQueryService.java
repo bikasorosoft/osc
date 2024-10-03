@@ -1,4 +1,4 @@
-package io.osc.bikas.user.service;
+package io.osc.bikas.user.kafka.service;
 
 import com.osc.bikas.avro.OtpDetails;
 import com.osc.bikas.avro.UserRegistrationDetail;

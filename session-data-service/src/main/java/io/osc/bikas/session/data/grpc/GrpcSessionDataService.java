@@ -5,7 +5,6 @@ import com.google.protobuf.Empty;
 import com.osc.bikas.proto.*;
 
 import io.grpc.stub.StreamObserver;
-import io.osc.bikas.session.data.model.Session;
 import io.osc.bikas.session.data.service.SessionService;
 import lombok.RequiredArgsConstructor;
 import net.devh.boot.grpc.server.service.GrpcService;

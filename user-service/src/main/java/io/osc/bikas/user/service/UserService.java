@@ -13,6 +13,7 @@ import io.osc.bikas.user.grpc.GrpcSessionDataServiceClient;
 import io.osc.bikas.user.grpc.GrpcUserDataServiceClient;
 import io.osc.bikas.user.kafka.producer.OtpPublisher;
 import io.osc.bikas.user.kafka.producer.RegistrationUserPublisher;
+import io.osc.bikas.user.kafka.service.KafkaInteractiveQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;

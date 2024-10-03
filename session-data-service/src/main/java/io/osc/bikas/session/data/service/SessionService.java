@@ -30,7 +30,7 @@ public class SessionService {
         ReadOnlyKeyValueStore<SessionTopicKey, CharSequence> sessionStore = interactiveQueryService.retrieveQueryableStore(KafkaConstants.SESSION_STORE, QueryableStoreTypes.keyValueStore());
 
         SessionTopicKey key = SessionTopicKey.newBuilder().setUserId(userId).setDevice(device).build();
-        String s = sessionStore.get(key).toString();
+        CharSequence s = sessionStore.get(key);
 
         return s != null && !s.isEmpty();
     }

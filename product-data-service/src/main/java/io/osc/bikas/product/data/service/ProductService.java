@@ -1,20 +1,13 @@
 package io.osc.bikas.product.data.service;
 
 import com.osc.bikas.avro.ProductAvro;
-import io.osc.bikas.product.data
-        .kafka.producer.UserProductViewProducer;
-import io.osc.bikas.product.data
-        .model.Category;
-import io.osc.bikas.product.data
-        .model.Product;
-import io.osc.bikas.product.data
-        .model.UserProductView;
-import io.osc.bikas.product.data
-        .repo.CategoryRepository;
-import io.osc.bikas.product.data
-        .repo.ProductRepository;
-import io.osc.bikas.product.data
-        .repo.UserProductViewRepository;
+import io.osc.bikas.product.data.kafka.producer.UserProductViewProducer;
+import io.osc.bikas.product.data.model.Category;
+import io.osc.bikas.product.data.model.Product;
+import io.osc.bikas.product.data.model.UserProductView;
+import io.osc.bikas.product.data.repo.CategoryRepository;
+import io.osc.bikas.product.data.repo.ProductRepository;
+import io.osc.bikas.product.data.repo.UserProductViewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -61,7 +54,7 @@ public class ProductService {
 
         List<Product> products;
 
-        switch(filter) {
+        switch (filter) {
             case "HL":
                 products = productRepository.findByCategoryOrderByProductPriceDesc(category);
                 break;
@@ -76,7 +69,8 @@ public class ProductService {
                 break;
             default:
                 products = productRepository.findAll();
-        };
+        }
+        ;
         return products;
     }
 
