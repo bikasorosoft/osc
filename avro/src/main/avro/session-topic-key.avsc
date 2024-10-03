@@ -1,0 +1,9 @@
+{
+  "type": "record",
+  "namespace": "com.osc.bikas.avro",
+  "name": "SessionTopicKey",
+  "fields": [
+    {"name": "userId", "type": "string"},
+    {"name": "device", "type": "string"}
+  ]
+}

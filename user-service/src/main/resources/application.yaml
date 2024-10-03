@@ -3,6 +3,9 @@ logging:
     org.springframework.web: DEBUG
 #    io.grpc: DEBUG
 
+server:
+  port: 8080
+
 grpc:
   client:
     GLOBAL:

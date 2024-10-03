@@ -1,7 +1,8 @@
 package io.osc.bikas.session.data.kafka.config;
 
-import com.osc.bikas.avro.OTPAvro;
-import com.osc.bikas.avro.RegistrationUserAvro;
+import com.osc.bikas.avro.SessionTopicKey;
+import io.confluent.kafka.streams.serdes.avro.GenericAvroSerde;
+import io.confluent.kafka.streams.serdes.avro.PrimitiveAvroSerde;
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.utils.Bytes;
@@ -31,8 +32,8 @@ public class KafkaStreamsConfig {
         Map<String, Object> props = new HashMap<>();
         props.put(StreamsConfig.APPLICATION_ID_CONFIG, "session-data-service");
         props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.99.223:19092");
-        props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
-        props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
+        props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, SpecificAvroSerde.class);
+        props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, PrimitiveAvroSerde.class);
         props.put("schema.registry.url", "http://192.168.99.223:18081");
         props.put(StreamsConfig.STATE_DIR_CONFIG, "/store2");
         props.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 0);
@@ -47,10 +48,10 @@ public class KafkaStreamsConfig {
     }
 
     @Bean
-    public KTable<String, String> registrationKTable(StreamsBuilder builder) {
-        KTable<String, String> registrationKTable =
+    public KTable<SessionTopicKey, CharSequence> registrationKTable(StreamsBuilder builder) {
+        KTable<SessionTopicKey, CharSequence> registrationKTable =
                 builder.table(KafkaConstants.SESSION_TOPIC,
-                        Materialized.<String, String, KeyValueStore<Bytes, byte[]>>as(KafkaConstants.SESSION_STORE));
+                        Materialized.<SessionTopicKey, CharSequence, KeyValueStore<Bytes, byte[]>>as(KafkaConstants.SESSION_STORE));
         return registrationKTable;
     }
 

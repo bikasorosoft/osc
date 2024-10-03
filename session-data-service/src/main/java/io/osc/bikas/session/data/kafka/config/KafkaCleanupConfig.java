@@ -16,7 +16,7 @@ public class KafkaCleanupConfig {
 
     private final AdminClient adminClient;
 
-    @PreDestroy
+//    @PreDestroy
     public void cleanUpTopic() {
         try {
             adminClient.deleteTopics(

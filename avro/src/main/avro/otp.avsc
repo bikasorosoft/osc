@@ -1,0 +1,31 @@
+{
+  "type": "record",
+  "name": "OtpDetails",
+  "namespace": "com.osc.bikas.avro",
+  "fields": [
+    {
+      "name": "otp",
+      "type": "int"
+    },
+    {
+      "name": "attempts",
+      "type": "int",
+      "default": 0
+    },
+    {
+      "name": "email",
+      "type": "string"
+    },
+    {
+      "name": "format",
+      "type": {
+        "type": "enum",
+        "name": "Format",
+        "symbols": [
+          "REGISTRATION",
+          "FORGOT_PASSWORD"
+        ]
+      }
+    }
+  ]
+}

@@ -14,7 +14,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception e) {
         log.error("{}", e);
-        ErrorResponse errResponse = new ErrorResponse(0, e.getMessage());
+        ErrorResponse errResponse = new ErrorResponse(StatusCode.INTERNAL_SERVER_ERROR, e.getMessage());
         return new ResponseEntity<>(errResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -23,35 +23,35 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleStatusRuntimeException(StatusRuntimeException e){
         log.error("{}", e);
         return switch (e.getStatus().getCode()){
-            default -> new ResponseEntity<>(new ErrorResponse(0, e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+            default -> new ResponseEntity<>(new ErrorResponse(StatusCode.INTERNAL_SERVER_ERROR, e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         };
     }
 
     @ExceptionHandler(EmailAlreadyInUseException.class)
     public ResponseEntity<ErrorResponse> handleEmailAlreadyInUseException(Exception e) {
         log.error("{}", e);
-        ErrorResponse errResponse = new ErrorResponse(30, e.getMessage());
+        ErrorResponse errResponse = new ErrorResponse(StatusCode.EMAIL_ALREADY_IN_USE, e.getMessage());
         return new ResponseEntity<>(errResponse, HttpStatus.OK);
     }
 
     @ExceptionHandler(RegistrationUserNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleRegistrationUserNotFoundException(Exception e) {
         log.error("{}", e);
-        ErrorResponse errResponse = new ErrorResponse(1999, e.getMessage());
+        ErrorResponse errResponse = new ErrorResponse(StatusCode.REGISTRATION_USER_NOT_FOUND, e.getMessage());
         return new ResponseEntity<>(errResponse, HttpStatus.OK);
     }
 
     @ExceptionHandler(TooManyFailedOTPAttemptsException.class)
     public ResponseEntity<ErrorResponse> handleTooManyFailedOTPAttemptsException(Exception e) {
         log.error("{}", e);
-        ErrorResponse errorResponse = new ErrorResponse(301, e.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(StatusCode.MAX_INVALID_OTP_ATTEMPT_REACHED, e.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.OK);
     }
 
     @ExceptionHandler(InvalidOTPException.class)
     public ResponseEntity<ErrorResponse> handleInvalidOTPException(Exception e) {
         log.error("{}", e);
-        ErrorResponse errorResponse = new ErrorResponse(502, e.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(StatusCode.INVALID_REGISTRATION_OTP, e.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.OK);
     }
 
@@ -62,21 +62,28 @@ public class GlobalExceptionHandler {
             ForgotPasswordUnexpectedErrorException.class})
     public ResponseEntity<ErrorResponse> handleForgotPasswordException(Exception e) {
         log.error("{}", e);
-        ErrorResponse errorResponse = new ErrorResponse(199, e.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(StatusCode.PASSWORD_NOT_SAVED, e.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.OK);
     }
 
     @ExceptionHandler(LoginUserIdInvalidException.class)
     public ResponseEntity<ErrorResponse> handleLoginUserIdInvalidException(Exception e) {
         log.error("{}",e);
-        ErrorResponse errorResponse = new ErrorResponse(201, e.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(StatusCode.INVALID_USER_ID, e.getMessage());
         return ResponseEntity.ok(errorResponse);
     }
 
     @ExceptionHandler(LoginPasswordInvalidException.class)
     public ResponseEntity<ErrorResponse> handleLoginPasswordInvalidException(Exception e) {
         log.error("{}",e);
-        ErrorResponse errorResponse = new ErrorResponse(202, e.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(StatusCode.INVALID_CREDENTIAL, e.getMessage());
+        return ResponseEntity.ok(errorResponse);
+    }
+
+    @ExceptionHandler(LoginSessionAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleLoginSessionAlreadyExistsException(LoginSessionAlreadyExistsException e) {
+        log.error("{}", e);
+        ErrorResponse errorResponse = new ErrorResponse(StatusCode.ACTIVE_SESSION_EXISTS_FOR_THIS_DEVICE, e.getMessage());
         return ResponseEntity.ok(errorResponse);
     }
 

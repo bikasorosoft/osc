@@ -15,6 +15,8 @@
         <module>user-service</module>
         <module>avro</module>
         <module>session-data-service</module>
+        <module>product-service</module>
+        <module>product-data-service</module>
     </modules>
 
     <properties>

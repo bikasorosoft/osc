@@ -1,6 +1,5 @@
 package io.osc.bikas.user.grpc;
 
-import com.google.protobuf.BoolValue;
 import com.osc.bikas.proto.CreateSessionRequest;
 import com.osc.bikas.proto.LogoutSessionRequest;
 import com.osc.bikas.proto.SessionDataServiceGrpc;

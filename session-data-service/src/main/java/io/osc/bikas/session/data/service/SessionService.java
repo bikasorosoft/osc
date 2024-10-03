@@ -1,7 +1,8 @@
 package io.osc.bikas.session.data.service;
 
+import com.osc.bikas.avro.SessionTopicKey;
 import io.osc.bikas.session.data.kafka.config.KafkaConstants;
-import io.osc.bikas.session.data.kafka.producer.KafkaSessionProducer;
+import io.osc.bikas.session.data.kafka.producer.KafkaSessionPublisher;
 import io.osc.bikas.session.data.model.Session;
 import io.osc.bikas.session.data.repository.SessionRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ import java.time.LocalDateTime;
 public class SessionService {
 
     private final SessionRepository sessionRepository;
-    private final KafkaSessionProducer kafkaSessionProducer;
+    private final KafkaSessionPublisher kafkaSessionProducer;
     private final KafkaStreamsInteractiveQueryService interactiveQueryService;
 
     public Session getSessionById(String sessionId) {
@@ -26,13 +27,12 @@ public class SessionService {
 
     public boolean sessionExists(String userId, String device) {
 
-        ReadOnlyKeyValueStore<String, String> sessionStore = interactiveQueryService.retrieveQueryableStore(KafkaConstants.SESSION_STORE, QueryableStoreTypes.keyValueStore());
+        ReadOnlyKeyValueStore<SessionTopicKey, CharSequence> sessionStore = interactiveQueryService.retrieveQueryableStore(KafkaConstants.SESSION_STORE, QueryableStoreTypes.keyValueStore());
 
-        String key = "{userId:" + userId + ",deviceType:" + device + "}";
-        String s = sessionStore.get(key);
+        SessionTopicKey key = SessionTopicKey.newBuilder().setUserId(userId).setDevice(device).build();
+        String s = sessionStore.get(key).toString();
 
         return s != null && !s.isEmpty();
-
     }
 
     public void createSession(String sessionId, String userId, String deviceType) {
@@ -44,7 +44,7 @@ public class SessionService {
                 .loginTIme(LocalDateTime.now())
                 .build();
         sessionRepository.save(session);
-        kafkaSessionProducer.sendMessage(userId, deviceType, sessionId);
+        kafkaSessionProducer.publish(userId, deviceType, sessionId);
     }
 
     public void logout(String sessionId, String userId) {
@@ -52,6 +52,6 @@ public class SessionService {
         String deviceType = session.getDeviceType();
         session.setLogoutTime(LocalDateTime.now());
         sessionRepository.save(session);
-        kafkaSessionProducer.sendMessage(userId, deviceType, null);
+        kafkaSessionProducer.publish(userId, deviceType, null);
     }
 }

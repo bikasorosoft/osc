@@ -1,32 +1,28 @@
 package io.osc.bikas.user.service;
 
 import com.google.protobuf.Timestamp;
-import com.osc.bikas.avro.OTPAvro;
-import com.osc.bikas.avro.RegistrationUserAvro;
+import com.osc.bikas.avro.Format;
+import com.osc.bikas.avro.OtpDetails;
+import com.osc.bikas.avro.UserRegistrationDetail;
 import com.osc.bikas.proto.CreateUserRequest;
 import com.osc.bikas.proto.GetUserPasswordByIdResponse;
 import com.osc.bikas.proto.UpdatePasswordRequest;
 import io.grpc.StatusRuntimeException;
-import io.osc.bikas.user.dto.LoginRequest;
-import io.osc.bikas.user.dto.*;
 import io.osc.bikas.user.exception.*;
 import io.osc.bikas.user.grpc.GrpcSessionDataServiceClient;
 import io.osc.bikas.user.grpc.GrpcUserDataServiceClient;
-import io.osc.bikas.user.kafka.config.KafkaConstants;
-import io.osc.bikas.user.kafka.producer.OTPProducer;
-import io.osc.bikas.user.kafka.producer.RegistrationUserProducer;
+import io.osc.bikas.user.kafka.producer.OtpPublisher;
+import io.osc.bikas.user.kafka.producer.RegistrationUserPublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apache.kafka.streams.state.QueryableStoreTypes;
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
-import org.springframework.kafka.streams.KafkaStreamsInteractiveQueryService;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 
 @Service
@@ -34,134 +30,80 @@ import java.util.Random;
 @Slf4j
 public class UserService {
 
-    private static final int MAX_ATTEMPT = 2;
-    private final RegistrationUserProducer registrationEventProducer;
-    private final OTPProducer otpEvenProducer;
+    private static final int MAX_ALLOWED_OTP_ATTEMPTS = 3;
+
+    private final RegistrationUserPublisher registrationEventPublisher;
+    private final OtpPublisher otpEventPublisher;
 
     private final GrpcUserDataServiceClient grpcUserDataServiceClient;
     private final GrpcSessionDataServiceClient grpcSessionDataServiceClient;
 
-    private final KafkaStreamsInteractiveQueryService interactiveQueryService;
+    private final KafkaInteractiveQueryService interactiveQueryService;
 
     public String signup(String name, String email, String contact, LocalDate dob) {
 
-        // Check if email exists in user-data-service
         boolean emailExists = grpcUserDataServiceClient.checkEmailExists(email);
 
         if(emailExists) {
             throw new EmailAlreadyInUseException(email);
         }
 
-        //generate user id
         String userId = generateUserId();
+        UserRegistrationDetail registrationEvent = generateRegistrationUserFrom(userId, name, contact, email, dob);
+        registrationEventPublisher.publish(userId, registrationEvent);
 
-        // build a registration event and publish it to registration topic
-        RegistrationUserAvro registrationEvent = RegistrationUserAvro.newBuilder()
-                .setUserId(userId)
-                .setName(name)
-                .setContact(contact)
-                .setEmail(email)
-                .setDOB(dob)
-                .build();
-        registrationEventProducer.sendMessage(userId, registrationEvent);
-
-        //generate 6 digit otp
         Integer otp = generateOTP();
+        OtpDetails otpEvent = generateOtpDetailsFrom(otp, email, Format.REGISTRATION);
+        otpEventPublisher.publish(userId, otpEvent);
 
-        // build an otp event and publish it to otp topic
-        OTPAvro otpEvent = OTPAvro.newBuilder()
-                .setUserId(userId)
-                .setOtp(otp)
-                .setAttempts(0)
-                .setName(name)
-                .setEmail(email)
-                .build();
-        otpEvenProducer.sendMessage(userId, otpEvent);
-
-        // Return user id
         return userId;
     }
 
-    private int generateOTP() {
-        return new Random().nextInt(900000) + 100000; // Generate 6-digit OTP
-    }
-
-    private String generateUserId() {
-        var num = new Random().nextInt(900000) + 100000;
-        return "user"+ num;// Generate random user id
-    }
-
     public void validateOTP(String userId, Integer otp) {
-        ReadOnlyKeyValueStore<String, OTPAvro> appStore =
-                interactiveQueryService
-                        .retrieveQueryableStore(
-                                KafkaConstants.OTP_STORE,
-                                QueryableStoreTypes.keyValueStore()
-                        );
+        ReadOnlyKeyValueStore<String, OtpDetails> store =
+                interactiveQueryService.getOtpReadOnlyKeyValueStore();
 
-        OTPAvro otpData = appStore.get(userId);
+        OtpDetails otpDetails = store.get(userId);
 
-        if(otpData == null) {
+        if(otpDetails == null) {
             throw new RegistrationUserNotFoundException(userId);
         }
 
-        int attempts = otpData.getAttempts();
-        boolean isOtpValid = otpData.getOtp() == otp;
+        int currentAttemptCount = otpDetails.getAttempts()+1;
+        boolean isOtpValid = Objects.equals(otpDetails.getOtp(), otp);
 
         if(!isOtpValid) {
-            if(attempts >= MAX_ATTEMPT) {
+            if(currentAttemptCount >= MAX_ALLOWED_OTP_ATTEMPTS) {
                 publishCleanupEvent(userId);
                 throw new TooManyFailedOTPAttemptsException(userId);
             } else {
-                otpData.setAttempts(otpData.getAttempts()+1);
-                otpEvenProducer.sendMessage(userId, otpData);
+                otpDetails.setAttempts(otpDetails.getAttempts());
+                otpEventPublisher.publish(userId, otpDetails);
                 log.info("update attempt count for user{}", userId);
                 throw new InvalidOTPException(userId);
             }
         } else {
-            otpEvenProducer.sendMessage(userId, null);
+            otpEventPublisher.publish(userId, null);
             log.info("OTP validated successfully for user {}", userId);
         }
     }
 
-    private void publishCleanupEvent(String userId) {
-        registrationEventProducer.sendMessage(userId, null);
-        otpEvenProducer.sendMessage(userId, null);
-        log.info("clean data for user {}", userId);
-    }
-
     public void addUserDetails(String userId, String password) {
 
-        ReadOnlyKeyValueStore<String, RegistrationUserAvro> appStore =
-                interactiveQueryService
-                        .retrieveQueryableStore(
-                                KafkaConstants.REGISTRATION_STORE,
-                                QueryableStoreTypes.keyValueStore()
-                        );
+        ReadOnlyKeyValueStore<String, UserRegistrationDetail> store =
+                interactiveQueryService.getRegistrationUserReadOnlyKeyValueStore();
 
-        RegistrationUserAvro userAvro = appStore.get(userId);
+        UserRegistrationDetail registrationUserDetails = store.get(userId);
 
-        if(userAvro == null ) {
+        if(registrationUserDetails == null ) {
             throw new RuntimeException("Unknown user "+userId);
         }
 
-        Instant instant = userAvro.getDOB().atStartOfDay().toInstant(ZoneOffset.UTC);
-
-        CreateUserRequest createUserRequest = CreateUserRequest.newBuilder()
-                .setId(userId)
-                .setName(userAvro.getName().toString())
-                .setEmail(userAvro.getEmail().toString())
-                .setContactNumber(userAvro.getContact().toString())
-                .setDateOfBirth(Timestamp.newBuilder()
-                        .setSeconds(instant.getEpochSecond())
-                        .setNanos(instant.getNano())
-                        .build())
-                .setPassword(password)
-                .build();
+        CreateUserRequest createUserRequest =
+                generateCreateUserRequestFrom(registrationUserDetails, userId, password);
 
         grpcUserDataServiceClient.createUser(createUserRequest);
-
-        registrationEventProducer.sendMessage(userId, null);
+        registrationEventPublisher.publish(userId, null);
 
     }
 
@@ -173,48 +115,31 @@ public class UserService {
             throw new ForgotPasswordUserNotFoundException(email);
         }
 
-        OTPAvro otpEvent = OTPAvro.newBuilder()
-                .setEmail(email)
-                .setOtp(generateOTP())
-                .setAttempts(0)
-                .build();
+        OtpDetails otpEvent = generateOtpDetailsFrom(generateOTP(), email, Format.FORGOT_PASSWORD);
 
-        otpEvenProducer.sendMessage(email, otpEvent);
+        otpEventPublisher.publish(email, otpEvent);
 
     }
 
     public void validateOTPForForgotPassword(String email, Integer otp) {
-        ReadOnlyKeyValueStore<String, OTPAvro> appStore =
-                interactiveQueryService
-                        .retrieveQueryableStore(
-                                KafkaConstants.OTP_STORE,
-                                QueryableStoreTypes.keyValueStore()
-                        );
+        ReadOnlyKeyValueStore<String, OtpDetails> store =
+                interactiveQueryService.getOtpReadOnlyKeyValueStore();
 
-        OTPAvro otpData = appStore.get(email);
+        OtpDetails otpData = store.get(email);
 
         if(otpData == null) {
             throw new ForgotPasswordUserNotFoundException(email);
         }
 
-        boolean isOtpValid = otpData.getOtp() == otp;
-
-        int attempts = otpData.getAttempts();
+        boolean isOtpValid = Objects.equals(otpData.getOtp(), otp);
 
         if(!isOtpValid) {
-            if(attempts >= MAX_ATTEMPT) {
-                otpEvenProducer.sendMessage(email, null);
-                throw new ForgotPasswordTooManyFailedOTPAttemptsException(email);
-            } else {
-                otpData.setAttempts(otpData.getAttempts()+1);
-                otpEvenProducer.sendMessage(email, otpData);
-                log.info("update attempt count for user {}", email);
-                throw new ForgotPasswordInvalidOTPException(email);
-            }
-        } else {
-            otpEvenProducer.sendMessage(email, null);
-            log.info("OTP validated successfully for user {}", email);
+            throw new ForgotPasswordInvalidOTPException(email);
         }
+
+        otpEventPublisher.publish(email, null);
+        log.info("OTP validated successfully for user {}", email);
+
     }
 
     public void changePassword(String email, String password) {
@@ -242,8 +167,8 @@ public class UserService {
                 default -> throw new RuntimeException(e);
             }
         }
-        String password1 = userPasswordAndName.getPassword();
-        boolean passwordValid = password1.equals(password);
+        String storedPassword = userPasswordAndName.getPassword();
+        boolean passwordValid = storedPassword.equals(password);
         if(!passwordValid) {
             throw new LoginPasswordInvalidException(userId);
         }
@@ -251,7 +176,7 @@ public class UserService {
         Boolean sessionExists = grpcSessionDataServiceClient.sessionExists(userId, deviceType);
 
         if(sessionExists) {
-            //throw exception
+            throw new LoginSessionAlreadyExistsException(userId);
         }
 
         //create new session
@@ -264,12 +189,66 @@ public class UserService {
         return response;
     }
 
+    public void logout(String userId, String sessionId) {
+        grpcSessionDataServiceClient.logout(userId, sessionId);
+    }
+
+    private String generateUserId() {
+        var num = new Random().nextInt(900000) + 100000;
+        return "user"+ num;
+    }
+
     private String generateSessionId() {
         var num = new Random().nextInt(900000) + 100000;
         return "session"+ num;// Generate random user id
     }
 
-    public void logout(String userId, String sessionId) {
-        grpcSessionDataServiceClient.logout(userId, sessionId);
+    private void publishCleanupEvent(String userId) {
+        registrationEventPublisher.publish(userId, null);
+        otpEventPublisher.publish(userId, null);
+        log.info("clean data for user {}", userId);
+    }
+
+    private int generateOTP() {
+        return new Random().nextInt(900000) + 100000;
+    }
+
+    private CreateUserRequest generateCreateUserRequestFrom(UserRegistrationDetail registrationUserDetails,
+                                                            String userId, String password) {
+
+        Instant instant = registrationUserDetails.getDOB().atStartOfDay().toInstant(ZoneOffset.UTC);
+
+        return CreateUserRequest.newBuilder()
+                .setId(userId)
+                .setName(registrationUserDetails.getName().toString())
+                .setEmail(registrationUserDetails.getEmail().toString())
+                .setContactNumber(registrationUserDetails.getContact().toString())
+                .setDateOfBirth(Timestamp.newBuilder()
+                        .setSeconds(instant.getEpochSecond())
+                        .setNanos(instant.getNano())
+                        .build())
+                .setPassword(password)
+                .build();
+    }
+
+    private OtpDetails generateOtpDetailsFrom(Integer otp, String email, Format format) {
+        return OtpDetails.newBuilder()
+                .setOtp(otp)
+                .setAttempts(0)
+                .setEmail(email)
+                .setFormat(format)
+                .build();
+    }
+
+    private UserRegistrationDetail generateRegistrationUserFrom(String userId, String name, String contact,
+                                                                String email, LocalDate dob) {
+
+        return UserRegistrationDetail.newBuilder()
+                .setUserId(userId)
+                .setName(name)
+                .setContact(contact)
+                .setEmail(email)
+                .setDOB(dob)
+                .build();
     }
 }

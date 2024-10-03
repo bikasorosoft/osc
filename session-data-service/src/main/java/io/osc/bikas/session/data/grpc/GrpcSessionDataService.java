@@ -2,7 +2,6 @@ package io.osc.bikas.session.data.grpc;
 
 import com.google.protobuf.BoolValue;
 import com.google.protobuf.Empty;
-import com.google.protobuf.StringValue;
 import com.osc.bikas.proto.*;
 
 import io.grpc.stub.StreamObserver;
@@ -22,7 +21,8 @@ public class GrpcSessionDataService extends SessionDataServiceGrpc.SessionDataSe
                               StreamObserver<BoolValue> responseObserver) {
         String userId = request.getUserId();
         String device = request.getDeviceType();
-        boolean response = sessionService.sessionExists(userId, device);
+        boolean response =
+                sessionService.sessionExists(userId, device);
 
         responseObserver.onNext(BoolValue.newBuilder().setValue(response).build());
         responseObserver.onCompleted();
