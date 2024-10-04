@@ -78,7 +78,7 @@ public class UserService {
                 publishCleanupEvent(userId);
                 throw new TooManyFailedOTPAttemptsException(userId);
             } else {
-                otpDetails.setAttempts(otpDetails.getAttempts());
+                otpDetails.setAttempts(currentAttemptCount);
                 otpEventPublisher.publish(userId, otpDetails);
                 log.info("update attempt count for user{}", userId);
                 throw new InvalidOTPException(userId);
@@ -101,7 +101,7 @@ public class UserService {
         }
 
         CreateUserRequest createUserRequest =
-                generateCreateUserRequestFrom(registrationUserDetails, userId, password);
+                generateCreateUserRequestFrom(registrationUserDetails, userId, password);//rename method name to generateUserDetails
 
         grpcUserDataServiceClient.createUser(createUserRequest);
         registrationEventPublisher.publish(userId, null);

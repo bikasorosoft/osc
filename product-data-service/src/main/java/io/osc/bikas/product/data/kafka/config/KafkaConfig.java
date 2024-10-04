@@ -3,6 +3,7 @@ package io.osc.bikas.product.data.kafka.config;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.common.config.TopicConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.TopicBuilder;
@@ -28,7 +29,16 @@ public class KafkaConfig {
 
     @Bean
     public NewTopic categoriesTopic() {
-        return TopicBuilder.name(KafkaConstant.CATEGORIES_TOPIC).build();
+        return TopicBuilder.name(KafkaConstant.CATEGORIES_TOPIC)
+                .config(TopicConfig.RETENTION_MS_CONFIG, "300000")
+                .build();
+    }
+
+    @Bean
+    public NewTopic sortedProductDataTopic() {
+        return TopicBuilder.name(KafkaConstant.SORTED_PRODUCT_DATA_TOPIC)
+                .config(TopicConfig.RETENTION_MS_CONFIG, "300000")
+                .build();
     }
 
 }

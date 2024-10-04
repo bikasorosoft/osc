@@ -46,7 +46,7 @@ message GetUserPasswordByIdResponse {
 
 service UserDataServices {
   rpc UserExists(UserExistsRequest) returns (UserExistsResponse);
-  rpc CreateUser(CreateUserRequest) returns (google.protobuf.Empty);
+  rpc CreateUser(CreateUserRequest) returns (google.protobuf.Empty);//rename CreateUserRequest -> UserDetails
   rpc UpdatePassword(UpdatePasswordRequest) returns (google.protobuf.Empty);
-  rpc GetUserPasswordById(google.protobuf.StringValue) returns (GetUserPasswordByIdResponse);
+  rpc GetUserPasswordById(google.protobuf.StringValue) returns (GetUserPasswordByIdResponse);//rename GetUserPasswordByIdResponse -> UserPasswordResponse
 }
