@@ -8,19 +8,44 @@ option java_package = "com.osc.bikas.proto";
 import "google/protobuf/wrappers.proto";
 import "google/protobuf/empty.proto";
 
-//    prodId: "A01",
-//    catId: "A",
-//    prodName: "Nikon D7500",
-//    prodDesc: "20.9MP DX-Format CMOS Sensor, SnapBridge Bluetooth and Wi-Fi. 4K UHD Video Recording at 30 fps. Multi-CAM 3500FX II 51-Point AF System. Native ISO 51200, Expanded ISO 1640000.",
-//    prodPrice
-message GetProductDetailsResponse {
+
+service ProductDataService {
+//  rpc GetFeaturedProducts (google.protobuf.Empty) returns (ProductListResponse);
+  rpc GetCategoriesOrderedByViewCount (google.protobuf.Empty) returns (CategoryListResponse);
+  rpc GetProductDetails (google.protobuf.StringValue) returns (ProductDetails);
+  rpc GetFilteredProducts(CategoryFilterRequest) returns (ProductListResponse);
+}
+
+message ProductDetails {
   string product_id = 1;
   string category_id = 2;
   string product_name = 3;
   string product_description = 4;
   double product_price = 5;
+  int32 count = 6;
 }
 
-service ProductDataService {
-  rpc GetProductDetails (google.protobuf.StringValue) returns (GetProductDetailsResponse);
+message ProductListResponse {
+  repeated ProductDetails products = 1;
+}
+
+message Category {
+  string category_id = 1;
+  string category_name = 2;
+  int32 count = 3;
+}
+
+message CategoryListResponse {
+  repeated Category categories = 1;
+}
+
+message CategoryFilterRequest {
+  enum FILTER {
+    POPULAR = 0;
+    LOW_TO_HIGH = 1;
+    HIGH_TO_LOW = 2;
+    NEW_FIRST = 3;
+  }
+  string category_id = 1;
+  FILTER filter = 2;
 }

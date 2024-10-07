@@ -38,6 +38,7 @@ public class Product {
     private Integer count;
 
     @JsonIgnore
+    @Column(columnDefinition = "int default 1")
     private Integer viewCount;
 
     @JsonIgnore
