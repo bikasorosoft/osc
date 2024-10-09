@@ -11,7 +11,7 @@ import org.springframework.kafka.core.KafkaAdmin;
 
 import io.osc.bikas.product.data.kafka.KafkaConstant;
 
-@Configuration
+//@Configuration
 @RequiredArgsConstructor
 public class KafkaConfig {
 
