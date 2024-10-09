@@ -34,11 +34,7 @@ public class Product {
     @Column(columnDefinition = "TEXT")
     private String productDescription;
 
-    @Column(columnDefinition = "int default 1")
-    private Integer count;
-
-    @JsonIgnore
-    @Column(columnDefinition = "int default 1")
+    @Column(columnDefinition = "int default 0")
     private Integer viewCount;
 
     @JsonIgnore

@@ -35,7 +35,7 @@ public class GrpcProductDataService extends ProductDataServiceGrpc.ProductDataSe
                     .setProductName(product.getProductName())
                     .setProductDescription(product.getProductDescription())
                     .setProductPrice(product.getProductPrice().doubleValue())
-                    .setCount(product.getCount())
+                    .setViewCount(product.getViewCount())
                     .build();
             productList.add(productDetails);
         }
@@ -57,7 +57,7 @@ public class GrpcProductDataService extends ProductDataServiceGrpc.ProductDataSe
             Category category = Category.newBuilder()
                     .setCategoryId(categoryDto.categoryId())
                     .setCategoryName(categoryDto.categoryName())
-                    .setCount(categoryDto.count().intValue())
+                    .setViewCount(categoryDto.count().intValue())
                     .build();
             CategoryList.add(category);
         }
@@ -79,6 +79,7 @@ public class GrpcProductDataService extends ProductDataServiceGrpc.ProductDataSe
                 .setProductName(product.getProductName())
                 .setProductDescription(product.getProductDescription())
                 .setProductPrice(product.getProductPrice().doubleValue())
+                .setViewCount(product.getViewCount())
                 .build();
 
         responseObserver.onNext(response);

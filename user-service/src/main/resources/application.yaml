@@ -11,7 +11,7 @@ grpc:
     GLOBAL:
       negotiation-type: PLAINTEXT
     user-data-service:
-      address: static://localhost:9090
+      address: static://localhost:9000
       negotiationType: PLAINTEXT
     session-data-service:
       address: static://localhost:9100

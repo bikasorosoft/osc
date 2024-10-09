@@ -1,0 +1,18 @@
+server:
+  port: 8090
+
+logging:
+  level:
+    web: DEBUG
+
+grpc:
+  client:
+    GLOBAL:
+      negotiation-type: PLAINTEXT
+    product-data-service:
+      address: static://localhost:9200
+      negotiationType: PLAINTEXT
+
+spring:
+  application:
+    name: dashboard-service

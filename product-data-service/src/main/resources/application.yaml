@@ -3,8 +3,9 @@ logging:
     org.springframework.web: INFO
     org.springframework.scheduling: TRACE
 
-server:
-  port: 8090
+grpc:
+  server:
+    port: 9200
 
 spring:
   application:
