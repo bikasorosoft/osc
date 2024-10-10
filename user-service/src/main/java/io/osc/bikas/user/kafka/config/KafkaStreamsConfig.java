@@ -3,6 +3,7 @@ package io.osc.bikas.user.kafka.config;
 import com.osc.bikas.avro.OtpDetails;
 import com.osc.bikas.avro.UserRegistrationDetail;
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.utils.Bytes;
 import org.apache.kafka.streams.StreamsBuilder;
@@ -17,6 +18,7 @@ import org.springframework.kafka.annotation.KafkaStreamsDefaultConfiguration;
 import org.springframework.kafka.config.KafkaStreamsConfiguration;
 import org.springframework.kafka.config.StreamsBuilderFactoryBean;
 import org.springframework.kafka.config.StreamsBuilderFactoryBeanConfigurer;
+import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.streams.KafkaStreamsInteractiveQueryService;
 
 import java.util.HashMap;

@@ -1,0 +1,9 @@
+{
+  "type": "record",
+  "name": "UserProductViewTopicValue",
+  "namespace": "com.osc.bikas.avro",
+  "fields": [
+    {"name": "productId", "type":["null", "string"], "default": null},
+    {"name": "viewedAt", "type": ["null", "string"], "default": null}
+  ]
+}

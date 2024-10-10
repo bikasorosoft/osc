@@ -21,33 +21,32 @@ spring:
     properties:
       format_sql: true
 
-#  kafka:
-#    bootstrap-servers: 192.168.99.223:19092
-##    streams:
-##      default:
-##        key-serde:  org.apache.kafka.common.serialization.Serdes$StringSerde  # Key Serde (String Serde)
-##        value-serde: io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde # Value Serde (String Serde or Avro, if using Avro)
-##        properties:
-##          commit.interval.ms: 10000                  # Interval at which to commit processed records
-##          cache.max.bytes.buffering: 10485760        # Cache size for the state stores
-##          processing.guarantee: exactly_once         # Ensures exactly-once processing
-##          state.dir: /store              # Directory for state store
-##        cleanup:
-##          on-startup: true                           # Whether to clean up local state stores on startup
-#    producer:
-#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-#      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
-#
-#    consumer:
-#      group-id: product-view-event-consumer
-#      auto-offset-reset: earliest
-##      enable-auto-commit: false
-##      fetch-min-size: 5000
-##      fetch-max-wait: 500
-##      max-poll-records: 5
-#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-#      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
-#
-#    properties:
-#      schema.registry.url: http://192.168.99.223:18081
-#      specific.avro.reader: true
+  kafka:
+    bootstrap-servers: 192.168.99.223:19092
+#    streams:
+#      default:
+#        key-serde:  org.apache.kafka.common.serialization.Serdes$StringSerde  # Key Serde (String Serde)
+#        value-serde: io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde # Value Serde (String Serde or Avro, if using Avro)
+#        properties:
+#          commit.interval.ms: 10000                  # Interval at which to commit processed records
+#          cache.max.bytes.buffering: 10485760        # Cache size for the state stores
+#          processing.guarantee: exactly_once         # Ensures exactly-once processing
+#          state.dir: /store              # Directory for state store
+#        cleanup:
+#          on-startup: true                           # Whether to clean up local state stores on startup
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+
+    consumer:
+      group-id: product-view-event-consumer
+      auto-offset-reset: earliest
+#      enable-auto-commit: false
+#      fetch-min-size: 5000
+#      fetch-max-wait: 500
+#      max-poll-records: 5
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+    properties:
+      schema.registry.url: http://192.168.99.223:18081
+      specific.avro.reader: true

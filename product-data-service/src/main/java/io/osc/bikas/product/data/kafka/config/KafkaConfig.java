@@ -3,15 +3,14 @@ package io.osc.bikas.product.data.kafka.config;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.NewTopic;
-import org.apache.kafka.common.config.TopicConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.KafkaAdmin;
 
-import io.osc.bikas.product.data.kafka.KafkaConstant;
+import io.osc.bikas.product.data.kafka.KafkaConst;
 
-//@Configuration
+@Configuration
 @RequiredArgsConstructor
 public class KafkaConfig {
 
@@ -23,21 +22,25 @@ public class KafkaConfig {
     }
 
     @Bean
-    public NewTopic registrationTopic() {
-        return TopicBuilder.name(KafkaConstant.USER_PRODUCT_VIEW_TOPIC).build();
+    public NewTopic productViewTopic() {
+        return TopicBuilder.name(KafkaConst.PRODUCT_VIEW_TOPIC).build();
     }
 
     @Bean
-    public NewTopic categoriesTopic() {
-        return TopicBuilder.name(KafkaConstant.CATEGORIES_TOPIC)
-                .config(TopicConfig.RETENTION_MS_CONFIG, "300000")
+    public NewTopic sortedCategoriesTopic() {
+        return TopicBuilder.name(KafkaConst.SORTED_CATEGORIES_TOPIC)
+                .build();
+    }
+
+    @Bean
+    public NewTopic ProductDataTopic() {
+        return TopicBuilder.name(KafkaConst.PRODUCT_DATA_TOPIC)
                 .build();
     }
 
     @Bean
     public NewTopic sortedProductDataTopic() {
-        return TopicBuilder.name(KafkaConstant.SORTED_PRODUCT_DATA_TOPIC)
-                .config(TopicConfig.RETENTION_MS_CONFIG, "300000")
+        return TopicBuilder.name(KafkaConst.SORTED_PRODUCT_DATA_TOPIC)
                 .build();
     }
 
