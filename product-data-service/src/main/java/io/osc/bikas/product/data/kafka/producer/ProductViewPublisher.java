@@ -13,12 +13,9 @@ public class ProductViewPublisher {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
 
-    public void publish() {
-        Random random = new Random();
+    public void publish(String key, String value) {
 
-        int randomInt = random.nextInt(3);
-
-        kafkaTemplate.send(KafkaConst.PRODUCT_VIEW_TOPIC, String.valueOf(randomInt), String.valueOf(randomInt));
+        kafkaTemplate.send(KafkaConst.PRODUCT_VIEW_TOPIC, key, value);
 
     }
 

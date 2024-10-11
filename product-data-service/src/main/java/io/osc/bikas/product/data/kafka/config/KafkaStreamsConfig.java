@@ -8,7 +8,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafkaStreams;
 import org.springframework.kafka.annotation.KafkaStreamsDefaultConfiguration;
 import org.springframework.kafka.config.KafkaStreamsConfiguration;
+import org.springframework.kafka.config.StreamsBuilderFactoryBean;
 import org.springframework.kafka.config.StreamsBuilderFactoryBeanConfigurer;
+import org.springframework.kafka.streams.KafkaStreamsInteractiveQueryService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +37,14 @@ public class KafkaStreamsConfig {
         return fb -> fb.setStateListener((newState, oldState) -> {
             System.out.println("State transition from " + oldState + " to " + newState);
         });
+    }
+
+    @Bean
+    public KafkaStreamsInteractiveQueryService kafkaStreamsInteractiveQueryService(
+            StreamsBuilderFactoryBean streamsBuilderFactoryBean) {
+        final KafkaStreamsInteractiveQueryService kafkaStreamsInteractiveQueryService =
+                new KafkaStreamsInteractiveQueryService(streamsBuilderFactoryBean);
+        return kafkaStreamsInteractiveQueryService;
     }
 
 }

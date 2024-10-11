@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,6 +15,7 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "products")
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Product {
@@ -21,7 +23,7 @@ public class Product {
     @Id
     private String productId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "categoryId", referencedColumnName = "categoryId")
 //    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @JsonIgnore

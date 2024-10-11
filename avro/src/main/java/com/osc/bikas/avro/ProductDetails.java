@@ -13,24 +13,24 @@ import org.apache.avro.message.BinaryMessageDecoder;
 import org.apache.avro.message.SchemaStore;
 
 @org.apache.avro.specific.AvroGenerated
-public class ProductAvro extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = 8515910872818268547L;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ProductAvro\",\"namespace\":\"com.osc.bikas.avro\",\"fields\":[{\"name\":\"productId\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"categoryId\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"productName\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"productPrice\",\"type\":\"double\",\",default\":1.0},{\"name\":\"productDescription\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"count\",\"type\":\"int\",\",default\":1}]}");
+public class ProductDetails extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
+  private static final long serialVersionUID = -404928272631598695L;
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ProductDetails\",\"namespace\":\"com.osc.bikas.avro\",\"fields\":[{\"name\":\"productId\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"categoryId\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"productName\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"productPrice\",\"type\":\"double\",\",default\":1.0},{\"name\":\"productDescription\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"viewCount\",\"type\":\"int\",\",default\":1},{\"name\":\"imagePath\",\"type\":[\"null\",\"string\"],\"default\":null}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static SpecificData MODEL$ = new SpecificData();
 
-  private static final BinaryMessageEncoder<ProductAvro> ENCODER =
-      new BinaryMessageEncoder<ProductAvro>(MODEL$, SCHEMA$);
+  private static final BinaryMessageEncoder<ProductDetails> ENCODER =
+      new BinaryMessageEncoder<ProductDetails>(MODEL$, SCHEMA$);
 
-  private static final BinaryMessageDecoder<ProductAvro> DECODER =
-      new BinaryMessageDecoder<ProductAvro>(MODEL$, SCHEMA$);
+  private static final BinaryMessageDecoder<ProductDetails> DECODER =
+      new BinaryMessageDecoder<ProductDetails>(MODEL$, SCHEMA$);
 
   /**
    * Return the BinaryMessageEncoder instance used by this class.
    * @return the message encoder used by this class
    */
-  public static BinaryMessageEncoder<ProductAvro> getEncoder() {
+  public static BinaryMessageEncoder<ProductDetails> getEncoder() {
     return ENCODER;
   }
 
@@ -38,7 +38,7 @@ public class ProductAvro extends org.apache.avro.specific.SpecificRecordBase imp
    * Return the BinaryMessageDecoder instance used by this class.
    * @return the message decoder used by this class
    */
-  public static BinaryMessageDecoder<ProductAvro> getDecoder() {
+  public static BinaryMessageDecoder<ProductDetails> getDecoder() {
     return DECODER;
   }
 
@@ -47,12 +47,12 @@ public class ProductAvro extends org.apache.avro.specific.SpecificRecordBase imp
    * @param resolver a {@link SchemaStore} used to find schemas by fingerprint
    * @return a BinaryMessageDecoder instance for this class backed by the given SchemaStore
    */
-  public static BinaryMessageDecoder<ProductAvro> createDecoder(SchemaStore resolver) {
-    return new BinaryMessageDecoder<ProductAvro>(MODEL$, SCHEMA$, resolver);
+  public static BinaryMessageDecoder<ProductDetails> createDecoder(SchemaStore resolver) {
+    return new BinaryMessageDecoder<ProductDetails>(MODEL$, SCHEMA$, resolver);
   }
 
   /**
-   * Serializes this ProductAvro to a ByteBuffer.
+   * Serializes this ProductDetails to a ByteBuffer.
    * @return a buffer holding the serialized data for this instance
    * @throws java.io.IOException if this instance could not be serialized
    */
@@ -61,12 +61,12 @@ public class ProductAvro extends org.apache.avro.specific.SpecificRecordBase imp
   }
 
   /**
-   * Deserializes a ProductAvro from a ByteBuffer.
+   * Deserializes a ProductDetails from a ByteBuffer.
    * @param b a byte buffer holding serialized data for an instance of this class
-   * @return a ProductAvro instance decoded from the given buffer
+   * @return a ProductDetails instance decoded from the given buffer
    * @throws java.io.IOException if the given bytes could not be deserialized into an instance of this class
    */
-  public static ProductAvro fromByteBuffer(
+  public static ProductDetails fromByteBuffer(
       java.nio.ByteBuffer b) throws java.io.IOException {
     return DECODER.decode(b);
   }
@@ -76,14 +76,15 @@ public class ProductAvro extends org.apache.avro.specific.SpecificRecordBase imp
    private java.lang.CharSequence productName;
    private double productPrice;
    private java.lang.CharSequence productDescription;
-   private int count;
+   private int viewCount;
+   private java.lang.CharSequence imagePath;
 
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
    * one should use <code>newBuilder()</code>.
    */
-  public ProductAvro() {}
+  public ProductDetails() {}
 
   /**
    * All-args constructor.
@@ -92,15 +93,17 @@ public class ProductAvro extends org.apache.avro.specific.SpecificRecordBase imp
    * @param productName The new value for productName
    * @param productPrice The new value for productPrice
    * @param productDescription The new value for productDescription
-   * @param count The new value for count
+   * @param viewCount The new value for viewCount
+   * @param imagePath The new value for imagePath
    */
-  public ProductAvro(java.lang.CharSequence productId, java.lang.CharSequence categoryId, java.lang.CharSequence productName, java.lang.Double productPrice, java.lang.CharSequence productDescription, java.lang.Integer count) {
+  public ProductDetails(java.lang.CharSequence productId, java.lang.CharSequence categoryId, java.lang.CharSequence productName, java.lang.Double productPrice, java.lang.CharSequence productDescription, java.lang.Integer viewCount, java.lang.CharSequence imagePath) {
     this.productId = productId;
     this.categoryId = categoryId;
     this.productName = productName;
     this.productPrice = productPrice;
     this.productDescription = productDescription;
-    this.count = count;
+    this.viewCount = viewCount;
+    this.imagePath = imagePath;
   }
 
   public org.apache.avro.specific.SpecificData getSpecificData() { return MODEL$; }
@@ -113,7 +116,8 @@ public class ProductAvro extends org.apache.avro.specific.SpecificRecordBase imp
     case 2: return productName;
     case 3: return productPrice;
     case 4: return productDescription;
-    case 5: return count;
+    case 5: return viewCount;
+    case 6: return imagePath;
     default: throw new IndexOutOfBoundsException("Invalid index: " + field$);
     }
   }
@@ -127,7 +131,8 @@ public class ProductAvro extends org.apache.avro.specific.SpecificRecordBase imp
     case 2: productName = (java.lang.CharSequence)value$; break;
     case 3: productPrice = (java.lang.Double)value$; break;
     case 4: productDescription = (java.lang.CharSequence)value$; break;
-    case 5: count = (java.lang.Integer)value$; break;
+    case 5: viewCount = (java.lang.Integer)value$; break;
+    case 6: imagePath = (java.lang.CharSequence)value$; break;
     default: throw new IndexOutOfBoundsException("Invalid index: " + field$);
     }
   }
@@ -218,69 +223,87 @@ public class ProductAvro extends org.apache.avro.specific.SpecificRecordBase imp
   }
 
   /**
-   * Gets the value of the 'count' field.
-   * @return The value of the 'count' field.
+   * Gets the value of the 'viewCount' field.
+   * @return The value of the 'viewCount' field.
    */
-  public int getCount() {
-    return count;
+  public int getViewCount() {
+    return viewCount;
   }
 
 
   /**
-   * Sets the value of the 'count' field.
+   * Sets the value of the 'viewCount' field.
    * @param value the value to set.
    */
-  public void setCount(int value) {
-    this.count = value;
+  public void setViewCount(int value) {
+    this.viewCount = value;
   }
 
   /**
-   * Creates a new ProductAvro RecordBuilder.
-   * @return A new ProductAvro RecordBuilder
+   * Gets the value of the 'imagePath' field.
+   * @return The value of the 'imagePath' field.
    */
-  public static com.osc.bikas.avro.ProductAvro.Builder newBuilder() {
-    return new com.osc.bikas.avro.ProductAvro.Builder();
+  public java.lang.CharSequence getImagePath() {
+    return imagePath;
+  }
+
+
+  /**
+   * Sets the value of the 'imagePath' field.
+   * @param value the value to set.
+   */
+  public void setImagePath(java.lang.CharSequence value) {
+    this.imagePath = value;
   }
 
   /**
-   * Creates a new ProductAvro RecordBuilder by copying an existing Builder.
+   * Creates a new ProductDetails RecordBuilder.
+   * @return A new ProductDetails RecordBuilder
+   */
+  public static com.osc.bikas.avro.ProductDetails.Builder newBuilder() {
+    return new com.osc.bikas.avro.ProductDetails.Builder();
+  }
+
+  /**
+   * Creates a new ProductDetails RecordBuilder by copying an existing Builder.
    * @param other The existing builder to copy.
-   * @return A new ProductAvro RecordBuilder
+   * @return A new ProductDetails RecordBuilder
    */
-  public static com.osc.bikas.avro.ProductAvro.Builder newBuilder(com.osc.bikas.avro.ProductAvro.Builder other) {
+  public static com.osc.bikas.avro.ProductDetails.Builder newBuilder(com.osc.bikas.avro.ProductDetails.Builder other) {
     if (other == null) {
-      return new com.osc.bikas.avro.ProductAvro.Builder();
+      return new com.osc.bikas.avro.ProductDetails.Builder();
     } else {
-      return new com.osc.bikas.avro.ProductAvro.Builder(other);
+      return new com.osc.bikas.avro.ProductDetails.Builder(other);
     }
   }
 
   /**
-   * Creates a new ProductAvro RecordBuilder by copying an existing ProductAvro instance.
+   * Creates a new ProductDetails RecordBuilder by copying an existing ProductDetails instance.
    * @param other The existing instance to copy.
-   * @return A new ProductAvro RecordBuilder
+   * @return A new ProductDetails RecordBuilder
    */
-  public static com.osc.bikas.avro.ProductAvro.Builder newBuilder(com.osc.bikas.avro.ProductAvro other) {
+  public static com.osc.bikas.avro.ProductDetails.Builder newBuilder(com.osc.bikas.avro.ProductDetails other) {
     if (other == null) {
-      return new com.osc.bikas.avro.ProductAvro.Builder();
+      return new com.osc.bikas.avro.ProductDetails.Builder();
     } else {
-      return new com.osc.bikas.avro.ProductAvro.Builder(other);
+      return new com.osc.bikas.avro.ProductDetails.Builder(other);
     }
   }
 
   /**
-   * RecordBuilder for ProductAvro instances.
+   * RecordBuilder for ProductDetails instances.
    */
   @org.apache.avro.specific.AvroGenerated
-  public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<ProductAvro>
-    implements org.apache.avro.data.RecordBuilder<ProductAvro> {
+  public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<ProductDetails>
+    implements org.apache.avro.data.RecordBuilder<ProductDetails> {
 
     private java.lang.CharSequence productId;
     private java.lang.CharSequence categoryId;
     private java.lang.CharSequence productName;
     private double productPrice;
     private java.lang.CharSequence productDescription;
-    private int count;
+    private int viewCount;
+    private java.lang.CharSequence imagePath;
 
     /** Creates a new Builder */
     private Builder() {
@@ -291,7 +314,7 @@ public class ProductAvro extends org.apache.avro.specific.SpecificRecordBase imp
      * Creates a Builder by copying an existing Builder.
      * @param other The existing Builder to copy.
      */
-    private Builder(com.osc.bikas.avro.ProductAvro.Builder other) {
+    private Builder(com.osc.bikas.avro.ProductDetails.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.productId)) {
         this.productId = data().deepCopy(fields()[0].schema(), other.productId);
@@ -313,17 +336,21 @@ public class ProductAvro extends org.apache.avro.specific.SpecificRecordBase imp
         this.productDescription = data().deepCopy(fields()[4].schema(), other.productDescription);
         fieldSetFlags()[4] = other.fieldSetFlags()[4];
       }
-      if (isValidValue(fields()[5], other.count)) {
-        this.count = data().deepCopy(fields()[5].schema(), other.count);
+      if (isValidValue(fields()[5], other.viewCount)) {
+        this.viewCount = data().deepCopy(fields()[5].schema(), other.viewCount);
         fieldSetFlags()[5] = other.fieldSetFlags()[5];
+      }
+      if (isValidValue(fields()[6], other.imagePath)) {
+        this.imagePath = data().deepCopy(fields()[6].schema(), other.imagePath);
+        fieldSetFlags()[6] = other.fieldSetFlags()[6];
       }
     }
 
     /**
-     * Creates a Builder by copying an existing ProductAvro instance
+     * Creates a Builder by copying an existing ProductDetails instance
      * @param other The existing instance to copy.
      */
-    private Builder(com.osc.bikas.avro.ProductAvro other) {
+    private Builder(com.osc.bikas.avro.ProductDetails other) {
       super(SCHEMA$);
       if (isValidValue(fields()[0], other.productId)) {
         this.productId = data().deepCopy(fields()[0].schema(), other.productId);
@@ -345,9 +372,13 @@ public class ProductAvro extends org.apache.avro.specific.SpecificRecordBase imp
         this.productDescription = data().deepCopy(fields()[4].schema(), other.productDescription);
         fieldSetFlags()[4] = true;
       }
-      if (isValidValue(fields()[5], other.count)) {
-        this.count = data().deepCopy(fields()[5].schema(), other.count);
+      if (isValidValue(fields()[5], other.viewCount)) {
+        this.viewCount = data().deepCopy(fields()[5].schema(), other.viewCount);
         fieldSetFlags()[5] = true;
+      }
+      if (isValidValue(fields()[6], other.imagePath)) {
+        this.imagePath = data().deepCopy(fields()[6].schema(), other.imagePath);
+        fieldSetFlags()[6] = true;
       }
     }
 
@@ -365,7 +396,7 @@ public class ProductAvro extends org.apache.avro.specific.SpecificRecordBase imp
       * @param value The value of 'productId'.
       * @return This builder.
       */
-    public com.osc.bikas.avro.ProductAvro.Builder setProductId(java.lang.CharSequence value) {
+    public com.osc.bikas.avro.ProductDetails.Builder setProductId(java.lang.CharSequence value) {
       validate(fields()[0], value);
       this.productId = value;
       fieldSetFlags()[0] = true;
@@ -385,7 +416,7 @@ public class ProductAvro extends org.apache.avro.specific.SpecificRecordBase imp
       * Clears the value of the 'productId' field.
       * @return This builder.
       */
-    public com.osc.bikas.avro.ProductAvro.Builder clearProductId() {
+    public com.osc.bikas.avro.ProductDetails.Builder clearProductId() {
       productId = null;
       fieldSetFlags()[0] = false;
       return this;
@@ -405,7 +436,7 @@ public class ProductAvro extends org.apache.avro.specific.SpecificRecordBase imp
       * @param value The value of 'categoryId'.
       * @return This builder.
       */
-    public com.osc.bikas.avro.ProductAvro.Builder setCategoryId(java.lang.CharSequence value) {
+    public com.osc.bikas.avro.ProductDetails.Builder setCategoryId(java.lang.CharSequence value) {
       validate(fields()[1], value);
       this.categoryId = value;
       fieldSetFlags()[1] = true;
@@ -425,7 +456,7 @@ public class ProductAvro extends org.apache.avro.specific.SpecificRecordBase imp
       * Clears the value of the 'categoryId' field.
       * @return This builder.
       */
-    public com.osc.bikas.avro.ProductAvro.Builder clearCategoryId() {
+    public com.osc.bikas.avro.ProductDetails.Builder clearCategoryId() {
       categoryId = null;
       fieldSetFlags()[1] = false;
       return this;
@@ -445,7 +476,7 @@ public class ProductAvro extends org.apache.avro.specific.SpecificRecordBase imp
       * @param value The value of 'productName'.
       * @return This builder.
       */
-    public com.osc.bikas.avro.ProductAvro.Builder setProductName(java.lang.CharSequence value) {
+    public com.osc.bikas.avro.ProductDetails.Builder setProductName(java.lang.CharSequence value) {
       validate(fields()[2], value);
       this.productName = value;
       fieldSetFlags()[2] = true;
@@ -465,7 +496,7 @@ public class ProductAvro extends org.apache.avro.specific.SpecificRecordBase imp
       * Clears the value of the 'productName' field.
       * @return This builder.
       */
-    public com.osc.bikas.avro.ProductAvro.Builder clearProductName() {
+    public com.osc.bikas.avro.ProductDetails.Builder clearProductName() {
       productName = null;
       fieldSetFlags()[2] = false;
       return this;
@@ -485,7 +516,7 @@ public class ProductAvro extends org.apache.avro.specific.SpecificRecordBase imp
       * @param value The value of 'productPrice'.
       * @return This builder.
       */
-    public com.osc.bikas.avro.ProductAvro.Builder setProductPrice(double value) {
+    public com.osc.bikas.avro.ProductDetails.Builder setProductPrice(double value) {
       validate(fields()[3], value);
       this.productPrice = value;
       fieldSetFlags()[3] = true;
@@ -505,7 +536,7 @@ public class ProductAvro extends org.apache.avro.specific.SpecificRecordBase imp
       * Clears the value of the 'productPrice' field.
       * @return This builder.
       */
-    public com.osc.bikas.avro.ProductAvro.Builder clearProductPrice() {
+    public com.osc.bikas.avro.ProductDetails.Builder clearProductPrice() {
       fieldSetFlags()[3] = false;
       return this;
     }
@@ -524,7 +555,7 @@ public class ProductAvro extends org.apache.avro.specific.SpecificRecordBase imp
       * @param value The value of 'productDescription'.
       * @return This builder.
       */
-    public com.osc.bikas.avro.ProductAvro.Builder setProductDescription(java.lang.CharSequence value) {
+    public com.osc.bikas.avro.ProductDetails.Builder setProductDescription(java.lang.CharSequence value) {
       validate(fields()[4], value);
       this.productDescription = value;
       fieldSetFlags()[4] = true;
@@ -544,62 +575,103 @@ public class ProductAvro extends org.apache.avro.specific.SpecificRecordBase imp
       * Clears the value of the 'productDescription' field.
       * @return This builder.
       */
-    public com.osc.bikas.avro.ProductAvro.Builder clearProductDescription() {
+    public com.osc.bikas.avro.ProductDetails.Builder clearProductDescription() {
       productDescription = null;
       fieldSetFlags()[4] = false;
       return this;
     }
 
     /**
-      * Gets the value of the 'count' field.
+      * Gets the value of the 'viewCount' field.
       * @return The value.
       */
-    public int getCount() {
-      return count;
+    public int getViewCount() {
+      return viewCount;
     }
 
 
     /**
-      * Sets the value of the 'count' field.
-      * @param value The value of 'count'.
+      * Sets the value of the 'viewCount' field.
+      * @param value The value of 'viewCount'.
       * @return This builder.
       */
-    public com.osc.bikas.avro.ProductAvro.Builder setCount(int value) {
+    public com.osc.bikas.avro.ProductDetails.Builder setViewCount(int value) {
       validate(fields()[5], value);
-      this.count = value;
+      this.viewCount = value;
       fieldSetFlags()[5] = true;
       return this;
     }
 
     /**
-      * Checks whether the 'count' field has been set.
-      * @return True if the 'count' field has been set, false otherwise.
+      * Checks whether the 'viewCount' field has been set.
+      * @return True if the 'viewCount' field has been set, false otherwise.
       */
-    public boolean hasCount() {
+    public boolean hasViewCount() {
       return fieldSetFlags()[5];
     }
 
 
     /**
-      * Clears the value of the 'count' field.
+      * Clears the value of the 'viewCount' field.
       * @return This builder.
       */
-    public com.osc.bikas.avro.ProductAvro.Builder clearCount() {
+    public com.osc.bikas.avro.ProductDetails.Builder clearViewCount() {
       fieldSetFlags()[5] = false;
+      return this;
+    }
+
+    /**
+      * Gets the value of the 'imagePath' field.
+      * @return The value.
+      */
+    public java.lang.CharSequence getImagePath() {
+      return imagePath;
+    }
+
+
+    /**
+      * Sets the value of the 'imagePath' field.
+      * @param value The value of 'imagePath'.
+      * @return This builder.
+      */
+    public com.osc.bikas.avro.ProductDetails.Builder setImagePath(java.lang.CharSequence value) {
+      validate(fields()[6], value);
+      this.imagePath = value;
+      fieldSetFlags()[6] = true;
+      return this;
+    }
+
+    /**
+      * Checks whether the 'imagePath' field has been set.
+      * @return True if the 'imagePath' field has been set, false otherwise.
+      */
+    public boolean hasImagePath() {
+      return fieldSetFlags()[6];
+    }
+
+
+    /**
+      * Clears the value of the 'imagePath' field.
+      * @return This builder.
+      */
+    public com.osc.bikas.avro.ProductDetails.Builder clearImagePath() {
+      imagePath = null;
+      fieldSetFlags()[6] = false;
       return this;
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public ProductAvro build() {
+    public ProductDetails build() {
       try {
-        ProductAvro record = new ProductAvro();
+        ProductDetails record = new ProductDetails();
         record.productId = fieldSetFlags()[0] ? this.productId : (java.lang.CharSequence) defaultValue(fields()[0]);
         record.categoryId = fieldSetFlags()[1] ? this.categoryId : (java.lang.CharSequence) defaultValue(fields()[1]);
         record.productName = fieldSetFlags()[2] ? this.productName : (java.lang.CharSequence) defaultValue(fields()[2]);
         record.productPrice = fieldSetFlags()[3] ? this.productPrice : (java.lang.Double) defaultValue(fields()[3]);
         record.productDescription = fieldSetFlags()[4] ? this.productDescription : (java.lang.CharSequence) defaultValue(fields()[4]);
-        record.count = fieldSetFlags()[5] ? this.count : (java.lang.Integer) defaultValue(fields()[5]);
+        record.viewCount = fieldSetFlags()[5] ? this.viewCount : (java.lang.Integer) defaultValue(fields()[5]);
+        record.imagePath = fieldSetFlags()[6] ? this.imagePath : (java.lang.CharSequence) defaultValue(fields()[6]);
         return record;
       } catch (org.apache.avro.AvroMissingFieldException e) {
         throw e;
@@ -610,8 +682,8 @@ public class ProductAvro extends org.apache.avro.specific.SpecificRecordBase imp
   }
 
   @SuppressWarnings("unchecked")
-  private static final org.apache.avro.io.DatumWriter<ProductAvro>
-    WRITER$ = (org.apache.avro.io.DatumWriter<ProductAvro>)MODEL$.createDatumWriter(SCHEMA$);
+  private static final org.apache.avro.io.DatumWriter<ProductDetails>
+    WRITER$ = (org.apache.avro.io.DatumWriter<ProductDetails>)MODEL$.createDatumWriter(SCHEMA$);
 
   @Override public void writeExternal(java.io.ObjectOutput out)
     throws java.io.IOException {
@@ -619,8 +691,8 @@ public class ProductAvro extends org.apache.avro.specific.SpecificRecordBase imp
   }
 
   @SuppressWarnings("unchecked")
-  private static final org.apache.avro.io.DatumReader<ProductAvro>
-    READER$ = (org.apache.avro.io.DatumReader<ProductAvro>)MODEL$.createDatumReader(SCHEMA$);
+  private static final org.apache.avro.io.DatumReader<ProductDetails>
+    READER$ = (org.apache.avro.io.DatumReader<ProductDetails>)MODEL$.createDatumReader(SCHEMA$);
 
   @Override public void readExternal(java.io.ObjectInput in)
     throws java.io.IOException {
@@ -666,7 +738,15 @@ public class ProductAvro extends org.apache.avro.specific.SpecificRecordBase imp
       out.writeString(this.productDescription);
     }
 
-    out.writeInt(this.count);
+    out.writeInt(this.viewCount);
+
+    if (this.imagePath == null) {
+      out.writeIndex(0);
+      out.writeNull();
+    } else {
+      out.writeIndex(1);
+      out.writeString(this.imagePath);
+    }
 
   }
 
@@ -705,10 +785,17 @@ public class ProductAvro extends org.apache.avro.specific.SpecificRecordBase imp
         this.productDescription = in.readString(this.productDescription instanceof Utf8 ? (Utf8)this.productDescription : null);
       }
 
-      this.count = in.readInt();
+      this.viewCount = in.readInt();
+
+      if (in.readIndex() != 1) {
+        in.readNull();
+        this.imagePath = null;
+      } else {
+        this.imagePath = in.readString(this.imagePath instanceof Utf8 ? (Utf8)this.imagePath : null);
+      }
 
     } else {
-      for (int i = 0; i < 6; i++) {
+      for (int i = 0; i < 7; i++) {
         switch (fieldOrder[i].pos()) {
         case 0:
           if (in.readIndex() != 1) {
@@ -751,7 +838,16 @@ public class ProductAvro extends org.apache.avro.specific.SpecificRecordBase imp
           break;
 
         case 5:
-          this.count = in.readInt();
+          this.viewCount = in.readInt();
+          break;
+
+        case 6:
+          if (in.readIndex() != 1) {
+            in.readNull();
+            this.imagePath = null;
+          } else {
+            this.imagePath = in.readString(this.imagePath instanceof Utf8 ? (Utf8)this.imagePath : null);
+          }
           break;
 
         default:

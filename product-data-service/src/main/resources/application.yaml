@@ -1,7 +1,8 @@
 logging:
   level:
-    org.springframework.web: INFO
-    org.springframework.scheduling: TRACE
+#    org.springframework.web: INFO
+#    org.springframework.scheduling: TRACE
+#    org.hibernate: TRACE
 
 grpc:
   server:

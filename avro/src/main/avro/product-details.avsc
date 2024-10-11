@@ -1,6 +1,6 @@
 {
   "type": "record",
-  "name": "ProductAvro",
+  "name": "ProductDetails",
   "namespace": "com.osc.bikas.avro",
   "fields": [
     {"name": "productId", "type": ["null", "string"], "default": null},
@@ -8,6 +8,7 @@
     {"name": "productName", "type": ["null", "string"], "default": null},
     {"name": "productPrice", "type": "double", ",default": 1.0},
     {"name": "productDescription", "type": ["null", "string"], "default": null},
-    {"name": "count", "type": "int", ",default": 1}
+    {"name": "viewCount", "type": "int", ",default": 1},
+    {"name": "imagePath", "type": ["null", "string"], "default": null}
   ]
 }

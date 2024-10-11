@@ -1,6 +1,6 @@
 {
   "type": "record",
-  "name": "Categories",
+  "name": "CategoryList",
   "namespace": "com.osc.bikas.avro",
   "fields": [
     {
