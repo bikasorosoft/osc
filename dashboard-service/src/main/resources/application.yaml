@@ -12,6 +12,9 @@ grpc:
     product-data-service:
       address: static://localhost:9200
       negotiationType: PLAINTEXT
+    cart-data-service:
+      address: static://localhost:9300
+      negotiationType: PLAINTEXT
 
 spring:
   application:

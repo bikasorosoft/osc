@@ -18,8 +18,8 @@ public class UserProductViewPublisher {
     public void publish() {
         Random rand = new Random();
         String key = "userId";
-        var value = UserProductViewTopicValue.newBuilder().setProductId(String.valueOf(rand.nextInt(2))).setViewedAt(LocalDateTime.now().toString()).build();
-        kafkaTemplate.send(KafkaConst.USER_PRODUCT_VIEW_TOPIC, key, null);
+        var value = UserProductViewTopicValue.newBuilder().setProductId(String.valueOf(rand.nextInt(5))).setViewedAt(LocalDateTime.now().toString()).build();
+        kafkaTemplate.send(KafkaConst.USER_PRODUCT_VIEW_TOPIC, key, value);
     }
 
 }

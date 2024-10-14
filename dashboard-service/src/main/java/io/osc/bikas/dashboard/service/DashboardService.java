@@ -2,6 +2,7 @@ package io.osc.bikas.dashboard.service;
 
 import com.osc.bikas.proto.CategoryFilterRequest;
 import io.osc.bikas.dashboard.dto.*;
+import io.osc.bikas.dashboard.grpc.GrpcCartDataServiceClient;
 import io.osc.bikas.dashboard.grpc.GrpcProductDataServiceClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import java.util.List;
 public class DashboardService {
 
     private final GrpcProductDataServiceClient productDataServiceClient;
+    private final GrpcCartDataServiceClient cartDataServiceClient;
 
     public DataObjectDto getDashboardData(String userId) {
 
@@ -67,5 +69,13 @@ public class DashboardService {
             default -> throw new IllegalStateException("Unexpected value: " + filterString);
         };
         return new FilterProductResponse(productList);
+    }
+
+    public void updateCartItem(String userId, String productId, Integer count) {
+        cartDataServiceClient.updateCartItem(userId, productId, count);
+    }
+
+    public void removeCartItem(String userId, String productId) {
+        cartDataServiceClient.removeItemFromCart(userId, productId);
     }
 }

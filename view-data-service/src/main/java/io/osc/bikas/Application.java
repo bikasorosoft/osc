@@ -35,13 +35,12 @@ public class Application {
 
     public final UserProductViewPublisher publisher;
     private final KafkaStreamsInteractiveQueryService kafkaStreamsInteractiveQueryService;
-    private final KafkaStreams kafkaStreams;
 
     @GetMapping("/populate")
-    public void populate(String... args) throws Exception {
-        for (int i = 0; i < 10; i++) {
+    public void populate() throws Exception {
+        for (int i = 0; i < 100; i++) {
             publisher.publish();
-            Thread.sleep(1_000);
+            Thread.sleep(1_00);
         }
         System.out.println(LocalDateTime.now());
     }

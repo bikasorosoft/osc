@@ -30,4 +30,30 @@ public class DashboardController {
         var responseData = dashboardService.getFilteredProduct(filterProductRequest.categoryId(), filterProductRequest.filter());
         return ResponseEntity.ok(new ResponseDto(200, responseData));
     }
+
+
+    //cart related operations
+
+    //update cart
+    @PostMapping("/user/cart/increase")
+    public ResponseEntity<?> increaseItemInCart(@RequestBody UpdateCartItemRequestDto updateCartItemRequestDto) {
+        dashboardService.updateCartItem(updateCartItemRequestDto.userId(), updateCartItemRequestDto.productId(), updateCartItemRequestDto.count());
+        return ResponseEntity.ok(new ResponseDto(200, null));
+    }
+
+    @PostMapping("/user/cart/decrease")
+    public ResponseEntity<?> decreaseItemInCart(@RequestBody UpdateCartItemRequestDto updateCartItemRequestDto) {
+        dashboardService.updateCartItem(updateCartItemRequestDto.userId(), updateCartItemRequestDto.productId(), updateCartItemRequestDto.count()*(-1));
+        return ResponseEntity.ok(new ResponseDto(200, null));
+    }
+
+    //remove item from cart
+    @PostMapping("/user/cart/remove")
+    public ResponseEntity<?> removeItemInCart(@RequestBody UpdateCartItemRequestDto updateCartItemRequestDto) {
+        dashboardService.removeCartItem(updateCartItemRequestDto.userId(), updateCartItemRequestDto.productId());
+        return ResponseEntity.ok(new ResponseDto(200, null));
+    }
+
+    //get cart details
+
 }
