@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package common;
+
+option java_multiple_files = true;
+option java_package = "com.osc.bikas.proto";
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/empty.proto";
+
+
+service CartDataService {
+  rpc GetCartItemList(google.protobuf.StringValue) returns (GetCartItemListResponse);
+  rpc UpdateCartItem(UpdateCartItemRequest) returns (google.protobuf.Empty);
+  rpc RemoveCartItem(RemoveCartItemRequest) returns (google.protobuf.Empty);
+  rpc UpdateCartDataToDb(google.protobuf.StringValue) returns (google.protobuf.Empty);
+}
+
+message GetCartItemListResponse {
+  message CartItem {
+    string product_id = 1;
+    int32 count = 2;
+  }
+  repeated CartItem cartItems = 1;
+}
+
+message UpdateCartItemRequest {
+  string user_id = 1;
+  string product_id = 2;
+  int32 count = 3;
+}
+
+message RemoveCartItemRequest {
+  string user_id = 1;
+  string product_id = 2;
+}

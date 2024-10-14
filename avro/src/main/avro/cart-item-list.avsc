@@ -1,0 +1,27 @@
+{
+  "type": "record",
+  "namespace": "com.osc.bikas.avro",
+  "name": "CartItemList",
+  "fields": [
+    {
+      "name": "cartItem",
+      "type": {
+        "type": "array",
+        "items": {
+          "type": "record",
+          "name": "CartItem",
+          "fields": [
+            {
+              "name": "productId",
+              "type": "string"
+            },
+            {
+              "name": "count",
+              "type": ["int", ]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

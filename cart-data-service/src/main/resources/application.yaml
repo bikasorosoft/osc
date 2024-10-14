@@ -1,0 +1,36 @@
+grpc:
+  server:
+    port: 9090
+
+spring:
+  application:
+    name: cart-data-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/osc
+    username: postgres
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      format_sql: true
+
+  kafka:
+    bootstrap-servers: 192.168.99.223:19092                          # Whether to clean up local state stores on startup
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+
+    consumer:
+      group-id: cart-data-service
+      auto-offset-reset: earliest
+      #      enable-auto-commit: false
+      #      fetch-min-size: 5000
+      #      fetch-max-wait: 500
+      #      max-poll-records: 5
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+    properties:
+      schema.registry.url: http://192.168.99.223:18081
+      specific.avro.reader: true
