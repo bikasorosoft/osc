@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package common;
+
+option java_multiple_files = true;
+option java_package = "com.osc.bikas.proto";
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/empty.proto";
+
+service ViewDataService {
+  rpc GetRecentlyViewedProductIdList(google.protobuf.StringValue) returns (ProductIdList);
+}
+
+message ProductIdList {
+  repeated google.protobuf.StringValue productId = 1;
+}

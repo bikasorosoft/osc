@@ -35,7 +35,7 @@ public class KafkaStreamsConfig {
         props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, SpecificAvroSerde.class);
         props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, PrimitiveAvroSerde.class);
         props.put("schema.registry.url", "http://192.168.99.223:18081");
-        props.put(StreamsConfig.STATE_DIR_CONFIG, "/store2");
+        props.put(StreamsConfig.STATE_DIR_CONFIG, "/session-data");
         props.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 0);
         return new KafkaStreamsConfiguration(props);
     }

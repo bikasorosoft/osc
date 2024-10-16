@@ -2,6 +2,8 @@ package io.osc.bikas.cart.data.grpc;
 
 import com.google.protobuf.Empty;
 import com.google.protobuf.StringValue;
+import com.osc.bikas.avro.CartItem;
+import com.osc.bikas.avro.CartItemList;
 import com.osc.bikas.proto.CartDataServiceGrpc;
 import com.osc.bikas.proto.GetCartItemListResponse;
 import com.osc.bikas.proto.RemoveCartItemRequest;
@@ -10,6 +12,9 @@ import io.grpc.stub.StreamObserver;
 import io.osc.bikas.cart.data.service.CartDataService;
 import lombok.RequiredArgsConstructor;
 import net.devh.boot.grpc.server.service.GrpcService;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @GrpcService
 @RequiredArgsConstructor
@@ -20,9 +25,9 @@ public class GrpcCartDataService extends CartDataServiceGrpc.CartDataServiceImpl
     @Override
     public void getCartItemList(StringValue request, StreamObserver<GetCartItemListResponse> responseObserver) {
 
-        cartDataService.getCartItemList(request.getValue());
+        var cartItems = generateCartItem(cartDataService.getCartItemList(request.getValue()));
 
-        GetCartItemListResponse response = GetCartItemListResponse.newBuilder().build();
+        GetCartItemListResponse response = GetCartItemListResponse.newBuilder().addAllCartItems(cartItems).build();
 
         responseObserver.onNext(response);
         responseObserver.onCompleted();
@@ -56,11 +61,25 @@ public class GrpcCartDataService extends CartDataServiceGrpc.CartDataServiceImpl
     }
 
     @Override
-    public void updateCartDataToDb(StringValue request, StreamObserver<Empty> responseObserver) {
+    public void saveCart(StringValue request, StreamObserver<Empty> responseObserver) {
         cartDataService.updateCartDataToDb(request.getValue());
 
         responseObserver.onNext(Empty.getDefaultInstance());
         responseObserver.onCompleted();
 
     }
+
+    List<GetCartItemListResponse.CartItem> generateCartItem(List<CartItem> items) {
+        return items.stream()
+                .map(this::generateCartItem)
+                .collect(Collectors.toList());
+    }
+
+    GetCartItemListResponse.CartItem generateCartItem(CartItem item) {
+        return GetCartItemListResponse.CartItem.newBuilder()
+                .setProductId(item.getProductId().toString())
+                .setCount(item.getCount())
+                .build();
+    }
+
 }

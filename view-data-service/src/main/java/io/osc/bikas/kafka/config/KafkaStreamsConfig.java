@@ -2,6 +2,7 @@ package io.osc.bikas.kafka.config;
 
 import com.osc.bikas.avro.UserProductViewTopicValue;
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
+import io.confluent.kafka.streams.serdes.avro.PrimitiveAvroSerde;
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
 import io.osc.bikas.kafka.KafkaConst;
 import io.osc.bikas.kafka.utils.LinkedListSerde;
@@ -11,6 +12,7 @@ import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.utils.Bytes;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
+import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.KTable;
 import org.apache.kafka.streams.kstream.Materialized;
@@ -39,7 +41,7 @@ public class KafkaStreamsConfig {
         props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
         props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, SpecificAvroSerde.class);
         props.put("schema.registry.url", "http://192.168.99.223:18081");
-        props.put(StreamsConfig.STATE_DIR_CONFIG, "/store");
+        props.put(StreamsConfig.STATE_DIR_CONFIG, "/view-data");
         props.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 0);//1000 ms = 1 sec
         return new KafkaStreamsConfiguration(props);
     }
@@ -52,56 +54,40 @@ public class KafkaStreamsConfig {
     }
 
     @Bean
-    public KTable<String, LinkedList<UserProductViewTopicValue>> kafkaUserProductViewWindowedAggregate(StreamsBuilder builder) {
+    public KTable<String, LinkedList<String>> kafkaUserProductViewWindowedAggregate(StreamsBuilder builder) {
 
         final String schemaRegistryUrl = "http://192.168.99.223:18081";
-
-        final Serde<String> stringSerde = Serdes.String();
 
         final Map<String, String> serdeConfig = Collections.singletonMap(
                 AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryUrl);
 
-        Serde<String> keySerde = Serdes.String();
+        final Serde<String> keySerde = Serdes.String();
         keySerde.configure(serdeConfig, true);
 
-        final Serde<UserProductViewTopicValue> valueSerde = new SpecificAvroSerde();
+        final Serde<String> valueSerde = Serdes.String();
         valueSerde.configure(serdeConfig, false);
 
-        KStream<String, UserProductViewTopicValue> stream = builder.stream(KafkaConst.USER_PRODUCT_VIEW_TOPIC);
+        KStream<String, String> stream = builder.stream(KafkaConst.USER_PRODUCT_VIEW_TOPIC, Consumed.with(Serdes.String(), Serdes.String()));
         return stream
                 .groupByKey()
                 .aggregate(
                         //initializer
                         LinkedList::new,
-                        //aggregator
-                        (k, v, l) -> {
-                            //remove if duplicate present
-                            removeDuplicate(v, l);
-                            if(l.size()<6) {
-                                l.addFirst(v);
-                                System.out.println(l.toString());
-                                return l;
+                        //aggregate
+                        (userId, productId, linkedList) -> {
+                            linkedList.removeIf((v) -> Objects.equals(v, productId));
+                            linkedList.addFirst(productId);
+                            while(linkedList.size()>6) {
+                                linkedList.removeLast();
                             }
-                            l.removeLast();
-                            l.addFirst(v);
-                            System.out.println(l.toString());
-                            return l;
+                            System.out.println(linkedList.toString());
+                            return linkedList;
                         },
-                        Materialized.<String, LinkedList<UserProductViewTopicValue>, KeyValueStore<Bytes, byte[]>>as(KafkaConst.PRODUCT_VIEW_HISTORY)
+                        //materialize
+                        Materialized.<String, LinkedList<String>, KeyValueStore<Bytes, byte[]>>as(KafkaConst.PRODUCT_VIEW_HISTORY)
                                 .withKeySerde(keySerde)
                                 .withValueSerde(new LinkedListSerde<>(valueSerde))
                 );
-    }
-
-    private void removeDuplicate(UserProductViewTopicValue v, LinkedList<UserProductViewTopicValue> l) {
-        if(l == null || l.isEmpty())    return;
-
-        for(UserProductViewTopicValue i: l) {
-            if(Objects.equals(i.getProductId(), v.getProductId())) {
-                l.remove(i);
-                break;
-            }
-        }
     }
 
     @Bean

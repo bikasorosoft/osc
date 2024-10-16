@@ -24,8 +24,14 @@ message LogoutSessionRequest {
   string session_id = 2;
 }
 
+message SessionValidationRequest {
+  string user_id = 1;
+  string session_id = 2;
+}
+
 service SessionDataService {
   rpc SessionExists(SessionExistsRequest) returns (google.protobuf.BoolValue);
   rpc CreateSession(CreateSessionRequest) returns (google.protobuf.Empty);
   rpc LogoutSession(LogoutSessionRequest) returns (google.protobuf.Empty);
+  rpc IsSessionValid(SessionValidationRequest) returns (google.protobuf.BoolValue);
 }

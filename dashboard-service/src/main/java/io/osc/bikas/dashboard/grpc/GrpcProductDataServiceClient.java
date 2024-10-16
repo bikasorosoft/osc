@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class GrpcProductDataServiceClient {
@@ -17,69 +18,67 @@ public class GrpcProductDataServiceClient {
     @GrpcClient("product-data-service")
     private ProductDataServiceGrpc.ProductDataServiceBlockingStub productDataServiceBlockingStub;
 
-    public ProductDto fetchProductDetails(String productId) {
-        ProductDetails productDetails = productDataServiceBlockingStub.getProductDetails(StringValue.newBuilder().setValue(productId).build());
-        return toProductDto(productDetails);
+    public ProductDto getProductDetailsById(String productId) {
+        ProductDetails productDetails = productDataServiceBlockingStub.getProductById(StringValue.newBuilder().setValue(productId).build());
+        return generateProductDto(productDetails);
     }
 
-    public List<ProductDto> fetchFilteredProducts(String categoryId, CategoryFilterRequest.FILTER filter) {
+    public List<ProductDto> getAllProductById(List<String> productIdList) {
+
+        var stringValues = generateStringValue(productIdList);
+        ProductListResponse response = productDataServiceBlockingStub.getAllProductById(ProductIdList.newBuilder().addAllProductId(stringValues).build());
+
+        return generateProductDto(response.getProductsList());
+
+    }
+
+    private List<StringValue> generateStringValue(List<String> stringList) {
+        return stringList.stream().map(StringValue::of)
+                .collect(Collectors.toList());
+    }
+
+    public List<ProductDto> getProductsFilterBy(String categoryId, CategoryFilterRequest.FILTER filter) {
         CategoryFilterRequest categoryFilterRequest = CategoryFilterRequest.newBuilder().setCategoryId(categoryId).setFilter(filter).build();
         ProductListResponse filteredProducts = productDataServiceBlockingStub.getFilteredProducts(categoryFilterRequest);
-        return toProductDto(filteredProducts);
+        return generateProductDto(filteredProducts.getProductsList());
     }
 
     public List<CategoryDto> fetchCategoriesOrderByViewCount() {
 
         CategoryListResponse categories =
                 productDataServiceBlockingStub.getCategoriesOrderedByViewCount(Empty.newBuilder().build());
-        return toCategoryDto(categories);
+        return generateCategoryDto(categories.getCategoriesList());
     }
 
-    public List<ProductDto> fetchFeaturedProducts() {
+    public List<ProductDto> getFeaturedProducts() {
         ProductListResponse filteredProducts = productDataServiceBlockingStub.getFilteredProducts(CategoryFilterRequest.newBuilder().build());
-        return toProductDto(filteredProducts);
+        return generateProductDto(filteredProducts.getProductsList());
     }
 
-    private List<CategoryDto> toCategoryDto(CategoryListResponse categoryListResponse) {
 
-        List<CategoryDto> categoryDtoList = new ArrayList<>();
 
-        for (Category category : categoryListResponse.getCategoriesList()) {
-            CategoryDto categoryDto = CategoryDto.builder()
-                    .categoryId(category.getCategoryId())
-                    .categoryName(category.getCategoryName())
-                    .count(category.getViewCount())
-                    .build();
-            categoryDtoList.add(categoryDto);
-        }
-        return categoryDtoList;
+    private List<CategoryDto> generateCategoryDto(List<CategoryDetails> categoryListResponse) {
+        return categoryListResponse.stream()
+                .map(this::generateCategoryDto)
+                .collect(Collectors.toList());
     }
 
-    private List<ProductDto> toProductDto(ProductListResponse productListResponse) {
-
-        List<ProductDto> productDtoList = new ArrayList<>();
-
-        for (ProductDetails product : productListResponse.getProductsList()) {
-
-            ProductDto productDto = ProductDto.builder()
-                    .productId(product.getProductId())
-                    .categoryId(product.getCategoryId())
-                    .productName(product.getProductName())
-                    .productPrice(product.getProductPrice())
-                    .productDescription(product.getProductDescription())
-                    .viewCount(product.getViewCount())
-                    .build();
-            productDtoList.add(productDto);
-        }
-
-        return productDtoList;
-
+    private CategoryDto generateCategoryDto(CategoryDetails categoryDetails) {
+        return CategoryDto.builder()
+                .categoryId(categoryDetails.getCategoryId())
+                .categoryName(categoryDetails.getCategoryName())
+                .count(categoryDetails.getViewCount())
+                .build();
     }
 
-    private ProductDto toProductDto(ProductDetails proto) {
+    private List<ProductDto> generateProductDto(List<ProductDetails> productDetailsList) {
 
-        ProductDto dto = ProductDto.builder().build();
+        return productDetailsList.stream()
+                .map(this::generateProductDto)
+                .collect(Collectors.toList());
+    }
 
+    private ProductDto generateProductDto(ProductDetails proto) {
         return ProductDto.builder()
                 .productId(proto.getProductId())
                 .categoryId(proto.getCategoryId())
@@ -89,4 +88,6 @@ public class GrpcProductDataServiceClient {
                 .viewCount(proto.getViewCount())
                 .build();
     }
+
+
 }

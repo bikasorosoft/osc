@@ -47,4 +47,17 @@ public class GrpcSessionDataService extends SessionDataServiceGrpc.SessionDataSe
         responseObserver.onNext(Empty.newBuilder().build());
         responseObserver.onCompleted();
     }
+
+    @Override
+    public void isSessionValid(SessionValidationRequest request, StreamObserver<BoolValue> responseObserver) {
+
+        String userId = request.getUserId();
+        String sessionId = request.getSessionId();
+
+        var response = BoolValue.of(sessionService.isSessionValid(userId, sessionId));
+
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+
+    }
 }

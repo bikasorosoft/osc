@@ -5,7 +5,6 @@ import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.serialization.Serializer;
 
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.Map;
 

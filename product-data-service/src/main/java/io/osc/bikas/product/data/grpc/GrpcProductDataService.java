@@ -5,6 +5,7 @@ import com.google.protobuf.StringValue;
 import com.osc.bikas.proto.*;
 import io.grpc.stub.StreamObserver;
 import io.osc.bikas.product.data.dto.CategoryDto;
+import io.osc.bikas.product.data.model.Category;
 import io.osc.bikas.product.data.model.Product;
 import io.osc.bikas.product.data.service.ProductDataService;
 import lombok.RequiredArgsConstructor;
@@ -25,22 +26,9 @@ public class GrpcProductDataService extends ProductDataServiceGrpc.ProductDataSe
         String categoryId = request.getCategoryId();
         CategoryFilterRequest.FILTER filter = request.getFilter();
 
-        var featuredProductList = productDataService.filterProduct(categoryId, filter);
-        var productList = new ArrayList<ProductDetails>();
-
-        for (Product product : featuredProductList) {
-            ProductDetails productDetails = ProductDetails.newBuilder()
-                    .setProductId(product.getProductId())
-                    .setCategoryId(product.getCategory().getCategoryId())
-                    .setProductName(product.getProductName())
-                    .setProductDescription(product.getProductDescription())
-                    .setProductPrice(product.getProductPrice().doubleValue())
-                    .setViewCount(product.getViewCount())
-                    .build();
-            productList.add(productDetails);
-        }
-
-        ProductListResponse response = ProductListResponse.newBuilder().addAllProducts(productList).build();
+        var featuredProductList = productDataService.getProductsFilterBy(categoryId, filter);
+        var productList = convertToProductDetails(featuredProductList);
+        var response = buildProductListResponse(productList);
 
         responseObserver.onNext(response);
         responseObserver.onCompleted();
@@ -49,31 +37,50 @@ public class GrpcProductDataService extends ProductDataServiceGrpc.ProductDataSe
     @Override
     public void getCategoriesOrderedByViewCount(Empty request, StreamObserver<CategoryListResponse> responseObserver) {
 
-        var categoryList = productDataService.findCategoriesOrderedByProductViewCount();
+        var categoryDtoList = productDataService.findCategoriesOrderedByProductViewCount();
 
-        List<Category> CategoryList = new ArrayList<Category>();
+        List<CategoryDetails> categoryDetailsList = convertToCategoryDetails(categoryDtoList);
 
-        for (CategoryDto categoryDto : categoryList) {
-            Category category = Category.newBuilder()
-                    .setCategoryId(categoryDto.categoryId())
-                    .setCategoryName(categoryDto.categoryName())
-                    .setViewCount(categoryDto.count().intValue())
-                    .build();
-            CategoryList.add(category);
-        }
-
-        var response = CategoryListResponse.newBuilder().addAllCategories(CategoryList).build();
+        var response = buildCategoryListResponse(categoryDetailsList);
 
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
 
     @Override
-    public void getProductDetails(StringValue request, StreamObserver<ProductDetails> responseObserver) {
+    public void getProductById(StringValue request, StreamObserver<ProductDetails> responseObserver) {
         String productId = request.getValue();
         Product product = productDataService.findProductById(productId);
 
-        ProductDetails response = ProductDetails.newBuilder()
+        var response = convertToProductDetails(product);
+
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void getAllProductById(ProductIdList request, StreamObserver<ProductListResponse> responseObserver) {
+
+        List<String> productIdList = request.getProductIdList().stream().map(StringValue::getValue).toList();
+
+        List<Product> productList = productDataService.findAllProductById(productIdList);
+
+        List<ProductDetails> productDetailsList = convertToProductDetails(productList);
+        ProductListResponse response = buildProductListResponse(productDetailsList);
+
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+
+    }
+
+    private List<ProductDetails> convertToProductDetails(List<Product> products) {
+        return products.stream()
+                .map(this::convertToProductDetails)
+                .toList();
+    }
+
+    private ProductDetails convertToProductDetails(Product product) {
+        return ProductDetails.newBuilder()
                 .setProductId(product.getProductId())
                 .setCategoryId(product.getCategory().getCategoryId())
                 .setProductName(product.getProductName())
@@ -81,8 +88,27 @@ public class GrpcProductDataService extends ProductDataServiceGrpc.ProductDataSe
                 .setProductPrice(product.getProductPrice().doubleValue())
                 .setViewCount(product.getViewCount())
                 .build();
+    }
 
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
+    private ProductListResponse buildProductListResponse(List<ProductDetails> productList) {
+        return ProductListResponse.newBuilder().addAllProducts(productList).build();
+    }
+
+    private List<CategoryDetails> convertToCategoryDetails(List<CategoryDto> categoryDtoList) {
+        return categoryDtoList.stream()
+                .map(this::convertToCategoryDetails)
+                .toList();
+    }
+
+    private CategoryDetails convertToCategoryDetails(CategoryDto categoryDto) {
+        return CategoryDetails.newBuilder()
+                .setCategoryId(categoryDto.categoryId())
+                .setCategoryName(categoryDto.categoryName())
+                .setViewCount(categoryDto.count().intValue())
+                .build();
+    }
+
+    private CategoryListResponse buildCategoryListResponse(List<CategoryDetails> categoryDetailsList) {
+        return CategoryListResponse.newBuilder().addAllCategories(categoryDetailsList).build();
     }
 }

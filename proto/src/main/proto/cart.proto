@@ -13,7 +13,7 @@ service CartDataService {
   rpc GetCartItemList(google.protobuf.StringValue) returns (GetCartItemListResponse);
   rpc UpdateCartItem(UpdateCartItemRequest) returns (google.protobuf.Empty);
   rpc RemoveCartItem(RemoveCartItemRequest) returns (google.protobuf.Empty);
-  rpc UpdateCartDataToDb(google.protobuf.StringValue) returns (google.protobuf.Empty);
+  rpc SaveCart(google.protobuf.StringValue) returns (google.protobuf.Empty);
 }
 
 message GetCartItemListResponse {

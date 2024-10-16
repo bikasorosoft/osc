@@ -13,13 +13,10 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class UserProductViewPublisher {
 
-    private final KafkaTemplate<String, UserProductViewTopicValue> kafkaTemplate;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
-    public void publish() {
-        Random rand = new Random();
-        String key = "userId";
-        var value = UserProductViewTopicValue.newBuilder().setProductId(String.valueOf(rand.nextInt(5))).setViewedAt(LocalDateTime.now().toString()).build();
-        kafkaTemplate.send(KafkaConst.USER_PRODUCT_VIEW_TOPIC, key, value);
+    public void publish(String userId, String productId) {
+        kafkaTemplate.send(KafkaConst.USER_PRODUCT_VIEW_TOPIC, userId, productId);
     }
 
 }

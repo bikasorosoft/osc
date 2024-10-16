@@ -13,7 +13,6 @@ import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,14 +23,11 @@ public class CartDataService {
     private final KafkaCartPublisher cartPublisher;
     private final CartRepository cartRepository;
 
-    public void getCartItemList(String userId) {
+    public List<CartItem> getCartItemList(String userId) {
 
         ReadOnlyKeyValueStore<String, CartItemList> store = kafkaInteractiveQueryService.getCartItemReadOnlyKeyValueStore();
 
-        CartItemList cartItemList = store.get(userId);
-
-        log.info("{}", cartItemList);
-
+        return store.get(userId).getCartItem();
     }
 
     public void updateCartItem(String userId, String productId, int count) {
@@ -40,22 +36,20 @@ public class CartDataService {
 
         if (cartItemList == null) {
             cartItemList = CartItemList.newBuilder().setCartItem(
-                    new ArrayList<>(Arrays.asList(CartItem.newBuilder().setProductId(productId).setCount(count).build())
+                    Arrays.asList(new CartItem(productId, count)
             )).build();
         } else {
             boolean itemExist = false;
-
             List<CartItem> cartItem = cartItemList.getCartItem();
             for (CartItem item : cartItem) {
                 if (Objects.equals(item.getProductId().toString(), productId)) {
-                    item.setCount(item.getCount() + count);
+                    item.setCount(count + item.getCount());
                     itemExist = true;
                     break;
                 }
             }
-
             if (!itemExist) {
-                CartItem newItem = CartItem.newBuilder().setProductId(productId).setCount(count).build();
+                CartItem newItem = new CartItem(productId, count);
                 cartItem.add(newItem);
             }
         }

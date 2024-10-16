@@ -2,10 +2,13 @@ package io.osc.bikas.dashboard.grpc;
 
 import com.google.protobuf.StringValue;
 import com.osc.bikas.proto.*;
+import io.osc.bikas.dashboard.dto.CartItemDto;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class GrpcCartDataServiceClient {
@@ -37,11 +40,20 @@ public class GrpcCartDataServiceClient {
     }
 
     //get cart products
-    public ArrayList<GetCartItemListResponse.CartItem> getCartItemsDetail(String userId) {
-        //TODO
-        //handle response and implement methods to get product details form product data service and generate cart details response.
+    public List<CartItemDto> getCartItemsDetail(String userId) {
         GetCartItemListResponse cartItemList = cartDataServiceBlockingStub.getCartItemList(StringValue.of(userId));
-        return new ArrayList<>(cartItemList.getCartItemsList());
+        return generateCartITemDto(cartItemList.getCartItemsList());
     }
+
+    private CartItemDto generateCartItemDto(GetCartItemListResponse.CartItem cartItem) {
+        return CartItemDto.builder().productId(cartItem.getProductId()).quantity(cartItem.getCount()).build();
+    }
+
+    private List<CartItemDto> generateCartITemDto(List<GetCartItemListResponse.CartItem> cartItems) {
+        return cartItems.stream()
+                .map(this::generateCartItemDto)
+                .collect(Collectors.toList());
+    }
+
 
 }

@@ -7,13 +7,15 @@ option java_package = "com.osc.bikas.proto";
 
 import "google/protobuf/wrappers.proto";
 import "google/protobuf/empty.proto";
+import "view.proto";
 
 
 service ProductDataService {
 //  rpc GetFeaturedProducts (google.protobuf.Empty) returns (ProductListResponse);
   rpc GetCategoriesOrderedByViewCount (google.protobuf.Empty) returns (CategoryListResponse);
-  rpc GetProductDetails (google.protobuf.StringValue) returns (ProductDetails);
+  rpc GetProductById (google.protobuf.StringValue) returns (ProductDetails);
   rpc GetFilteredProducts(CategoryFilterRequest) returns (ProductListResponse);
+  rpc GetAllProductById(ProductIdList) returns (ProductListResponse);
 }
 
 message ProductDetails {
@@ -29,14 +31,14 @@ message ProductListResponse {
   repeated ProductDetails products = 1;
 }
 
-message Category {
+message CategoryDetails {
   string category_id = 1;
   string category_name = 2;
   int32 view_count = 3;
 }
 
 message CategoryListResponse {
-  repeated Category categories = 1;
+  repeated CategoryDetails categories = 1;
 }
 
 message CategoryFilterRequest {

@@ -12,6 +12,7 @@ import org.springframework.kafka.streams.KafkaStreamsInteractiveQueryService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -53,5 +54,13 @@ public class SessionService {
         session.setLogoutTime(LocalDateTime.now());
         sessionRepository.save(session);
         kafkaSessionProducer.publish(userId, deviceType, null);
+    }
+
+    public boolean isSessionValid(String userId, String sessionId) {
+
+        Optional<Session> sessionOptional = sessionRepository.findByUserIdAndSessionId(userId, sessionId);
+
+        return sessionOptional.isPresent();
+
     }
 }

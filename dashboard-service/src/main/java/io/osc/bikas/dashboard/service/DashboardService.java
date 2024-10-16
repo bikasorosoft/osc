@@ -2,80 +2,82 @@ package io.osc.bikas.dashboard.service;
 
 import com.osc.bikas.proto.CategoryFilterRequest;
 import io.osc.bikas.dashboard.dto.*;
+import io.osc.bikas.dashboard.exception.InvalidSessionException;
 import io.osc.bikas.dashboard.grpc.GrpcCartDataServiceClient;
 import io.osc.bikas.dashboard.grpc.GrpcProductDataServiceClient;
+import io.osc.bikas.dashboard.grpc.GrpcSessionDataServiceClient;
+import io.osc.bikas.dashboard.grpc.GrpcViewDataServiceClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class DashboardService {
 
     private final GrpcProductDataServiceClient productDataServiceClient;
-    private final GrpcCartDataServiceClient cartDataServiceClient;
+    private final GrpcSessionDataServiceClient sessionDataServiceClient;
+    private final GrpcViewDataServiceClient viewDataServiceClient;
 
-    public DataObjectDto getDashboardData(String userId) {
+    public DataObjectDto getDashboardData(String userId, String sessionId) {
 
-        //let user don't have product view history
+        if (!sessionDataServiceClient.isSessionValid(userId, sessionId)) {
+            throw new InvalidSessionException(userId, sessionId);
+        }
 
-        //get categories
+        List<DashboardDto> dashboardDtos = new ArrayList<>();
+
         List<CategoryDto> categories = productDataServiceClient.fetchCategoriesOrderByViewCount();
 
-        //get featured products
-        List<ProductDto> featuredProducts = productDataServiceClient.fetchFeaturedProducts();
+        dashboardDtos.add(generateCategoryDataDto(categories));
 
-        DataDto categoriesDataDto = DataDto.builder()
-                .type("Categories")
-                .categories(categories)
-                .build();
+        //fetch user last viewed product list
+        List<String> recentlyViewedProductIdListBy =
+                viewDataServiceClient.getRecentlyViewedProductIdListBy(userId);
 
-        DataDto featuredProductsDataDto = DataDto.builder()
-                .type("Featured Products")
-                .featuredProducts(featuredProducts)
-                .build();
+        //check if list is empty (empty list mean user does not have view history)
+        if (recentlyViewedProductIdListBy.isEmpty()) {
+            //get featured products
+            List<ProductDto> featuredProducts =
+                    productDataServiceClient.getFeaturedProducts();
+            //add it to response data dto
+            dashboardDtos.add(generateFeaturedProductDataDto(featuredProducts));
+        } else {
+            //user have view history
+            //get last viewed product id list
+            List<ProductDto> lastViewedProducts =
+                    productDataServiceClient.getAllProductById(recentlyViewedProductIdListBy);
+            //get last viewed product details by product id
+            dashboardDtos.add(generateRecentlyViewedProductDataDto(lastViewedProducts));
+            //get featured product details
 
-        return new DataObjectDto(Arrays.asList(categoriesDataDto, featuredProductsDataDto));
+            //get cart details
 
+        }
+
+        //fetch
+
+        return new DataObjectDto(dashboardDtos);
     }
 
-    public ProductDetailsAndSimilarProductListDto getProductDetailsAndSimilarProduct(String productId, String categoryId) {
 
-        ProductDto productDto = productDataServiceClient.fetchProductDetails(productId);
 
-        List<ProductDto> productDtoList = productDataServiceClient.fetchFilteredProducts(categoryId, CategoryFilterRequest.FILTER.POPULAR);
-
-        productDtoList.remove(productDto);
-
-        return ProductDetailsAndSimilarProductListDto.builder()
-                        .productId(productDto.productId())
-                        .categoryId(productDto.categoryId())
-                        .productName(productDto.productName())
-                        .productDescription(productDto.productDescription())
-                        .productPrice(productDto.productPrice())
-                        .similarProducts(productDtoList)
-                        .build();
+    private DashboardDto generateCategoryDataDto(List<CategoryDto> categoriesDtos) {
+        return new CategoriesDto(categoriesDtos);
     }
 
-    public FilterProductResponse getFilteredProduct(String categoryId, String filterString) {
-
-        var productList = switch (filterString) {
-            case "P" -> productDataServiceClient.fetchFilteredProducts(categoryId, CategoryFilterRequest.FILTER.POPULAR);
-            case "LH" -> productDataServiceClient.fetchFilteredProducts(categoryId, CategoryFilterRequest.FILTER.LOW_TO_HIGH);
-            case "HL" -> productDataServiceClient.fetchFilteredProducts(categoryId, CategoryFilterRequest.FILTER.HIGH_TO_LOW);
-            case "NF" -> productDataServiceClient.fetchFilteredProducts(categoryId, CategoryFilterRequest.FILTER.NEW_FIRST);
-            default -> throw new IllegalStateException("Unexpected value: " + filterString);
-        };
-        return new FilterProductResponse(productList);
+    private DashboardDto generateFeaturedProductDataDto(List<ProductDto> featuredProducts) {
+        return new FeaturedProductsDto(featuredProducts);
     }
 
-    public void updateCartItem(String userId, String productId, Integer count) {
-        cartDataServiceClient.updateCartItem(userId, productId, count);
+    private DashboardDto generateRecentlyViewedProductDataDto(List<ProductDto> lastViewedProducts) {
+        return new RecentlyViewedProducts(lastViewedProducts);
     }
 
-    public void removeCartItem(String userId, String productId) {
-        cartDataServiceClient.removeItemFromCart(userId, productId);
-    }
+
 }

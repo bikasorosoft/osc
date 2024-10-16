@@ -15,6 +15,7 @@ import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -36,7 +37,7 @@ public class ProductDataService {
         return productRepository.findCategoriesOrderedByProductViewCount();
     }
 
-    public List<Product> filterProduct(String categoryId, CategoryFilterRequest.FILTER filter) {
+    public List<Product> getProductsFilterBy(String categoryId, CategoryFilterRequest.FILTER filter) {
 
         if (Objects.isNull(categoryId) || categoryId.isEmpty()) {
             return findFeaturedProducts();
@@ -78,4 +79,15 @@ public class ProductDataService {
         return product;
     }
 
+    public List<Product> findAllProductById(List<String> productIdList) {
+
+        List<Product> productList = new ArrayList<>();
+
+        for(String productId: productIdList) {
+            productList.add(findProductById(productId));
+        }
+
+        return productList;
+
+    }
 }
