@@ -13,9 +13,14 @@ import "view.proto";
 service ProductDataService {
 //  rpc GetFeaturedProducts (google.protobuf.Empty) returns (ProductListResponse);
   rpc GetCategoriesOrderedByViewCount (google.protobuf.Empty) returns (CategoryListResponse);
-  rpc GetProductById (google.protobuf.StringValue) returns (ProductDetails);
+  rpc GetProductById (GetProductByIdRequest) returns (ProductDetails);
   rpc GetFilteredProducts(CategoryFilterRequest) returns (ProductListResponse);
   rpc GetAllProductById(ProductIdList) returns (ProductListResponse);
+}
+
+message GetProductByIdRequest {
+  string product_id = 1;
+  string user_id = 2;
 }
 
 message ProductDetails {

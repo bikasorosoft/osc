@@ -14,8 +14,8 @@ import org.apache.avro.message.SchemaStore;
 
 @org.apache.avro.specific.AvroGenerated
 public class CategoryDetails extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = -4640131053845615623L;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"CategoryDetails\",\"namespace\":\"com.osc.bikas.avro\",\"fields\":[{\"name\":\"categoryId\",\"type\":\"string\"},{\"name\":\"categoryName\",\"type\":\"string\"},{\"name\":\"imagePath\",\"type\":\"string\"}]}");
+  private static final long serialVersionUID = -2899019598228669355L;
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"CategoryDetails\",\"namespace\":\"com.osc.bikas.avro\",\"fields\":[{\"name\":\"categoryId\",\"type\":\"string\"},{\"name\":\"categoryName\",\"type\":\"string\"},{\"name\":\"count\",\"type\":\"int\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static SpecificData MODEL$ = new SpecificData();
@@ -73,7 +73,7 @@ public class CategoryDetails extends org.apache.avro.specific.SpecificRecordBase
 
    private java.lang.CharSequence categoryId;
    private java.lang.CharSequence categoryName;
-   private java.lang.CharSequence imagePath;
+   private int count;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -86,12 +86,12 @@ public class CategoryDetails extends org.apache.avro.specific.SpecificRecordBase
    * All-args constructor.
    * @param categoryId The new value for categoryId
    * @param categoryName The new value for categoryName
-   * @param imagePath The new value for imagePath
+   * @param count The new value for count
    */
-  public CategoryDetails(java.lang.CharSequence categoryId, java.lang.CharSequence categoryName, java.lang.CharSequence imagePath) {
+  public CategoryDetails(java.lang.CharSequence categoryId, java.lang.CharSequence categoryName, java.lang.Integer count) {
     this.categoryId = categoryId;
     this.categoryName = categoryName;
-    this.imagePath = imagePath;
+    this.count = count;
   }
 
   public org.apache.avro.specific.SpecificData getSpecificData() { return MODEL$; }
@@ -101,7 +101,7 @@ public class CategoryDetails extends org.apache.avro.specific.SpecificRecordBase
     switch (field$) {
     case 0: return categoryId;
     case 1: return categoryName;
-    case 2: return imagePath;
+    case 2: return count;
     default: throw new IndexOutOfBoundsException("Invalid index: " + field$);
     }
   }
@@ -112,7 +112,7 @@ public class CategoryDetails extends org.apache.avro.specific.SpecificRecordBase
     switch (field$) {
     case 0: categoryId = (java.lang.CharSequence)value$; break;
     case 1: categoryName = (java.lang.CharSequence)value$; break;
-    case 2: imagePath = (java.lang.CharSequence)value$; break;
+    case 2: count = (java.lang.Integer)value$; break;
     default: throw new IndexOutOfBoundsException("Invalid index: " + field$);
     }
   }
@@ -152,20 +152,20 @@ public class CategoryDetails extends org.apache.avro.specific.SpecificRecordBase
   }
 
   /**
-   * Gets the value of the 'imagePath' field.
-   * @return The value of the 'imagePath' field.
+   * Gets the value of the 'count' field.
+   * @return The value of the 'count' field.
    */
-  public java.lang.CharSequence getImagePath() {
-    return imagePath;
+  public int getCount() {
+    return count;
   }
 
 
   /**
-   * Sets the value of the 'imagePath' field.
+   * Sets the value of the 'count' field.
    * @param value the value to set.
    */
-  public void setImagePath(java.lang.CharSequence value) {
-    this.imagePath = value;
+  public void setCount(int value) {
+    this.count = value;
   }
 
   /**
@@ -211,7 +211,7 @@ public class CategoryDetails extends org.apache.avro.specific.SpecificRecordBase
 
     private java.lang.CharSequence categoryId;
     private java.lang.CharSequence categoryName;
-    private java.lang.CharSequence imagePath;
+    private int count;
 
     /** Creates a new Builder */
     private Builder() {
@@ -232,8 +232,8 @@ public class CategoryDetails extends org.apache.avro.specific.SpecificRecordBase
         this.categoryName = data().deepCopy(fields()[1].schema(), other.categoryName);
         fieldSetFlags()[1] = other.fieldSetFlags()[1];
       }
-      if (isValidValue(fields()[2], other.imagePath)) {
-        this.imagePath = data().deepCopy(fields()[2].schema(), other.imagePath);
+      if (isValidValue(fields()[2], other.count)) {
+        this.count = data().deepCopy(fields()[2].schema(), other.count);
         fieldSetFlags()[2] = other.fieldSetFlags()[2];
       }
     }
@@ -252,8 +252,8 @@ public class CategoryDetails extends org.apache.avro.specific.SpecificRecordBase
         this.categoryName = data().deepCopy(fields()[1].schema(), other.categoryName);
         fieldSetFlags()[1] = true;
       }
-      if (isValidValue(fields()[2], other.imagePath)) {
-        this.imagePath = data().deepCopy(fields()[2].schema(), other.imagePath);
+      if (isValidValue(fields()[2], other.count)) {
+        this.count = data().deepCopy(fields()[2].schema(), other.count);
         fieldSetFlags()[2] = true;
       }
     }
@@ -339,41 +339,40 @@ public class CategoryDetails extends org.apache.avro.specific.SpecificRecordBase
     }
 
     /**
-      * Gets the value of the 'imagePath' field.
+      * Gets the value of the 'count' field.
       * @return The value.
       */
-    public java.lang.CharSequence getImagePath() {
-      return imagePath;
+    public int getCount() {
+      return count;
     }
 
 
     /**
-      * Sets the value of the 'imagePath' field.
-      * @param value The value of 'imagePath'.
+      * Sets the value of the 'count' field.
+      * @param value The value of 'count'.
       * @return This builder.
       */
-    public com.osc.bikas.avro.CategoryDetails.Builder setImagePath(java.lang.CharSequence value) {
+    public com.osc.bikas.avro.CategoryDetails.Builder setCount(int value) {
       validate(fields()[2], value);
-      this.imagePath = value;
+      this.count = value;
       fieldSetFlags()[2] = true;
       return this;
     }
 
     /**
-      * Checks whether the 'imagePath' field has been set.
-      * @return True if the 'imagePath' field has been set, false otherwise.
+      * Checks whether the 'count' field has been set.
+      * @return True if the 'count' field has been set, false otherwise.
       */
-    public boolean hasImagePath() {
+    public boolean hasCount() {
       return fieldSetFlags()[2];
     }
 
 
     /**
-      * Clears the value of the 'imagePath' field.
+      * Clears the value of the 'count' field.
       * @return This builder.
       */
-    public com.osc.bikas.avro.CategoryDetails.Builder clearImagePath() {
-      imagePath = null;
+    public com.osc.bikas.avro.CategoryDetails.Builder clearCount() {
       fieldSetFlags()[2] = false;
       return this;
     }
@@ -385,7 +384,7 @@ public class CategoryDetails extends org.apache.avro.specific.SpecificRecordBase
         CategoryDetails record = new CategoryDetails();
         record.categoryId = fieldSetFlags()[0] ? this.categoryId : (java.lang.CharSequence) defaultValue(fields()[0]);
         record.categoryName = fieldSetFlags()[1] ? this.categoryName : (java.lang.CharSequence) defaultValue(fields()[1]);
-        record.imagePath = fieldSetFlags()[2] ? this.imagePath : (java.lang.CharSequence) defaultValue(fields()[2]);
+        record.count = fieldSetFlags()[2] ? this.count : (java.lang.Integer) defaultValue(fields()[2]);
         return record;
       } catch (org.apache.avro.AvroMissingFieldException e) {
         throw e;
@@ -422,7 +421,7 @@ public class CategoryDetails extends org.apache.avro.specific.SpecificRecordBase
 
     out.writeString(this.categoryName);
 
-    out.writeString(this.imagePath);
+    out.writeInt(this.count);
 
   }
 
@@ -435,7 +434,7 @@ public class CategoryDetails extends org.apache.avro.specific.SpecificRecordBase
 
       this.categoryName = in.readString(this.categoryName instanceof Utf8 ? (Utf8)this.categoryName : null);
 
-      this.imagePath = in.readString(this.imagePath instanceof Utf8 ? (Utf8)this.imagePath : null);
+      this.count = in.readInt();
 
     } else {
       for (int i = 0; i < 3; i++) {
@@ -449,7 +448,7 @@ public class CategoryDetails extends org.apache.avro.specific.SpecificRecordBase
           break;
 
         case 2:
-          this.imagePath = in.readString(this.imagePath instanceof Utf8 ? (Utf8)this.imagePath : null);
+          this.count = in.readInt();
           break;
 
         default:

@@ -20,8 +20,8 @@
               "type": "string"
             },
             {
-              "name": "imagePath",
-              "type": "string"
+              "name": "count",
+              "type": "int"
             }
           ]
         }

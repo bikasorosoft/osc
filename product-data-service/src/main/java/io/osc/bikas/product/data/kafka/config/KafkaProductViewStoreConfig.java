@@ -20,7 +20,7 @@ import java.util.Map;
 
 import static org.apache.kafka.streams.kstream.Suppressed.BufferConfig.maxBytes;
 
-@Configuration
+//@Configuration
 @RequiredArgsConstructor
 @Slf4j
 public class KafkaProductViewStoreConfig {
@@ -42,13 +42,11 @@ public class KafkaProductViewStoreConfig {
         stringKeySerde.configure(config, false);
 
         KStream<String, String> stream = builder.stream(KafkaConst.PRODUCT_VIEW_TOPIC, Consumed.with(stringKeySerde, stringValueSerde));
-
         KTable<Windowed<String>, Long> count = stream
                 .groupByKey()
                 .windowedBy(TimeWindows.ofSizeWithNoGrace(WINDOW_DURATION_IN_MIN))
                 .count(Materialized.as(KafkaConst.PRODUCT_VIEW_STORE))
                 .suppress(Suppressed.untilWindowCloses(Suppressed.BufferConfig.unbounded()));
-
         count.toStream().foreach(
                 (productId, newViewCount) -> updateProductViewCountsDatabase(productId.key(), newViewCount.intValue())
         );

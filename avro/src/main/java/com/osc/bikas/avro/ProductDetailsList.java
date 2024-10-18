@@ -14,8 +14,8 @@ import org.apache.avro.message.SchemaStore;
 
 @org.apache.avro.specific.AvroGenerated
 public class ProductDetailsList extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = -4159205962223179300L;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ProductDetailsList\",\"namespace\":\"com.osc.bikas.avro\",\"fields\":[{\"name\":\"products\",\"type\":{\"type\":\"record\",\"name\":\"ProductDetails\",\"fields\":[{\"name\":\"productId\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"categoryId\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"productName\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"productPrice\",\"type\":\"double\",\",default\":1.0},{\"name\":\"productDescription\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"viewCount\",\"type\":\"int\",\",default\":1},{\"name\":\"imagePath\",\"type\":[\"null\",\"string\"],\"default\":null}]}}]}");
+  private static final long serialVersionUID = -3166516488927317378L;
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"ProductDetailsList\",\"namespace\":\"com.osc.bikas.avro\",\"fields\":[{\"name\":\"products\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"SortedProductDetails\",\"fields\":[{\"name\":\"productId\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"productName\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"productPrice\",\"type\":\"double\",\",default\":1.0}]}}}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static SpecificData MODEL$ = new SpecificData();
@@ -71,7 +71,7 @@ public class ProductDetailsList extends org.apache.avro.specific.SpecificRecordB
     return DECODER.decode(b);
   }
 
-   private com.osc.bikas.avro.ProductDetails products;
+   private java.util.List<com.osc.bikas.avro.SortedProductDetails> products;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -84,7 +84,7 @@ public class ProductDetailsList extends org.apache.avro.specific.SpecificRecordB
    * All-args constructor.
    * @param products The new value for products
    */
-  public ProductDetailsList(com.osc.bikas.avro.ProductDetails products) {
+  public ProductDetailsList(java.util.List<com.osc.bikas.avro.SortedProductDetails> products) {
     this.products = products;
   }
 
@@ -102,7 +102,7 @@ public class ProductDetailsList extends org.apache.avro.specific.SpecificRecordB
   @SuppressWarnings(value="unchecked")
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
-    case 0: products = (com.osc.bikas.avro.ProductDetails)value$; break;
+    case 0: products = (java.util.List<com.osc.bikas.avro.SortedProductDetails>)value$; break;
     default: throw new IndexOutOfBoundsException("Invalid index: " + field$);
     }
   }
@@ -111,7 +111,7 @@ public class ProductDetailsList extends org.apache.avro.specific.SpecificRecordB
    * Gets the value of the 'products' field.
    * @return The value of the 'products' field.
    */
-  public com.osc.bikas.avro.ProductDetails getProducts() {
+  public java.util.List<com.osc.bikas.avro.SortedProductDetails> getProducts() {
     return products;
   }
 
@@ -120,7 +120,7 @@ public class ProductDetailsList extends org.apache.avro.specific.SpecificRecordB
    * Sets the value of the 'products' field.
    * @param value the value to set.
    */
-  public void setProducts(com.osc.bikas.avro.ProductDetails value) {
+  public void setProducts(java.util.List<com.osc.bikas.avro.SortedProductDetails> value) {
     this.products = value;
   }
 
@@ -165,8 +165,7 @@ public class ProductDetailsList extends org.apache.avro.specific.SpecificRecordB
   public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<ProductDetailsList>
     implements org.apache.avro.data.RecordBuilder<ProductDetailsList> {
 
-    private com.osc.bikas.avro.ProductDetails products;
-    private com.osc.bikas.avro.ProductDetails.Builder productsBuilder;
+    private java.util.List<com.osc.bikas.avro.SortedProductDetails> products;
 
     /** Creates a new Builder */
     private Builder() {
@@ -183,9 +182,6 @@ public class ProductDetailsList extends org.apache.avro.specific.SpecificRecordB
         this.products = data().deepCopy(fields()[0].schema(), other.products);
         fieldSetFlags()[0] = other.fieldSetFlags()[0];
       }
-      if (other.hasProductsBuilder()) {
-        this.productsBuilder = com.osc.bikas.avro.ProductDetails.newBuilder(other.getProductsBuilder());
-      }
     }
 
     /**
@@ -198,14 +194,13 @@ public class ProductDetailsList extends org.apache.avro.specific.SpecificRecordB
         this.products = data().deepCopy(fields()[0].schema(), other.products);
         fieldSetFlags()[0] = true;
       }
-      this.productsBuilder = null;
     }
 
     /**
       * Gets the value of the 'products' field.
       * @return The value.
       */
-    public com.osc.bikas.avro.ProductDetails getProducts() {
+    public java.util.List<com.osc.bikas.avro.SortedProductDetails> getProducts() {
       return products;
     }
 
@@ -215,9 +210,8 @@ public class ProductDetailsList extends org.apache.avro.specific.SpecificRecordB
       * @param value The value of 'products'.
       * @return This builder.
       */
-    public com.osc.bikas.avro.ProductDetailsList.Builder setProducts(com.osc.bikas.avro.ProductDetails value) {
+    public com.osc.bikas.avro.ProductDetailsList.Builder setProducts(java.util.List<com.osc.bikas.avro.SortedProductDetails> value) {
       validate(fields()[0], value);
-      this.productsBuilder = null;
       this.products = value;
       fieldSetFlags()[0] = true;
       return this;
@@ -231,40 +225,6 @@ public class ProductDetailsList extends org.apache.avro.specific.SpecificRecordB
       return fieldSetFlags()[0];
     }
 
-    /**
-     * Gets the Builder instance for the 'products' field and creates one if it doesn't exist yet.
-     * @return This builder.
-     */
-    public com.osc.bikas.avro.ProductDetails.Builder getProductsBuilder() {
-      if (productsBuilder == null) {
-        if (hasProducts()) {
-          setProductsBuilder(com.osc.bikas.avro.ProductDetails.newBuilder(products));
-        } else {
-          setProductsBuilder(com.osc.bikas.avro.ProductDetails.newBuilder());
-        }
-      }
-      return productsBuilder;
-    }
-
-    /**
-     * Sets the Builder instance for the 'products' field
-     * @param value The builder instance that must be set.
-     * @return This builder.
-     */
-
-    public com.osc.bikas.avro.ProductDetailsList.Builder setProductsBuilder(com.osc.bikas.avro.ProductDetails.Builder value) {
-      clearProducts();
-      productsBuilder = value;
-      return this;
-    }
-
-    /**
-     * Checks whether the 'products' field has an active Builder instance
-     * @return True if the 'products' field has an active Builder instance
-     */
-    public boolean hasProductsBuilder() {
-      return productsBuilder != null;
-    }
 
     /**
       * Clears the value of the 'products' field.
@@ -272,7 +232,6 @@ public class ProductDetailsList extends org.apache.avro.specific.SpecificRecordB
       */
     public com.osc.bikas.avro.ProductDetailsList.Builder clearProducts() {
       products = null;
-      productsBuilder = null;
       fieldSetFlags()[0] = false;
       return this;
     }
@@ -282,16 +241,7 @@ public class ProductDetailsList extends org.apache.avro.specific.SpecificRecordB
     public ProductDetailsList build() {
       try {
         ProductDetailsList record = new ProductDetailsList();
-        if (productsBuilder != null) {
-          try {
-            record.products = this.productsBuilder.build();
-          } catch (org.apache.avro.AvroMissingFieldException e) {
-            e.addParentField(record.getSchema().getField("products"));
-            throw e;
-          }
-        } else {
-          record.products = fieldSetFlags()[0] ? this.products : (com.osc.bikas.avro.ProductDetails) defaultValue(fields()[0]);
-        }
+        record.products = fieldSetFlags()[0] ? this.products : (java.util.List<com.osc.bikas.avro.SortedProductDetails>) defaultValue(fields()[0]);
         return record;
       } catch (org.apache.avro.AvroMissingFieldException e) {
         throw e;
@@ -324,7 +274,18 @@ public class ProductDetailsList extends org.apache.avro.specific.SpecificRecordB
   @Override public void customEncode(org.apache.avro.io.Encoder out)
     throws java.io.IOException
   {
-    this.products.customEncode(out);
+    long size0 = this.products.size();
+    out.writeArrayStart();
+    out.setItemCount(size0);
+    long actualSize0 = 0;
+    for (com.osc.bikas.avro.SortedProductDetails e0: this.products) {
+      actualSize0++;
+      out.startItem();
+      e0.customEncode(out);
+    }
+    out.writeArrayEnd();
+    if (actualSize0 != size0)
+      throw new java.util.ConcurrentModificationException("Array-size written was " + size0 + ", but element count was " + actualSize0 + ".");
 
   }
 
@@ -333,19 +294,45 @@ public class ProductDetailsList extends org.apache.avro.specific.SpecificRecordB
   {
     org.apache.avro.Schema.Field[] fieldOrder = in.readFieldOrderIfDiff();
     if (fieldOrder == null) {
-      if (this.products == null) {
-        this.products = new com.osc.bikas.avro.ProductDetails();
+      long size0 = in.readArrayStart();
+      java.util.List<com.osc.bikas.avro.SortedProductDetails> a0 = this.products;
+      if (a0 == null) {
+        a0 = new SpecificData.Array<com.osc.bikas.avro.SortedProductDetails>((int)size0, SCHEMA$.getField("products").schema());
+        this.products = a0;
+      } else a0.clear();
+      SpecificData.Array<com.osc.bikas.avro.SortedProductDetails> ga0 = (a0 instanceof SpecificData.Array ? (SpecificData.Array<com.osc.bikas.avro.SortedProductDetails>)a0 : null);
+      for ( ; 0 < size0; size0 = in.arrayNext()) {
+        for ( ; size0 != 0; size0--) {
+          com.osc.bikas.avro.SortedProductDetails e0 = (ga0 != null ? ga0.peek() : null);
+          if (e0 == null) {
+            e0 = new com.osc.bikas.avro.SortedProductDetails();
+          }
+          e0.customDecode(in);
+          a0.add(e0);
+        }
       }
-      this.products.customDecode(in);
 
     } else {
       for (int i = 0; i < 1; i++) {
         switch (fieldOrder[i].pos()) {
         case 0:
-          if (this.products == null) {
-            this.products = new com.osc.bikas.avro.ProductDetails();
+          long size0 = in.readArrayStart();
+          java.util.List<com.osc.bikas.avro.SortedProductDetails> a0 = this.products;
+          if (a0 == null) {
+            a0 = new SpecificData.Array<com.osc.bikas.avro.SortedProductDetails>((int)size0, SCHEMA$.getField("products").schema());
+            this.products = a0;
+          } else a0.clear();
+          SpecificData.Array<com.osc.bikas.avro.SortedProductDetails> ga0 = (a0 instanceof SpecificData.Array ? (SpecificData.Array<com.osc.bikas.avro.SortedProductDetails>)a0 : null);
+          for ( ; 0 < size0; size0 = in.arrayNext()) {
+            for ( ; size0 != 0; size0--) {
+              com.osc.bikas.avro.SortedProductDetails e0 = (ga0 != null ? ga0.peek() : null);
+              if (e0 == null) {
+                e0 = new com.osc.bikas.avro.SortedProductDetails();
+              }
+              e0.customDecode(in);
+              a0.add(e0);
+            }
           }
-          this.products.customDecode(in);
           break;
 
         default:

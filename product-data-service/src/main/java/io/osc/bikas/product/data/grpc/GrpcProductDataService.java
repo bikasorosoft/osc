@@ -5,14 +5,13 @@ import com.google.protobuf.StringValue;
 import com.osc.bikas.proto.*;
 import io.grpc.stub.StreamObserver;
 import io.osc.bikas.product.data.dto.CategoryDto;
-import io.osc.bikas.product.data.model.Category;
 import io.osc.bikas.product.data.model.Product;
 import io.osc.bikas.product.data.service.ProductDataService;
 import lombok.RequiredArgsConstructor;
 import net.devh.boot.grpc.server.service.GrpcService;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @GrpcService
 @RequiredArgsConstructor
@@ -23,11 +22,8 @@ public class GrpcProductDataService extends ProductDataServiceGrpc.ProductDataSe
     @Override
     public void getFilteredProducts(CategoryFilterRequest request, StreamObserver<ProductListResponse> responseObserver) {
 
-        String categoryId = request.getCategoryId();
-        CategoryFilterRequest.FILTER filter = request.getFilter();
-
-        var featuredProductList = productDataService.getProductsFilterBy(categoryId, filter);
-        var productList = convertToProductDetails(featuredProductList);
+        var featuredProductList = productDataService.getProductsFilterBy(request.getCategoryId(), request.getFilter());
+        var productList = generateProductDetails(featuredProductList);
         var response = buildProductListResponse(productList);
 
         responseObserver.onNext(response);
@@ -38,8 +34,7 @@ public class GrpcProductDataService extends ProductDataServiceGrpc.ProductDataSe
     public void getCategoriesOrderedByViewCount(Empty request, StreamObserver<CategoryListResponse> responseObserver) {
 
         var categoryDtoList = productDataService.findCategoriesOrderedByProductViewCount();
-
-        List<CategoryDetails> categoryDetailsList = convertToCategoryDetails(categoryDtoList);
+        var categoryDetailsList = generateCategoryDetails(categoryDtoList);
 
         var response = buildCategoryListResponse(categoryDetailsList);
 
@@ -48,11 +43,11 @@ public class GrpcProductDataService extends ProductDataServiceGrpc.ProductDataSe
     }
 
     @Override
-    public void getProductById(StringValue request, StreamObserver<ProductDetails> responseObserver) {
-        String productId = request.getValue();
-        Product product = productDataService.findProductById(productId);
+    public void getProductById(GetProductByIdRequest request, StreamObserver<ProductDetails> responseObserver) {
 
-        var response = convertToProductDetails(product);
+        var product = productDataService.findProductById(request.getProductId(), request.getUserId());
+
+        var response = generateProductDetails(product);
 
         responseObserver.onNext(response);
         responseObserver.onCompleted();
@@ -61,25 +56,26 @@ public class GrpcProductDataService extends ProductDataServiceGrpc.ProductDataSe
     @Override
     public void getAllProductById(ProductIdList request, StreamObserver<ProductListResponse> responseObserver) {
 
-        List<String> productIdList = request.getProductIdList().stream().map(StringValue::getValue).toList();
+        var productIds = request.getProductIdList().stream()
+                .map(StringValue::getValue).collect(Collectors.toList());
 
-        List<Product> productList = productDataService.findAllProductById(productIdList);
+        var productList = productDataService.findAllProductById(productIds);
 
-        List<ProductDetails> productDetailsList = convertToProductDetails(productList);
-        ProductListResponse response = buildProductListResponse(productDetailsList);
+        var productDetailsList = generateProductDetails(productList);
+        var response = buildProductListResponse(productDetailsList);
 
         responseObserver.onNext(response);
         responseObserver.onCompleted();
 
     }
 
-    private List<ProductDetails> convertToProductDetails(List<Product> products) {
+    private List<ProductDetails> generateProductDetails(List<Product> products) {
         return products.stream()
-                .map(this::convertToProductDetails)
+                .map(this::generateProductDetails)
                 .toList();
     }
 
-    private ProductDetails convertToProductDetails(Product product) {
+    private ProductDetails generateProductDetails(Product product) {
         return ProductDetails.newBuilder()
                 .setProductId(product.getProductId())
                 .setCategoryId(product.getCategory().getCategoryId())
@@ -94,13 +90,13 @@ public class GrpcProductDataService extends ProductDataServiceGrpc.ProductDataSe
         return ProductListResponse.newBuilder().addAllProducts(productList).build();
     }
 
-    private List<CategoryDetails> convertToCategoryDetails(List<CategoryDto> categoryDtoList) {
+    private List<CategoryDetails> generateCategoryDetails(List<CategoryDto> categoryDtoList) {
         return categoryDtoList.stream()
-                .map(this::convertToCategoryDetails)
+                .map(this::generateCategoryDetails)
                 .toList();
     }
 
-    private CategoryDetails convertToCategoryDetails(CategoryDto categoryDto) {
+    private CategoryDetails generateCategoryDetails(CategoryDto categoryDto) {
         return CategoryDetails.newBuilder()
                 .setCategoryId(categoryDto.categoryId())
                 .setCategoryName(categoryDto.categoryName())

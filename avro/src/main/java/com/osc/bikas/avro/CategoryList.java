@@ -14,8 +14,8 @@ import org.apache.avro.message.SchemaStore;
 
 @org.apache.avro.specific.AvroGenerated
 public class CategoryList extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = 2284633098815857977L;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"CategoryList\",\"namespace\":\"com.osc.bikas.avro\",\"fields\":[{\"name\":\"categories\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"CategoryDetails\",\"fields\":[{\"name\":\"categoryId\",\"type\":\"string\"},{\"name\":\"categoryName\",\"type\":\"string\"},{\"name\":\"imagePath\",\"type\":\"string\"}]}}}]}");
+  private static final long serialVersionUID = -3633683553958039148L;
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"CategoryList\",\"namespace\":\"com.osc.bikas.avro\",\"fields\":[{\"name\":\"categories\",\"type\":{\"type\":\"array\",\"items\":{\"type\":\"record\",\"name\":\"CategoryDetails\",\"fields\":[{\"name\":\"categoryId\",\"type\":\"string\"},{\"name\":\"categoryName\",\"type\":\"string\"},{\"name\":\"count\",\"type\":\"int\"}]}}}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static SpecificData MODEL$ = new SpecificData();

@@ -1,6 +1,6 @@
 package io.osc.bikas.product.data.kafka.service;
 
-import com.osc.bikas.avro.ProductDetails;
+import com.osc.bikas.avro.*;
 import io.osc.bikas.product.data.kafka.KafkaConst;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
@@ -15,6 +15,9 @@ public class KafkaInteractiveQueryService {
     private final KafkaStreamsInteractiveQueryService kafkaStreamsInteractiveQueryService;
 
     private ReadOnlyKeyValueStore<String, ProductDetails> productDetailsReadOnlyKeyValueStore;
+    private ReadOnlyKeyValueStore<String, CategoryList> sortedCategoryReadOnlyKeyValueStore;
+    private ReadOnlyKeyValueStore<String, PairList> popularProductReadOnlyKeyValueStore;
+
 
     public ReadOnlyKeyValueStore<String, ProductDetails> getProductDetailsReadOnlyKeyValueStore() {
         if(productDetailsReadOnlyKeyValueStore == null) {
@@ -27,4 +30,31 @@ public class KafkaInteractiveQueryService {
         }
         return productDetailsReadOnlyKeyValueStore;
     }
+
+    public ReadOnlyKeyValueStore<String, CategoryList> getSortedCategoryReadOnlyKeyValueStore() {
+        if(sortedCategoryReadOnlyKeyValueStore == null) {
+            this.sortedCategoryReadOnlyKeyValueStore =
+                    this.kafkaStreamsInteractiveQueryService
+                            .retrieveQueryableStore(
+                                    KafkaConst.SORTED_CATEGORIES_STORE,
+                                    QueryableStoreTypes.keyValueStore()
+                            );
+        }
+        return sortedCategoryReadOnlyKeyValueStore;
+    }
+
+    public ReadOnlyKeyValueStore<String, PairList> getPopularProductReadOnlyKeyValueStore() {
+        if(popularProductReadOnlyKeyValueStore == null) {
+            this.popularProductReadOnlyKeyValueStore =
+                    this.kafkaStreamsInteractiveQueryService
+                            .retrieveQueryableStore(
+                                    KafkaConst.POPULAR_PRODUCT_STORE,
+                                    QueryableStoreTypes.keyValueStore()
+                            );
+        }
+        return popularProductReadOnlyKeyValueStore;
+    }
+
+
+
 }

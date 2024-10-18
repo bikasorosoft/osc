@@ -1,7 +1,7 @@
 {
   "type": "record",
   "namespace": "com.osc.bikas.avro",
-  "name": "SortedProductDataTopicKey",
+  "name": "SortedProductTopicKey",
   "fields": [
     {
       "name": "categoryId",
@@ -9,16 +9,7 @@
     },
     {
       "name": "filter",
-      "type": {
-        "type": "enum",
-        "name": "Filter",
-        "symbols": [
-          "POPULAR",
-          "LOW_TO_HIGH",
-          "HIGH_TO_LOW",
-          "NEW_FIRST"
-        ]
-      }
+      "type": "string"
     }
   ]
 }

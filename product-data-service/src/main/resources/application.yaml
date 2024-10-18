@@ -46,7 +46,8 @@ spring:
 #      fetch-min-size: 5000
 #      fetch-max-wait: 500
 #      max-poll-records: 5
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      key-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
       value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
     properties:
       schema.registry.url: http://192.168.99.223:18081

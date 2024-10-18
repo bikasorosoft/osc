@@ -19,9 +19,7 @@ public class Category {
 
     @Id
     private String categoryId;
-
     private String categoryName;
-
     private String imagePath;
 
 }

@@ -13,24 +13,24 @@ import org.apache.avro.message.BinaryMessageDecoder;
 import org.apache.avro.message.SchemaStore;
 
 @org.apache.avro.specific.AvroGenerated
-public class SortedProductDataTopicKey extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = -2937324813183726738L;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"SortedProductDataTopicKey\",\"namespace\":\"com.osc.bikas.avro\",\"fields\":[{\"name\":\"categoryId\",\"type\":\"string\"},{\"name\":\"filter\",\"type\":{\"type\":\"enum\",\"name\":\"Filter\",\"symbols\":[\"POPULAR\",\"LOW_TO_HIGH\",\"HIGH_TO_LOW\",\"NEW_FIRST\"]}}]}");
+public class SortedProductTopicKey extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
+  private static final long serialVersionUID = 6862205340081057337L;
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"SortedProductTopicKey\",\"namespace\":\"com.osc.bikas.avro\",\"fields\":[{\"name\":\"categoryId\",\"type\":\"string\"},{\"name\":\"filter\",\"type\":\"string\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static SpecificData MODEL$ = new SpecificData();
 
-  private static final BinaryMessageEncoder<SortedProductDataTopicKey> ENCODER =
-      new BinaryMessageEncoder<SortedProductDataTopicKey>(MODEL$, SCHEMA$);
+  private static final BinaryMessageEncoder<SortedProductTopicKey> ENCODER =
+      new BinaryMessageEncoder<SortedProductTopicKey>(MODEL$, SCHEMA$);
 
-  private static final BinaryMessageDecoder<SortedProductDataTopicKey> DECODER =
-      new BinaryMessageDecoder<SortedProductDataTopicKey>(MODEL$, SCHEMA$);
+  private static final BinaryMessageDecoder<SortedProductTopicKey> DECODER =
+      new BinaryMessageDecoder<SortedProductTopicKey>(MODEL$, SCHEMA$);
 
   /**
    * Return the BinaryMessageEncoder instance used by this class.
    * @return the message encoder used by this class
    */
-  public static BinaryMessageEncoder<SortedProductDataTopicKey> getEncoder() {
+  public static BinaryMessageEncoder<SortedProductTopicKey> getEncoder() {
     return ENCODER;
   }
 
@@ -38,7 +38,7 @@ public class SortedProductDataTopicKey extends org.apache.avro.specific.Specific
    * Return the BinaryMessageDecoder instance used by this class.
    * @return the message decoder used by this class
    */
-  public static BinaryMessageDecoder<SortedProductDataTopicKey> getDecoder() {
+  public static BinaryMessageDecoder<SortedProductTopicKey> getDecoder() {
     return DECODER;
   }
 
@@ -47,12 +47,12 @@ public class SortedProductDataTopicKey extends org.apache.avro.specific.Specific
    * @param resolver a {@link SchemaStore} used to find schemas by fingerprint
    * @return a BinaryMessageDecoder instance for this class backed by the given SchemaStore
    */
-  public static BinaryMessageDecoder<SortedProductDataTopicKey> createDecoder(SchemaStore resolver) {
-    return new BinaryMessageDecoder<SortedProductDataTopicKey>(MODEL$, SCHEMA$, resolver);
+  public static BinaryMessageDecoder<SortedProductTopicKey> createDecoder(SchemaStore resolver) {
+    return new BinaryMessageDecoder<SortedProductTopicKey>(MODEL$, SCHEMA$, resolver);
   }
 
   /**
-   * Serializes this SortedProductDataTopicKey to a ByteBuffer.
+   * Serializes this SortedProductTopicKey to a ByteBuffer.
    * @return a buffer holding the serialized data for this instance
    * @throws java.io.IOException if this instance could not be serialized
    */
@@ -61,32 +61,32 @@ public class SortedProductDataTopicKey extends org.apache.avro.specific.Specific
   }
 
   /**
-   * Deserializes a SortedProductDataTopicKey from a ByteBuffer.
+   * Deserializes a SortedProductTopicKey from a ByteBuffer.
    * @param b a byte buffer holding serialized data for an instance of this class
-   * @return a SortedProductDataTopicKey instance decoded from the given buffer
+   * @return a SortedProductTopicKey instance decoded from the given buffer
    * @throws java.io.IOException if the given bytes could not be deserialized into an instance of this class
    */
-  public static SortedProductDataTopicKey fromByteBuffer(
+  public static SortedProductTopicKey fromByteBuffer(
       java.nio.ByteBuffer b) throws java.io.IOException {
     return DECODER.decode(b);
   }
 
    private java.lang.CharSequence categoryId;
-   private com.osc.bikas.avro.Filter filter;
+   private java.lang.CharSequence filter;
 
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
    * one should use <code>newBuilder()</code>.
    */
-  public SortedProductDataTopicKey() {}
+  public SortedProductTopicKey() {}
 
   /**
    * All-args constructor.
    * @param categoryId The new value for categoryId
    * @param filter The new value for filter
    */
-  public SortedProductDataTopicKey(java.lang.CharSequence categoryId, com.osc.bikas.avro.Filter filter) {
+  public SortedProductTopicKey(java.lang.CharSequence categoryId, java.lang.CharSequence filter) {
     this.categoryId = categoryId;
     this.filter = filter;
   }
@@ -107,7 +107,7 @@ public class SortedProductDataTopicKey extends org.apache.avro.specific.Specific
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
     case 0: categoryId = (java.lang.CharSequence)value$; break;
-    case 1: filter = (com.osc.bikas.avro.Filter)value$; break;
+    case 1: filter = (java.lang.CharSequence)value$; break;
     default: throw new IndexOutOfBoundsException("Invalid index: " + field$);
     }
   }
@@ -133,7 +133,7 @@ public class SortedProductDataTopicKey extends org.apache.avro.specific.Specific
    * Gets the value of the 'filter' field.
    * @return The value of the 'filter' field.
    */
-  public com.osc.bikas.avro.Filter getFilter() {
+  public java.lang.CharSequence getFilter() {
     return filter;
   }
 
@@ -142,53 +142,53 @@ public class SortedProductDataTopicKey extends org.apache.avro.specific.Specific
    * Sets the value of the 'filter' field.
    * @param value the value to set.
    */
-  public void setFilter(com.osc.bikas.avro.Filter value) {
+  public void setFilter(java.lang.CharSequence value) {
     this.filter = value;
   }
 
   /**
-   * Creates a new SortedProductDataTopicKey RecordBuilder.
-   * @return A new SortedProductDataTopicKey RecordBuilder
+   * Creates a new SortedProductTopicKey RecordBuilder.
+   * @return A new SortedProductTopicKey RecordBuilder
    */
-  public static com.osc.bikas.avro.SortedProductDataTopicKey.Builder newBuilder() {
-    return new com.osc.bikas.avro.SortedProductDataTopicKey.Builder();
+  public static com.osc.bikas.avro.SortedProductTopicKey.Builder newBuilder() {
+    return new com.osc.bikas.avro.SortedProductTopicKey.Builder();
   }
 
   /**
-   * Creates a new SortedProductDataTopicKey RecordBuilder by copying an existing Builder.
+   * Creates a new SortedProductTopicKey RecordBuilder by copying an existing Builder.
    * @param other The existing builder to copy.
-   * @return A new SortedProductDataTopicKey RecordBuilder
+   * @return A new SortedProductTopicKey RecordBuilder
    */
-  public static com.osc.bikas.avro.SortedProductDataTopicKey.Builder newBuilder(com.osc.bikas.avro.SortedProductDataTopicKey.Builder other) {
+  public static com.osc.bikas.avro.SortedProductTopicKey.Builder newBuilder(com.osc.bikas.avro.SortedProductTopicKey.Builder other) {
     if (other == null) {
-      return new com.osc.bikas.avro.SortedProductDataTopicKey.Builder();
+      return new com.osc.bikas.avro.SortedProductTopicKey.Builder();
     } else {
-      return new com.osc.bikas.avro.SortedProductDataTopicKey.Builder(other);
+      return new com.osc.bikas.avro.SortedProductTopicKey.Builder(other);
     }
   }
 
   /**
-   * Creates a new SortedProductDataTopicKey RecordBuilder by copying an existing SortedProductDataTopicKey instance.
+   * Creates a new SortedProductTopicKey RecordBuilder by copying an existing SortedProductTopicKey instance.
    * @param other The existing instance to copy.
-   * @return A new SortedProductDataTopicKey RecordBuilder
+   * @return A new SortedProductTopicKey RecordBuilder
    */
-  public static com.osc.bikas.avro.SortedProductDataTopicKey.Builder newBuilder(com.osc.bikas.avro.SortedProductDataTopicKey other) {
+  public static com.osc.bikas.avro.SortedProductTopicKey.Builder newBuilder(com.osc.bikas.avro.SortedProductTopicKey other) {
     if (other == null) {
-      return new com.osc.bikas.avro.SortedProductDataTopicKey.Builder();
+      return new com.osc.bikas.avro.SortedProductTopicKey.Builder();
     } else {
-      return new com.osc.bikas.avro.SortedProductDataTopicKey.Builder(other);
+      return new com.osc.bikas.avro.SortedProductTopicKey.Builder(other);
     }
   }
 
   /**
-   * RecordBuilder for SortedProductDataTopicKey instances.
+   * RecordBuilder for SortedProductTopicKey instances.
    */
   @org.apache.avro.specific.AvroGenerated
-  public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<SortedProductDataTopicKey>
-    implements org.apache.avro.data.RecordBuilder<SortedProductDataTopicKey> {
+  public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<SortedProductTopicKey>
+    implements org.apache.avro.data.RecordBuilder<SortedProductTopicKey> {
 
     private java.lang.CharSequence categoryId;
-    private com.osc.bikas.avro.Filter filter;
+    private java.lang.CharSequence filter;
 
     /** Creates a new Builder */
     private Builder() {
@@ -199,7 +199,7 @@ public class SortedProductDataTopicKey extends org.apache.avro.specific.Specific
      * Creates a Builder by copying an existing Builder.
      * @param other The existing Builder to copy.
      */
-    private Builder(com.osc.bikas.avro.SortedProductDataTopicKey.Builder other) {
+    private Builder(com.osc.bikas.avro.SortedProductTopicKey.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.categoryId)) {
         this.categoryId = data().deepCopy(fields()[0].schema(), other.categoryId);
@@ -212,10 +212,10 @@ public class SortedProductDataTopicKey extends org.apache.avro.specific.Specific
     }
 
     /**
-     * Creates a Builder by copying an existing SortedProductDataTopicKey instance
+     * Creates a Builder by copying an existing SortedProductTopicKey instance
      * @param other The existing instance to copy.
      */
-    private Builder(com.osc.bikas.avro.SortedProductDataTopicKey other) {
+    private Builder(com.osc.bikas.avro.SortedProductTopicKey other) {
       super(SCHEMA$);
       if (isValidValue(fields()[0], other.categoryId)) {
         this.categoryId = data().deepCopy(fields()[0].schema(), other.categoryId);
@@ -241,7 +241,7 @@ public class SortedProductDataTopicKey extends org.apache.avro.specific.Specific
       * @param value The value of 'categoryId'.
       * @return This builder.
       */
-    public com.osc.bikas.avro.SortedProductDataTopicKey.Builder setCategoryId(java.lang.CharSequence value) {
+    public com.osc.bikas.avro.SortedProductTopicKey.Builder setCategoryId(java.lang.CharSequence value) {
       validate(fields()[0], value);
       this.categoryId = value;
       fieldSetFlags()[0] = true;
@@ -261,7 +261,7 @@ public class SortedProductDataTopicKey extends org.apache.avro.specific.Specific
       * Clears the value of the 'categoryId' field.
       * @return This builder.
       */
-    public com.osc.bikas.avro.SortedProductDataTopicKey.Builder clearCategoryId() {
+    public com.osc.bikas.avro.SortedProductTopicKey.Builder clearCategoryId() {
       categoryId = null;
       fieldSetFlags()[0] = false;
       return this;
@@ -271,7 +271,7 @@ public class SortedProductDataTopicKey extends org.apache.avro.specific.Specific
       * Gets the value of the 'filter' field.
       * @return The value.
       */
-    public com.osc.bikas.avro.Filter getFilter() {
+    public java.lang.CharSequence getFilter() {
       return filter;
     }
 
@@ -281,7 +281,7 @@ public class SortedProductDataTopicKey extends org.apache.avro.specific.Specific
       * @param value The value of 'filter'.
       * @return This builder.
       */
-    public com.osc.bikas.avro.SortedProductDataTopicKey.Builder setFilter(com.osc.bikas.avro.Filter value) {
+    public com.osc.bikas.avro.SortedProductTopicKey.Builder setFilter(java.lang.CharSequence value) {
       validate(fields()[1], value);
       this.filter = value;
       fieldSetFlags()[1] = true;
@@ -301,7 +301,7 @@ public class SortedProductDataTopicKey extends org.apache.avro.specific.Specific
       * Clears the value of the 'filter' field.
       * @return This builder.
       */
-    public com.osc.bikas.avro.SortedProductDataTopicKey.Builder clearFilter() {
+    public com.osc.bikas.avro.SortedProductTopicKey.Builder clearFilter() {
       filter = null;
       fieldSetFlags()[1] = false;
       return this;
@@ -309,11 +309,11 @@ public class SortedProductDataTopicKey extends org.apache.avro.specific.Specific
 
     @Override
     @SuppressWarnings("unchecked")
-    public SortedProductDataTopicKey build() {
+    public SortedProductTopicKey build() {
       try {
-        SortedProductDataTopicKey record = new SortedProductDataTopicKey();
+        SortedProductTopicKey record = new SortedProductTopicKey();
         record.categoryId = fieldSetFlags()[0] ? this.categoryId : (java.lang.CharSequence) defaultValue(fields()[0]);
-        record.filter = fieldSetFlags()[1] ? this.filter : (com.osc.bikas.avro.Filter) defaultValue(fields()[1]);
+        record.filter = fieldSetFlags()[1] ? this.filter : (java.lang.CharSequence) defaultValue(fields()[1]);
         return record;
       } catch (org.apache.avro.AvroMissingFieldException e) {
         throw e;
@@ -324,8 +324,8 @@ public class SortedProductDataTopicKey extends org.apache.avro.specific.Specific
   }
 
   @SuppressWarnings("unchecked")
-  private static final org.apache.avro.io.DatumWriter<SortedProductDataTopicKey>
-    WRITER$ = (org.apache.avro.io.DatumWriter<SortedProductDataTopicKey>)MODEL$.createDatumWriter(SCHEMA$);
+  private static final org.apache.avro.io.DatumWriter<SortedProductTopicKey>
+    WRITER$ = (org.apache.avro.io.DatumWriter<SortedProductTopicKey>)MODEL$.createDatumWriter(SCHEMA$);
 
   @Override public void writeExternal(java.io.ObjectOutput out)
     throws java.io.IOException {
@@ -333,8 +333,8 @@ public class SortedProductDataTopicKey extends org.apache.avro.specific.Specific
   }
 
   @SuppressWarnings("unchecked")
-  private static final org.apache.avro.io.DatumReader<SortedProductDataTopicKey>
-    READER$ = (org.apache.avro.io.DatumReader<SortedProductDataTopicKey>)MODEL$.createDatumReader(SCHEMA$);
+  private static final org.apache.avro.io.DatumReader<SortedProductTopicKey>
+    READER$ = (org.apache.avro.io.DatumReader<SortedProductTopicKey>)MODEL$.createDatumReader(SCHEMA$);
 
   @Override public void readExternal(java.io.ObjectInput in)
     throws java.io.IOException {
@@ -348,7 +348,7 @@ public class SortedProductDataTopicKey extends org.apache.avro.specific.Specific
   {
     out.writeString(this.categoryId);
 
-    out.writeEnum(this.filter.ordinal());
+    out.writeString(this.filter);
 
   }
 
@@ -359,7 +359,7 @@ public class SortedProductDataTopicKey extends org.apache.avro.specific.Specific
     if (fieldOrder == null) {
       this.categoryId = in.readString(this.categoryId instanceof Utf8 ? (Utf8)this.categoryId : null);
 
-      this.filter = com.osc.bikas.avro.Filter.values()[in.readEnum()];
+      this.filter = in.readString(this.filter instanceof Utf8 ? (Utf8)this.filter : null);
 
     } else {
       for (int i = 0; i < 2; i++) {
@@ -369,7 +369,7 @@ public class SortedProductDataTopicKey extends org.apache.avro.specific.Specific
           break;
 
         case 1:
-          this.filter = com.osc.bikas.avro.Filter.values()[in.readEnum()];
+          this.filter = in.readString(this.filter instanceof Utf8 ? (Utf8)this.filter : null);
           break;
 
         default:
