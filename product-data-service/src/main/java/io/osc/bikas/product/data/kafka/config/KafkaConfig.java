@@ -36,11 +36,6 @@ public class KafkaConfig {
     }
 
     @Bean
-    public NewTopic productViewTopic() {
-        return TopicBuilder.name(KafkaConst.PRODUCT_VIEW_TOPIC).build();
-    }
-
-    @Bean
     public NewTopic ProductDataTopic() {
         return TopicBuilder.name(KafkaConst.PRODUCT_DATA_TOPIC)
                 .build();

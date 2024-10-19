@@ -2,6 +2,8 @@ package io.osc.bikas.product.data.kafka;
 
 public class KafkaConst {
 
+    public static final String SCHEMA_REGISTRY = "http://0.0.0.0:18081";
+
     public static final String PRODUCT_VIEW_TOPIC = "bikas-product-view-topic";
     public static final String PRODUCT_VIEW_STORE = "bikas-product-view-store";
 

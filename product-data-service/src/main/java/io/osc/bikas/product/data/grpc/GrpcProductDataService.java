@@ -3,6 +3,13 @@ package io.osc.bikas.product.data.grpc;
 import com.google.protobuf.Empty;
 import com.google.protobuf.StringValue;
 import com.osc.bikas.proto.*;
+import com.osc.bikas.proto.CategoryDetails;
+import com.osc.bikas.proto.CategoryFilterRequest;
+import com.osc.bikas.proto.CategoryListResponse;
+import com.osc.bikas.proto.GetProductByIdRequest;
+import com.osc.bikas.proto.ProductDetails;
+import com.osc.bikas.proto.ProductIdList;
+import com.osc.bikas.proto.ProductListResponse;
 import io.grpc.stub.StreamObserver;
 import io.osc.bikas.product.data.dto.CategoryDto;
 import io.osc.bikas.product.data.model.Product;
@@ -46,7 +53,6 @@ public class GrpcProductDataService extends ProductDataServiceGrpc.ProductDataSe
     public void getProductById(GetProductByIdRequest request, StreamObserver<ProductDetails> responseObserver) {
 
         var product = productDataService.findProductById(request.getProductId(), request.getUserId());
-
         var response = generateProductDetails(product);
 
         responseObserver.onNext(response);

@@ -8,7 +8,6 @@ option java_package = "com.osc.bikas.proto";
 import "google/protobuf/wrappers.proto";
 import "google/protobuf/empty.proto";
 
-
 service CartDataService {
   rpc GetCartItemList(google.protobuf.StringValue) returns (GetCartItemListResponse);
   rpc UpdateCartItem(UpdateCartItemRequest) returns (google.protobuf.Empty);
