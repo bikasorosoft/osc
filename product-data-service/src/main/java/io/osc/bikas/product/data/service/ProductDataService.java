@@ -15,8 +15,7 @@ import io.osc.bikas.product.data.repo.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.osc.bikas.proto.CategoryFilterRequest.FILTER.*;
@@ -65,11 +64,40 @@ public class ProductDataService {
         return switch (filter) {
             case POPULAR -> findPopularProductBy(categoryId);
             //change below
-            case LOW_TO_HIGH -> productRepository.findByCategoryIdOrderByProductPriceAsc(categoryId);
-            case HIGH_TO_LOW -> productRepository.findByCategoryIdOrderByProductPriceDesc(categoryId);
-            case NEW_FIRST -> productRepository.findByCategoryIdOrderByProductId(categoryId);
+            case LOW_TO_HIGH -> findByCategoryIdOrderByProductPriceAsc(categoryId);
+            case HIGH_TO_LOW -> findByCategoryIdOrderByProductPriceDesc(categoryId);
+            case NEW_FIRST -> findByCategoryIdOrderByProductId(categoryId);
             default -> throw new IllegalArgumentException("Unsupported filter type");
         };
+
+    }
+
+    private List<Product> findByCategoryIdOrderByProductId(String categoryId) {
+
+        Comparator<Product> comparator =
+                Comparator.comparing(Product::getProductId).reversed();
+        Set<Product> treeSet = new TreeSet<>(comparator);
+        treeSet.addAll(findPopularProductBy(categoryId));
+
+        return new ArrayList<>(treeSet);
+
+    }
+
+    private List<Product> findByCategoryIdOrderByProductPriceDesc(String categoryId) {
+        List<Product> products = findByCategoryIdOrderByProductPriceAsc(categoryId);
+        Collections.reverse(products);
+        return products;
+    }
+
+    private List<Product> findByCategoryIdOrderByProductPriceAsc(String categoryId) {
+
+        Comparator<Product> comparator =
+                Comparator.comparingDouble( (Product item) -> item.getProductPrice().doubleValue())
+                .reversed();
+        Set<Product> treeSet = new TreeSet<>(comparator);
+        treeSet.addAll(findPopularProductBy(categoryId));
+
+        return new ArrayList<>(treeSet);
 
     }
 
