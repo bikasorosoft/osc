@@ -5,6 +5,7 @@ import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.serialization.Serializer;
 
+import java.util.Comparator;
 import java.util.TreeSet;
 import java.util.Map;
 
@@ -12,9 +13,9 @@ public class TreeSetSerde<T> implements Serde<TreeSet<T>> {
 
     private final Serde<TreeSet<T>> inner;
 
-    public TreeSetSerde( final Serde<T> avroSerde) {
+    public TreeSetSerde( final Serde<T> avroSerde, final Comparator<T> comparator) {
         inner = Serdes.serdeFrom(new TreeSetSerializer<>(avroSerde.serializer()),
-                new TreeSetDeserializer<>(avroSerde.deserializer()));
+                new TreeSetDeserializer<>(comparator, avroSerde.deserializer()));
     }
 
     @Override

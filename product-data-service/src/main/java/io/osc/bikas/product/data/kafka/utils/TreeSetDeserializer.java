@@ -15,9 +15,11 @@ import java.util.TreeSet;
 public class TreeSetDeserializer<T> implements Deserializer<TreeSet<T>> {
 
     private final Deserializer<T> valueDeserializer;
+    private final Comparator<T> comparator;
 
-    public TreeSetDeserializer(Deserializer<T> valueDeserializer) {
+    public TreeSetDeserializer(final Comparator<T> comparator, final Deserializer<T> valueDeserializer) {
         this.valueDeserializer = valueDeserializer;
+        this.comparator = comparator;
     }
 
     @Override
@@ -30,7 +32,7 @@ public class TreeSetDeserializer<T> implements Deserializer<TreeSet<T>> {
         if (bytes == null || bytes.length == 0) {
             return null;
         }
-        final TreeSet<T> TreeSet = new TreeSet<>();
+        final TreeSet<T> TreeSet = new TreeSet<>(comparator);
         final DataInputStream dataInputStream = new DataInputStream(new ByteArrayInputStream(bytes));
         try {
             final int records = dataInputStream.readInt();

@@ -137,8 +137,8 @@ public class ProductClickStreamConfig {
         final SpecificAvroSerde<Pair> pairValueSerde = new SpecificAvroSerde<>();
         pairValueSerde.configure(config, false);
 
-        TreeSetSerde<Pair> treeSetValueSerde = new TreeSetSerde<>(pairValueSerde);
-        treeSetValueSerde.configure(config, false);
+//        TreeSetSerde<Pair> treeSetValueSerde = new TreeSetSerde<>(pairValueSerde);
+//        treeSetValueSerde.configure(config, false);
 
         final SpecificAvroSerde<PairList> pairListSpecificAvroSerde = new SpecificAvroSerde<>();
         pairListSpecificAvroSerde.configure(config, false);
