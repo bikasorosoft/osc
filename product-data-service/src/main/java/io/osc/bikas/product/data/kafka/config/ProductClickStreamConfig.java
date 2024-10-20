@@ -47,10 +47,9 @@ public class ProductClickStreamConfig {
                         .reversed()
                         .thenComparing(pair -> pair.getProductId().toString());
 
-        Aggregator<String, Pair, PairList> aggregator = (String key, Pair pair, PairList aggregate) -> {
+        return (String key, Pair pair, PairList aggregate) -> {
 
             String productId = pair.getProductId().toString();
-
             TreeSet<Pair> pairTreeSet = new TreeSet<>(viewCountComparator);
 
             pairTreeSet.addAll(aggregate.getPairList());
@@ -72,10 +71,8 @@ public class ProductClickStreamConfig {
 
             // Add the updated pair back to the TreeSet
             pairTreeSet.add(updatedPair);
-            //            log.info("new tree set {}", newSortedList);
             return PairList.newBuilder().setPairList(pairTreeSet.stream().toList()).build();
         };
-        return aggregator;
     }
 
     @Bean
@@ -96,30 +93,40 @@ public class ProductClickStreamConfig {
 
         Duration WINDOW_DURATION_IN_MIN = ofMinutes(1);
 
-        KStream<String, String> stream = streamsBuilder.stream(KafkaConst.PRODUCT_CLICK_TOPIC, Consumed.with(stringKeySerde, stringValueSerde));
+        KStream<String, String> stream =
+                streamsBuilder.stream(KafkaConst.PRODUCT_CLICK_TOPIC, Consumed.with(stringKeySerde, stringValueSerde));
 
-        KTable<Windowed<String>, Long> groupedTable = stream.groupBy((userId, productId) -> String.valueOf(productId), Grouped.with(stringKeySerde, stringValueSerde)).windowedBy(TimeWindows.ofSizeWithNoGrace(ofMinutes(1))).count().suppress(untilWindowCloses(unbounded()));
+        KTable<Windowed<String>, Long> groupedTable =
+                stream.groupBy((userId, productId) -> String.valueOf(productId),
+                                Grouped.with(stringKeySerde, stringValueSerde))
+                        .windowedBy(TimeWindows.ofSizeWithNoGrace(ofMinutes(1)))
+                        .count()
+                        .suppress(untilWindowCloses(unbounded()));
 
-        groupedTable.toStream().peek((windowedUserId, viewCountDelta) -> log.info("Processing event for productId: {}, viewCountDelta: {}", windowedUserId.key(), viewCountDelta)).foreach((windowedUserId, count) -> updateProductViewCountsDatabase(windowedUserId.key(), count));
+        groupedTable.toStream()
+                .peek((windowedUserId, viewCountDelta) ->
+                        log.info("Processing event for productId: {}, viewCountDelta: {}",
+                                windowedUserId.key(), viewCountDelta))
+                .foreach((windowedUserId, count) ->
+                        updateProductViewCountToDatabase(windowedUserId.key(), count));
 
         return groupedTable;
 
     }
 
     @Transactional
-    private void updateProductViewCountsDatabase(String productId, Long viewCountDelta) {
-        log.info("start updating count for product id {} with count delta {}", productId, viewCountDelta);
-        Product product = productRepository.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Cant find product for id: " + productId));
-        log.info("{}", product);
+    private void updateProductViewCountToDatabase(String productId, Long viewCountDelta) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Cant find product for id: " + productId));
         product.setViewCount(product.getViewCount() + viewCountDelta.intValue());
-        log.info("{}", product);
         productRepository.save(product);
     }
 
     @Bean
     public KTable<String, PairList> processPopularProductByCategoryTopology(StreamsBuilder streamsBuilder) {
 
-        final Map<String, String> config = Map.of(AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, KafkaConst.SCHEMA_REGISTRY);
+        final Map<String, String> config =
+                Map.of(AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, KafkaConst.SCHEMA_REGISTRY);
 
         final Serde<String> stringKeySerde = Serdes.String();
         stringKeySerde.configure(config, true);
@@ -130,9 +137,6 @@ public class ProductClickStreamConfig {
         final SpecificAvroSerde<Pair> pairValueSerde = new SpecificAvroSerde<>();
         pairValueSerde.configure(config, false);
 
-        final Serde<Long> longValueSerde = new PrimitiveAvroSerde<>();
-        longValueSerde.configure(config, false);
-
         TreeSetSerde<Pair> treeSetValueSerde = new TreeSetSerde<>(pairValueSerde);
         treeSetValueSerde.configure(config, false);
 
@@ -141,8 +145,21 @@ public class ProductClickStreamConfig {
 
         Aggregator<String, Pair, PairList> aggregator = getPairAggregator();
 
-        KTable<String, PairList> sortedProductsByCategory = streamsBuilder.stream(KafkaConst.PRODUCT_CLICK_TOPIC, Consumed.with(stringKeySerde, stringValueSerde)).map((userId, productId) -> new KeyValue<>(productId.substring(0, 1), Pair.newBuilder().setProductId(productId).setViewCount(0L).build())).groupByKey(Grouped.with(stringKeySerde, pairValueSerde)).aggregate(() -> PairList.newBuilder().setPairList(new ArrayList<>()).build(), aggregator, Materialized.<String, PairList, KeyValueStore<Bytes, byte[]>>as(KafkaConst.POPULAR_PRODUCT_STORE).withKeySerde(stringKeySerde).withValueSerde(pairListSpecificAvroSerde));
-        sortedProductsByCategory.toStream();
+        KTable<String, PairList> sortedProductsByCategory =
+                streamsBuilder.stream(KafkaConst.PRODUCT_CLICK_TOPIC,
+                                Consumed.with(stringKeySerde, stringValueSerde))
+                        .map((userId, productId) ->
+                                new KeyValue<>(productId.substring(0, 1), new Pair(productId, 0L)))
+                        .groupByKey(Grouped.with(stringKeySerde, pairValueSerde))
+                        .aggregate(
+                                () -> PairList.newBuilder().setPairList(new ArrayList<>()).build(),
+                                aggregator,
+                                Materialized.<String, PairList, KeyValueStore<Bytes, byte[]>>as(KafkaConst.POPULAR_PRODUCT_STORE)
+                                        .withKeySerde(stringKeySerde)
+                                        .withValueSerde(pairListSpecificAvroSerde)
+                        );
+
+//        sortedProductsByCategory.toStream();
 //                .peek((k, v) -> log.info("categoryId: {}, sortedProductList:{}", k, v));
         return sortedProductsByCategory;
     }

@@ -72,6 +72,36 @@ public class ProductDataService {
 
     }
 
+    public List<Product> findSimilarProduct(List<String> lastViewedProductIds) {
+
+        Map<String, List<String>> mapOfPopularProductByCategory = new HashMap<>();
+        lastViewedProductIds.forEach(item -> {
+            String categoryId = item.substring(0, 1);
+            mapOfPopularProductByCategory.put(categoryId, new LinkedList<>(popularProductsInteractiveQueryService.get(categoryId)));
+        });
+
+        List<String> similarProductIds = new ArrayList<>();
+
+        lastViewedProductIds.forEach(
+                item -> {
+                    String categoryId = item.substring(0, 1);
+                    List<String> productIds = mapOfPopularProductByCategory.get(categoryId);
+                    similarProductIds.add(productIds.removeFirst());
+                }
+        );
+
+        if (similarProductIds.size() < 6) {
+            String categoryId = lastViewedProductIds.get(0).substring(0, 1);
+            List<String> productIds = mapOfPopularProductByCategory.get(categoryId);
+            while (similarProductIds.size() < 6) {
+                similarProductIds.add(productIds.removeFirst());
+            }
+        }
+
+        return findAllProductById(similarProductIds);
+
+    }
+
     private List<Product> findByCategoryIdOrderByProductId(String categoryId) {
 
         Comparator<Product> comparator =
