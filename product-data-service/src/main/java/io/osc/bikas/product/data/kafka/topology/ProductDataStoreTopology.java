@@ -12,10 +12,9 @@ import org.springframework.context.annotation.Configuration;
 public class ProductDataStoreTopology {
 
     @Bean
-    public KTable<String, ProductDetails> productDataStoreTopology(StreamsBuilder streamsBuilder) {
-        KTable<String, ProductDetails> table = streamsBuilder.table(KafkaConst.PRODUCT_DATA_TOPIC,
+    public KTable<String, ProductDetails> processProductDataStoreTopology(StreamsBuilder streamsBuilder) {
+        return streamsBuilder.table(KafkaConst.PRODUCT_DATA_TOPIC,
                 Materialized.as(KafkaConst.PRODUCT_DATA_STORE));
-        return table;
     }
 
 }

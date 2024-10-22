@@ -122,7 +122,8 @@ public class ProductDataService {
     private List<ProductDto> findByCategoryIdOrderByProductPriceAsc(String categoryId) {
 
         Comparator<ProductDto> comparator =
-                Comparator.comparingDouble(ProductDto::getProductPrice);
+                Comparator.comparingDouble(ProductDto::getProductPrice)
+                        .thenComparing(ProductDto::getProductId);
         Set<ProductDto> treeSet = new TreeSet<>(comparator);
         treeSet.addAll(findPopularProductBy(categoryId));
 

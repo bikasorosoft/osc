@@ -44,21 +44,19 @@ public class PopularProductStoreTopology {
         final SpecificAvroSerde<PairList> pairListSpecificAvroSerde = new SpecificAvroSerde<>();
         pairListSpecificAvroSerde.configure(config, false);
 
-        KTable<String, PairList> sortedProductsByCategory =
-                streamsBuilder.stream(KafkaConst.PRODUCT_CLICK_TOPIC,
-                                Consumed.with(stringKeySerde, stringValueSerde)
-                                        .withName("bikas-popular-product-store-process"))
-                        .map((userId, productId) ->
-                                new KeyValue<>(productId.substring(0, 1), new Pair(productId, 0L)))
-                        .groupByKey(Grouped.with(stringKeySerde, pairValueSerde))
-                        .aggregate(
-                                () -> PairList.newBuilder().setPairList(new ArrayList<>()).build(),
-                                getPairAggregator(),
-                                Materialized.<String, PairList, KeyValueStore<Bytes, byte[]>>as(KafkaConst.POPULAR_PRODUCT_STORE)
-                                        .withKeySerde(stringKeySerde)
-                                        .withValueSerde(pairListSpecificAvroSerde)
-                        );
-        return sortedProductsByCategory;
+        return streamsBuilder.stream(KafkaConst.PRODUCT_CLICK_TOPIC,
+                        Consumed.with(stringKeySerde, stringValueSerde)
+                                .withName("bikas-popular-product-store-process"))
+                .map((userId, productId) ->
+                        new KeyValue<>(productId.substring(0, 1), new Pair(productId, 0L)))
+                .groupByKey(Grouped.with(stringKeySerde, pairValueSerde))
+                .aggregate(
+                        () -> PairList.newBuilder().setPairList(new ArrayList<>()).build(),
+                        getPairAggregator(),
+                        Materialized.<String, PairList, KeyValueStore<Bytes, byte[]>>as(KafkaConst.POPULAR_PRODUCT_STORE)
+                                .withKeySerde(stringKeySerde)
+                                .withValueSerde(pairListSpecificAvroSerde)
+                );
     }
 
     private static Aggregator<String, Pair, PairList> getPairAggregator() {
