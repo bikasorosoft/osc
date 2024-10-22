@@ -14,7 +14,8 @@ import java.util.List;
 public class SimilarProducts extends DashboardDto {
 
     @JsonProperty("TYPE")
-    private final String type = "Recently Viewed Products";
+    private final String type = "Similar Products";
+    @JsonProperty("Similar Products")
     private List<ProductDto> similarProducts;
 
 }

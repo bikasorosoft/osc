@@ -18,7 +18,6 @@ public class GrpcCartDataServiceClient {
 
     //update cart product item count
     public void updateCartItem(String userId, String productId, Integer count) {
-
         UpdateCartItemRequest request =
                 UpdateCartItemRequest.newBuilder()
                         .setUserId(userId)
@@ -26,7 +25,6 @@ public class GrpcCartDataServiceClient {
                         .setCount(count)
                         .build();
         cartDataServiceBlockingStub.updateCartItem(request);
-
     }
 
     //remove item from cart

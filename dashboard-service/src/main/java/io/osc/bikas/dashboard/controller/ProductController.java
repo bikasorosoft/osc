@@ -18,7 +18,8 @@ public class ProductController {
 
     @PostMapping("/product/details")
     public ResponseEntity<ResponseDto> getProductDetailsAndSimilarProducts(@RequestBody ProductDetailsRequestDto productDetailsRequestDto) {
-        var data = productService.getProductDetailsAndSimilarProduct(productDetailsRequestDto.productId(), productDetailsRequestDto.categoryId());
+        var data = productService.getProductDetailsAndSimilarProduct(productDetailsRequestDto.productId(),
+                productDetailsRequestDto.userId(), productDetailsRequestDto.categoryId());
         return ResponseEntity.ok(new ResponseDto(200, data));
     }
 

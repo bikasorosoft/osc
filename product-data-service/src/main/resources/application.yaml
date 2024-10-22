@@ -1,6 +1,7 @@
-logging:
-  level:
-    org.springframework.web: INFO
+#logging:
+#  level:
+#    org.springframework.web: INFO
+#    org.apache.kafka.clients.admin: TRACE
 #    org.springframework.scheduling: TRACE
 #    org.hibernate: TRACE
 
@@ -23,7 +24,7 @@ spring:
       format_sql: true
 
   kafka:
-    bootstrap-servers: localhost:19092
+    bootstrap-servers: 192.168.99.223:19092
 #    streams:
 #      default:
 #        key-serde:  org.apache.kafka.common.serialization.Serdes$StringSerde  # Key Serde (String Serde)
@@ -50,5 +51,13 @@ spring:
       key-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
       value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
     properties:
-      schema.registry.url: http://0.0.0.0:18081
+      schema.registry.url: http://192.168.99.223:18081
       specific.avro.reader: true
+
+app.kafka.initialize:
+  #set this flag true to load product data to topic
+  product-data: false
+  #set this flag true to reset click count and load it to topic
+  click-data: false
+  #set this flag true to load category data to topic
+  category-data: false

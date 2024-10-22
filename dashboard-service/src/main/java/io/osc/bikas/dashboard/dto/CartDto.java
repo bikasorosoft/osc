@@ -17,7 +17,9 @@ public class CartDto {
 
     @JsonProperty("cartProducts")
     private List<CartItemDto> cartItemsDto;
+    @JsonProperty("productsCartCount")
     private Integer productsCartCount;
+    @JsonProperty("totalPrice")
     private Double totalPrice;
 
 }

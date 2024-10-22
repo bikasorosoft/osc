@@ -3,18 +3,14 @@ package io.osc.bikas.product.data.kafka.producer;
 import io.osc.bikas.product.data.kafka.KafkaConst;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-import java.util.Random;
-
-@Service
+@Component
 @RequiredArgsConstructor
-public class ProductViewPublisher {
-
+public class CategoryDetailsPublisher {
     private final KafkaTemplate<String, String> kafkaTemplate;
 
-    public void publish(String key, String value) {
-        kafkaTemplate.send(KafkaConst.PRODUCT_VIEW_TOPIC, key, value);
+    public void publish(String categoryId, String name) {
+        kafkaTemplate.send(KafkaConst.CATEGORY_DATA_TOPIC, categoryId, name);
     }
-
 }

@@ -18,9 +18,26 @@ public class GrpcProductDataServiceClient {
     @GrpcClient("product-data-service")
     private ProductDataServiceGrpc.ProductDataServiceBlockingStub productDataServiceBlockingStub;
 
-    public ProductDto getProductDetailsById(String productId) {
-        ProductDetails productDetails = productDataServiceBlockingStub.getProductById(StringValue.newBuilder().setValue(productId).build());
+    public ProductDto getProductDetailsById(String userId, String productId) {
+        ProductDetails productDetails = productDataServiceBlockingStub.getProductById(GetProductByIdRequest.newBuilder()
+                .setUserId(userId)
+                .setProductId(productId).build());
         return generateProductDto(productDetails);
+    }
+
+    public List<List<ProductDto>> getSimilarProductsById(List<String> productIds) {
+
+        List<StringValue> stringValues = generateStringValue(productIds);
+
+        GetSimilarProductResponse similarProducts = productDataServiceBlockingStub.getSimilarProducts(ProductIdList.newBuilder().addAllProductId(stringValues).build());
+
+        List<List<ProductDto>> recentlyViewedProductAndSimilarProduct = new ArrayList<>();
+
+        recentlyViewedProductAndSimilarProduct.add(generateProductDto(similarProducts.getLastVisitedProduct().getProductsList()));
+        recentlyViewedProductAndSimilarProduct.add(generateProductDto(similarProducts.getSimilarProducts().getProductsList()));
+
+        return recentlyViewedProductAndSimilarProduct;
+
     }
 
     public List<ProductDto> getAllProductById(List<String> productIdList) {
@@ -54,8 +71,6 @@ public class GrpcProductDataServiceClient {
         ProductListResponse filteredProducts = productDataServiceBlockingStub.getFilteredProducts(CategoryFilterRequest.newBuilder().build());
         return generateProductDto(filteredProducts.getProductsList());
     }
-
-
 
     private List<CategoryDto> generateCategoryDto(List<CategoryDetails> categoryListResponse) {
         return categoryListResponse.stream()

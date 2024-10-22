@@ -54,53 +54,11 @@ public class KafkaStreamsConfig {
     }
 
     @Bean
-    public KTable<String, LinkedList<String>> kafkaUserProductViewWindowedAggregate(StreamsBuilder builder) {
-
-        final String schemaRegistryUrl = "http://192.168.99.223:18081";
-
-        final Map<String, String> serdeConfig = Collections.singletonMap(
-                AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryUrl);
-
-        final Serde<String> keySerde = Serdes.String();
-        keySerde.configure(serdeConfig, true);
-
-        final Serde<String> valueSerde = Serdes.String();
-        valueSerde.configure(serdeConfig, false);
-
-        KStream<String, String> stream = builder.stream(KafkaConst.USER_PRODUCT_VIEW_TOPIC, Consumed.with(Serdes.String(), Serdes.String()));
-        return stream
-                .groupByKey()
-                .aggregate(
-                        //initializer
-                        LinkedList::new,
-                        //aggregate
-                        (userId, productId, linkedList) -> {
-                            linkedList.removeIf((v) -> Objects.equals(v, productId));
-                            linkedList.addFirst(productId);
-                            while(linkedList.size()>6) {
-                                linkedList.removeLast();
-                            }
-                            System.out.println(linkedList.toString());
-                            return linkedList;
-                        },
-                        //materialize
-                        Materialized.<String, LinkedList<String>, KeyValueStore<Bytes, byte[]>>as(KafkaConst.PRODUCT_VIEW_HISTORY)
-                                .withKeySerde(keySerde)
-                                .withValueSerde(new LinkedListSerde<>(valueSerde))
-                );
-    }
-
-    @Bean
     public KafkaStreamsInteractiveQueryService kafkaStreamsInteractiveQueryService(
             StreamsBuilderFactoryBean streamsBuilderFactoryBean) {
         final KafkaStreamsInteractiveQueryService kafkaStreamsInteractiveQueryService =
                 new KafkaStreamsInteractiveQueryService(streamsBuilderFactoryBean);
         return kafkaStreamsInteractiveQueryService;
-    }
-
-    @Bean
-    public NewTopic newTopic() {
-        return TopicBuilder.name(KafkaConst.USER_PRODUCT_VIEW_TOPIC).build();
     }
 
 }

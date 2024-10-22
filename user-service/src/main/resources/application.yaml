@@ -16,6 +16,12 @@ grpc:
     session-data-service:
       address: static://localhost:9100
       negotiationType: PLAINTEXT
+    cart-data-service:
+      address: static://localhost:9300
+      negotiationType: PLAINTEXT
+    view-data-service:
+      address: static://localhost:9400
+      negotiationType: PLAINTEXT
 
 spring:
   kafka:

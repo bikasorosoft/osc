@@ -3,6 +3,7 @@ package io.osc.bikas.session.data.service;
 import com.osc.bikas.avro.SessionTopicKey;
 import io.osc.bikas.session.data.kafka.config.KafkaConstants;
 import io.osc.bikas.session.data.kafka.producer.KafkaSessionPublisher;
+import io.osc.bikas.session.data.kafka.service.SessionDataInteractiveQueryService;
 import io.osc.bikas.session.data.model.Session;
 import io.osc.bikas.session.data.repository.SessionRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ public class SessionService {
 
     private final SessionRepository sessionRepository;
     private final KafkaSessionPublisher kafkaSessionProducer;
-    private final KafkaStreamsInteractiveQueryService interactiveQueryService;
+    private final SessionDataInteractiveQueryService sessionDataInteractiveQueryService;
 
     public Session getSessionById(String sessionId) {
         return sessionRepository.findById(sessionId).get();
@@ -28,12 +29,9 @@ public class SessionService {
 
     public boolean sessionExists(String userId, String device) {
 
-        ReadOnlyKeyValueStore<SessionTopicKey, CharSequence> sessionStore = interactiveQueryService.retrieveQueryableStore(KafkaConstants.SESSION_STORE, QueryableStoreTypes.keyValueStore());
+        Optional<String> sessionId = sessionDataInteractiveQueryService.get(userId, device);
 
-        SessionTopicKey key = SessionTopicKey.newBuilder().setUserId(userId).setDevice(device).build();
-        CharSequence s = sessionStore.get(key);
-
-        return s != null && !s.isEmpty();
+        return sessionId.isPresent();
     }
 
     public void createSession(String sessionId, String userId, String deviceType) {
@@ -49,10 +47,15 @@ public class SessionService {
     }
 
     public void logout(String sessionId, String userId) {
+
         Session session = sessionRepository.findById(sessionId).get();
+
         String deviceType = session.getDeviceType();
+
         session.setLogoutTime(LocalDateTime.now());
+
         sessionRepository.save(session);
+
         kafkaSessionProducer.publish(userId, deviceType, null);
     }
 

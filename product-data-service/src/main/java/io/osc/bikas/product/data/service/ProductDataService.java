@@ -2,16 +2,14 @@ package io.osc.bikas.product.data.service;
 
 import com.osc.bikas.proto.CategoryFilterRequest;
 import io.osc.bikas.product.data.dto.CategoryDto;
+import io.osc.bikas.product.data.dto.PairDto;
+import io.osc.bikas.product.data.dto.ProductDto;
 import io.osc.bikas.product.data.kafka.producer.ProductClickPublisher;
-import io.osc.bikas.product.data.kafka.producer.ProductDetailsPublisher;
-import io.osc.bikas.product.data.kafka.producer.ProductViewPublisher;
-import io.osc.bikas.product.data.kafka.service.KafkaInteractiveQueryService;
+
+import io.osc.bikas.product.data.kafka.service.CategoryDataInteractiveQueryService;
 import io.osc.bikas.product.data.kafka.service.PopularProductsInteractiveQueryService;
 import io.osc.bikas.product.data.kafka.service.ProductDetailsInteractiveQuery;
-import io.osc.bikas.product.data.kafka.service.SortedCategoryInteractiveQueryService;
-import io.osc.bikas.product.data.model.Product;
-import io.osc.bikas.product.data.repo.CategoryRepository;
-import io.osc.bikas.product.data.repo.ProductRepository;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,32 +22,30 @@ import static com.osc.bikas.proto.CategoryFilterRequest.FILTER.*;
 @RequiredArgsConstructor
 public class ProductDataService {
 
-    private final ProductRepository productRepository;
-    private final CategoryRepository categoryRepository;
-    private final ProductViewPublisher productViewPublisher;
-    private final KafkaInteractiveQueryService kafkaInteractiveQueryService;
-    private final ProductDetailsPublisher productDetailsPublisher;
-    private final SortedCategoryInteractiveQueryService sortedCategoryInteractiveQueryService;
     private final PopularProductsInteractiveQueryService popularProductsInteractiveQueryService;
+    private final CategoryDataInteractiveQueryService categoryDataInteractiveQueryService;
     private final ProductDetailsInteractiveQuery productDetailsInteractiveQuery;
     private final ProductClickPublisher productClickPublisher;
 
-    public List<Product> findFeaturedProducts() {
+    public List<ProductDto> findFeaturedProducts() {
 
-        List<String> productIds = popularProductsInteractiveQueryService.getAll();
+        List<PairDto> productPairs = popularProductsInteractiveQueryService.getAll();
 
-        return findAllProductById(productIds);
+        return findAllProductByPair(productPairs);
 
     }
 
     public List<CategoryDto> findCategoriesOrderedByProductViewCount() {
 
-        return sortedCategoryInteractiveQueryService.get();
+        List<String> categoryIds = popularProductsInteractiveQueryService.getAllCategoryId();
+
+        return categoryIds.stream().map(
+                categoryId -> new CategoryDto(categoryId, categoryDataInteractiveQueryService.get(categoryId))
+        ).collect(Collectors.toList());
 
     }
 
-
-    public List<Product> getProductsFilterBy(String categoryId, CategoryFilterRequest.FILTER filter) {
+    public List<ProductDto> getProductsFilterBy(String categoryId, CategoryFilterRequest.FILTER filter) {
 
         if (Objects.isNull(filter)) {
             throw new IllegalArgumentException("Filter cannot be null");
@@ -72,71 +68,74 @@ public class ProductDataService {
 
     }
 
-    public List<Product> findSimilarProduct(List<String> lastViewedProductIds) {
+    public List<ProductDto> findSimilarProduct(List<String> lastViewedProductIds) {
 
-        Map<String, List<String>> mapOfPopularProductByCategory = new HashMap<>();
+        Map<String, LinkedList<PairDto>> mapOfPopularProductByCategory = new HashMap<>();
         lastViewedProductIds.forEach(item -> {
             String categoryId = item.substring(0, 1);
-            mapOfPopularProductByCategory.put(categoryId, new LinkedList<>(popularProductsInteractiveQueryService.get(categoryId)));
+            mapOfPopularProductByCategory.put(categoryId,
+                    new LinkedList<>(
+                            popularProductsInteractiveQueryService.get(categoryId).stream()
+                            .filter(pair -> !lastViewedProductIds.contains(pair.productId()))
+                            .collect(Collectors.toList())));
         });
 
-        List<String> similarProductIds = new ArrayList<>();
+        List<PairDto> similarProductIds = new ArrayList<>();
 
         lastViewedProductIds.forEach(
                 item -> {
                     String categoryId = item.substring(0, 1);
-                    List<String> productIds = mapOfPopularProductByCategory.get(categoryId);
+                    LinkedList<PairDto> productIds = mapOfPopularProductByCategory.get(categoryId);
                     similarProductIds.add(productIds.removeFirst());
                 }
         );
 
         if (similarProductIds.size() < 6) {
             String categoryId = lastViewedProductIds.get(0).substring(0, 1);
-            List<String> productIds = mapOfPopularProductByCategory.get(categoryId);
+            LinkedList<PairDto> productIds = mapOfPopularProductByCategory.get(categoryId);
             while (similarProductIds.size() < 6) {
                 similarProductIds.add(productIds.removeFirst());
             }
         }
 
-        return findAllProductById(similarProductIds);
-
+        return findAllProductByPair(similarProductIds);
     }
 
-    private List<Product> findByCategoryIdOrderByProductId(String categoryId) {
+    private List<ProductDto> findByCategoryIdOrderByProductId(String categoryId) {
 
-        Comparator<Product> comparator =
-                Comparator.comparing(Product::getProductId).reversed();
-        Set<Product> treeSet = new TreeSet<>(comparator);
+        Comparator<ProductDto> comparator =
+                Comparator.comparing(ProductDto::getProductId).reversed();
+
+        Set<ProductDto> treeSet = new TreeSet<>(comparator);
         treeSet.addAll(findPopularProductBy(categoryId));
 
         return new ArrayList<>(treeSet);
 
     }
 
-    private List<Product> findByCategoryIdOrderByProductPriceDesc(String categoryId) {
-        List<Product> products = findByCategoryIdOrderByProductPriceAsc(categoryId);
+    private List<ProductDto> findByCategoryIdOrderByProductPriceDesc(String categoryId) {
+        List<ProductDto> products = findByCategoryIdOrderByProductPriceAsc(categoryId);
         Collections.reverse(products);
         return products;
     }
 
-    private List<Product> findByCategoryIdOrderByProductPriceAsc(String categoryId) {
+    private List<ProductDto> findByCategoryIdOrderByProductPriceAsc(String categoryId) {
 
-        Comparator<Product> comparator =
-                Comparator.comparingDouble( (Product item) -> item.getProductPrice().doubleValue())
-                .reversed();
-        Set<Product> treeSet = new TreeSet<>(comparator);
+        Comparator<ProductDto> comparator =
+                Comparator.comparingDouble(ProductDto::getProductPrice);
+        Set<ProductDto> treeSet = new TreeSet<>(comparator);
         treeSet.addAll(findPopularProductBy(categoryId));
 
         return new ArrayList<>(treeSet);
 
     }
 
-    private List<Product> findPopularProductBy(String categoryId) {
+    private List<ProductDto> findPopularProductBy(String categoryId) {
         var productIds = popularProductsInteractiveQueryService.get(categoryId);
-        return findAllProductById(productIds);
+        return findAllProductByPair(productIds);
     }
 
-    public Product findProductById(String productId, String userId) {
+    public ProductDto findProductById(String productId, String userId) {
 
         var product = findProductById(productId);
         productClickPublisher.publish(userId, productId);
@@ -144,14 +143,28 @@ public class ProductDataService {
         return product;
     }
 
-    private Product findProductById(String productId) {
-        return productDetailsInteractiveQuery.get(productId);
+    private ProductDto findProductById(String productId) {
+        ProductDto productDto = productDetailsInteractiveQuery.get(productId);
+        productDto.setProductId(productId);
+        return productDto;
     }
 
-    public List<Product> findAllProductById(List<String> productIdList) {
+    public List<ProductDto> findAllProductById(List<String> productIdList) {
 
         return productIdList.stream()
                 .map(this::findProductById)
+                .collect(Collectors.toList());
+
+    }
+
+    public List<ProductDto> findAllProductByPair(List<PairDto> pairDtoList) {
+
+        return pairDtoList.stream()
+                .map(item -> {
+                    ProductDto productDto = findProductById(item.productId());
+                    productDto.setViewCount(item.viewCount());
+                    return productDto;
+                })
                 .collect(Collectors.toList());
 
     }

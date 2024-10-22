@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class GrpcViewDataServiceClient {
@@ -17,12 +18,12 @@ public class GrpcViewDataServiceClient {
     private ViewDataServiceGrpc.ViewDataServiceBlockingStub viewDataServiceBlockingStub;
 
     public List<String> getRecentlyViewedProductIdListBy(String userId) {
-        ProductIdList respoinse = viewDataServiceBlockingStub.getRecentlyViewedProductIdList(StringValue.of(userId));
+        ProductIdList response = viewDataServiceBlockingStub.getRecentlyViewedProductIdList(StringValue.of(userId));
 
         List<String> productIdList = new ArrayList<>();
 
-        if(respoinse.getProductIdCount() > 0) {
-            productIdList = respoinse.getProductIdList().stream().map(StringValue::getValue).toList();
+        if(response.getProductIdCount() > 0) {
+            productIdList = response.getProductIdList().stream().map(StringValue::getValue).collect(Collectors.toList());
         }
         return productIdList;
     }

@@ -20,6 +20,11 @@ public class OTPConsumer {
     public void consume(ConsumerRecord<String, OtpDetails> record) {
         var key = record.key();
         var value = record.value();
+
+        if (value == null) {
+            return;
+        }
+
         String body = switch (value.getFormat()) {
             case FORGOT_PASSWORD -> {
                 yield EmailTemplate.generateOtpEmail(value.getOtp());

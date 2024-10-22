@@ -17,7 +17,8 @@ public class KafkaSessionPublisher {
     private final KafkaTemplate<SessionTopicKey, CharSequence> kafkaTemplate;
 
     public void publish(String userId, String deviceType, String sessionId) {
-        SessionTopicKey key = SessionTopicKey.newBuilder().setUserId(userId).setDevice(deviceType).build();
+        SessionTopicKey key = SessionTopicKey.newBuilder()
+                .setUserId(userId).setDevice(deviceType).build();
         CharSequence value = sessionId;
 
         kafkaTemplate.send(KafkaConstants.SESSION_TOPIC, key, value);

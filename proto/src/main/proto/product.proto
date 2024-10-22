@@ -11,11 +11,16 @@ import "view.proto";
 
 
 service ProductDataService {
-//  rpc GetFeaturedProducts (google.protobuf.Empty) returns (ProductListResponse);
+  rpc GetSimilarProducts (ProductIdList) returns (GetSimilarProductResponse);
   rpc GetCategoriesOrderedByViewCount (google.protobuf.Empty) returns (CategoryListResponse);
   rpc GetProductById (GetProductByIdRequest) returns (ProductDetails);
   rpc GetFilteredProducts(CategoryFilterRequest) returns (ProductListResponse);
   rpc GetAllProductById(ProductIdList) returns (ProductListResponse);
+}
+
+message GetSimilarProductResponse {
+    ProductListResponse last_visited_product = 1;
+    ProductListResponse similar_products = 2;
 }
 
 message GetProductByIdRequest {

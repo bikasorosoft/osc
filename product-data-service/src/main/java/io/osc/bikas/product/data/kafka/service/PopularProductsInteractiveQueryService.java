@@ -2,14 +2,14 @@ package io.osc.bikas.product.data.kafka.service;
 
 import com.osc.bikas.avro.Pair;
 import com.osc.bikas.avro.PairList;
+import io.osc.bikas.product.data.dto.PairDto;
 import lombok.RequiredArgsConstructor;
+import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.state.KeyValueIterator;
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -18,13 +18,13 @@ public class PopularProductsInteractiveQueryService {
 
     private final KafkaInteractiveQueryService kafkaInteractiveQueryService;
 
-    public List<String> get(String categoryId) {
+    public List<PairDto> get(String categoryId) {
         ReadOnlyKeyValueStore<String, PairList> store = kafkaInteractiveQueryService.getPopularProductReadOnlyKeyValueStore();
         PairList pairList = store.get(categoryId);
-        return generateProductIdFrom(pairList.getPairList());
+        return generatePairDto(pairList.getPairList());
     }
 
-    public List<String> getAll() {
+    public List<PairDto> getAll() {
         ReadOnlyKeyValueStore<String, PairList> store = kafkaInteractiveQueryService.getPopularProductReadOnlyKeyValueStore();
         KeyValueIterator<String, PairList> pairList = store.all();
 
@@ -38,17 +38,40 @@ public class PopularProductsInteractiveQueryService {
             sortedPair.addAll(pairList.next().value.getPairList());
         }
 
-        return generateProductIdFrom(sortedPair.stream().toList());
+        return generatePairDto(sortedPair.stream().toList());
 
     }
 
-    private List<String> generateProductIdFrom(List<Pair> pairs) {
-        return pairs.stream().map(this::generateProductIdFrom)
+    public List<String> getAllCategoryId() {
+        ReadOnlyKeyValueStore<String, PairList> store = kafkaInteractiveQueryService.getPopularProductReadOnlyKeyValueStore();
+        KeyValueIterator<String, PairList> keyValuePairList = store.all();
+
+        Map<String, Long> categoryCountMap = new HashMap<>();
+
+        while (keyValuePairList.hasNext()) {
+            KeyValue<String, PairList> next = keyValuePairList.next();
+            List<Pair> pairList = next.value.getPairList();
+            String categoryId = next.key;
+
+            for (Pair pair: pairList) {
+                categoryCountMap.put(categoryId,
+                        categoryCountMap.getOrDefault(categoryId, 0L)+ pair.getViewCount());
+            }
+        }
+        return categoryCountMap.entrySet()
+                .stream()
+                .sorted((entry1, entry2) -> Long.compare(entry2.getValue(), entry1.getValue()))
+                .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
     }
 
-    private String generateProductIdFrom(Pair pair) {
-        return pair.getProductId().toString();
+    private List<PairDto> generatePairDto(List<Pair> pairs) {
+        return pairs.stream().map(this::generatePairDto)
+                .collect(Collectors.toList());
+    }
+
+    private PairDto generatePairDto(Pair pair) {
+        return PairDto.builder().productId(pair.getProductId().toString()).viewCount(pair.getViewCount()).build();
     }
 
 }

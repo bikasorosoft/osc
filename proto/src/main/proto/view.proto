@@ -10,6 +10,7 @@ import "google/protobuf/empty.proto";
 
 service ViewDataService {
   rpc GetRecentlyViewedProductIdList(google.protobuf.StringValue) returns (ProductIdList);
+  rpc SaveUserViewData(google.protobuf.StringValue) returns (google.protobuf.Empty);
 }
 
 message ProductIdList {

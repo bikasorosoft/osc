@@ -15,7 +15,6 @@ public class KafkaInteractiveQueryService {
     private final KafkaStreamsInteractiveQueryService kafkaStreamsInteractiveQueryService;
 
     private ReadOnlyKeyValueStore<String, ProductDetails> productDetailsReadOnlyKeyValueStore;
-    private ReadOnlyKeyValueStore<String, CategoryList> sortedCategoryReadOnlyKeyValueStore;
     private ReadOnlyKeyValueStore<String, PairList> popularProductReadOnlyKeyValueStore;
 
 
@@ -29,18 +28,6 @@ public class KafkaInteractiveQueryService {
                             );
         }
         return productDetailsReadOnlyKeyValueStore;
-    }
-
-    public ReadOnlyKeyValueStore<String, CategoryList> getSortedCategoryReadOnlyKeyValueStore() {
-        if(sortedCategoryReadOnlyKeyValueStore == null) {
-            this.sortedCategoryReadOnlyKeyValueStore =
-                    this.kafkaStreamsInteractiveQueryService
-                            .retrieveQueryableStore(
-                                    KafkaConst.SORTED_CATEGORIES_STORE,
-                                    QueryableStoreTypes.keyValueStore()
-                            );
-        }
-        return sortedCategoryReadOnlyKeyValueStore;
     }
 
     public ReadOnlyKeyValueStore<String, PairList> getPopularProductReadOnlyKeyValueStore() {

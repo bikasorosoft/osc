@@ -16,10 +16,9 @@ public class ProductService {
 
     private final GrpcProductDataServiceClient productDataServiceClient;
 
+    public ProductDetailsAndSimilarProductListDto getProductDetailsAndSimilarProduct(String productId,String userId, String categoryId) {
 
-    public ProductDetailsAndSimilarProductListDto getProductDetailsAndSimilarProduct(String productId, String categoryId) {
-
-        ProductDto productDto = productDataServiceClient.getProductDetailsById(productId);
+        ProductDto productDto = productDataServiceClient.getProductDetailsById(userId, productId);
 
         List<ProductDto> productDtoList = productDataServiceClient.getProductsFilterBy(categoryId, CategoryFilterRequest.FILTER.POPULAR);
 

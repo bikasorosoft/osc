@@ -5,9 +5,11 @@ import io.osc.bikas.product.data.kafka.KafkaConst;
 import io.osc.bikas.product.data.model.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+import java.util.concurrent.ExecutionException;
+
+@Component
 @RequiredArgsConstructor
 public class ProductDetailsPublisher {
 
@@ -18,19 +20,18 @@ public class ProductDetailsPublisher {
         String key = productId;
         ProductDetails value = generateProductDetailsFrom(product);
 
-        kafkaTemplate.send(KafkaConst.PRODUCT_DATA_TOPIC, key, value);
-
+        try {
+            kafkaTemplate.send(KafkaConst.PRODUCT_DATA_TOPIC, key, value).get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(String.format("unable to process the message key : %s, value: %s \n %s", key, value.toString(), e.getMessage()));
+        }
     }
 
     private ProductDetails generateProductDetailsFrom(Product product) {
         return ProductDetails.newBuilder()
-                .setProductId(product.getProductId())
-                .setCategoryId(product.getCategory().getCategoryId())
                 .setProductName(product.getProductName())
                 .setProductDescription(product.getProductDescription())
                 .setProductPrice(product.getProductPrice().doubleValue())
-                .setViewCount(product.getViewCount())
-                .setImagePath(product.getImagePath())
                 .build();
     }
 

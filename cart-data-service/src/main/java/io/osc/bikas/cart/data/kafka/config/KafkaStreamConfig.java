@@ -27,7 +27,7 @@ public class KafkaStreamConfig {
         props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
         props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, SpecificAvroSerde.class);
         props.put("schema.registry.url", "http://192.168.99.223:18081");
-        props.put(StreamsConfig.STATE_DIR_CONFIG, "/store");
+        props.put(StreamsConfig.STATE_DIR_CONFIG, "/cart-data");
         props.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 0);//1000 ms = 1 sec
         return new KafkaStreamsConfiguration(props);
     }

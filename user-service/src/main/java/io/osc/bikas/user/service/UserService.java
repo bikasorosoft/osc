@@ -9,8 +9,10 @@ import com.osc.bikas.proto.GetUserPasswordByIdResponse;
 import com.osc.bikas.proto.UpdatePasswordRequest;
 import io.grpc.StatusRuntimeException;
 import io.osc.bikas.user.exception.*;
+import io.osc.bikas.user.grpc.GrpcCartDataServiceClient;
 import io.osc.bikas.user.grpc.GrpcSessionDataServiceClient;
 import io.osc.bikas.user.grpc.GrpcUserDataServiceClient;
+import io.osc.bikas.user.grpc.GrpcViewDataServiceClient;
 import io.osc.bikas.user.kafka.producer.OtpPublisher;
 import io.osc.bikas.user.kafka.producer.RegistrationUserPublisher;
 import io.osc.bikas.user.kafka.service.KafkaInteractiveQueryService;
@@ -38,6 +40,8 @@ public class UserService {
 
     private final GrpcUserDataServiceClient grpcUserDataServiceClient;
     private final GrpcSessionDataServiceClient grpcSessionDataServiceClient;
+    private final GrpcViewDataServiceClient grpcViewDataServiceClient;
+    private final GrpcCartDataServiceClient grpcCartDataServiceClient;
 
     private final KafkaInteractiveQueryService interactiveQueryService;
 
@@ -191,6 +195,8 @@ public class UserService {
     }
 
     public void logout(String userId, String sessionId) {
+        grpcViewDataServiceClient.saveUserViewHistory(userId);
+        grpcCartDataServiceClient.saveUserCart(userId);
         grpcSessionDataServiceClient.logout(userId, sessionId);
     }
 

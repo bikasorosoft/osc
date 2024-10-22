@@ -13,5 +13,6 @@ import java.util.List;
 public class RecentlyViewedProducts extends DashboardDto {
     @JsonProperty("TYPE")
     private final String type = "Recently Viewed Products";
+    @JsonProperty("Recently Viewed Products")
     List<ProductDto> recentlyViewedProducts;
 }

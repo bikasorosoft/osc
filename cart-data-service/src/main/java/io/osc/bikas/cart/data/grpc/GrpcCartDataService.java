@@ -27,7 +27,8 @@ public class GrpcCartDataService extends CartDataServiceGrpc.CartDataServiceImpl
 
         var cartItems = generateCartItem(cartDataService.getCartItemList(request.getValue()));
 
-        GetCartItemListResponse response = GetCartItemListResponse.newBuilder().addAllCartItems(cartItems).build();
+        GetCartItemListResponse response = GetCartItemListResponse.newBuilder()
+                .addAllCartItems(cartItems).build();
 
         responseObserver.onNext(response);
         responseObserver.onCompleted();
@@ -62,20 +63,20 @@ public class GrpcCartDataService extends CartDataServiceGrpc.CartDataServiceImpl
 
     @Override
     public void saveCart(StringValue request, StreamObserver<Empty> responseObserver) {
+
         cartDataService.updateCartDataToDb(request.getValue());
 
         responseObserver.onNext(Empty.getDefaultInstance());
         responseObserver.onCompleted();
-
     }
 
-    List<GetCartItemListResponse.CartItem> generateCartItem(List<CartItem> items) {
+    private List<GetCartItemListResponse.CartItem> generateCartItem(List<CartItem> items) {
         return items.stream()
                 .map(this::generateCartItem)
                 .collect(Collectors.toList());
     }
 
-    GetCartItemListResponse.CartItem generateCartItem(CartItem item) {
+    private GetCartItemListResponse.CartItem generateCartItem(CartItem item) {
         return GetCartItemListResponse.CartItem.newBuilder()
                 .setProductId(item.getProductId().toString())
                 .setCount(item.getCount())

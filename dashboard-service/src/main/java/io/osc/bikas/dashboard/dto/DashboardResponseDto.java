@@ -5,4 +5,4 @@ import lombok.Builder;
 import java.util.List;
 
 @Builder
-public record DataObjectDto(List<DashboardDto> data) {}
+public record DashboardResponseDto( List<DashboardDto> data ) {}

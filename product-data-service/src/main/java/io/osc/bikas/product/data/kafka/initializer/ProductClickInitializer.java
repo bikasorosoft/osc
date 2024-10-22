@@ -5,6 +5,7 @@ import io.osc.bikas.product.data.model.Product;
 import io.osc.bikas.product.data.repo.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -19,6 +20,9 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class ProductClickInitializer implements CommandLineRunner {
 
+    @Value("${app.kafka.initialize.click-data}")
+    String initialize;
+
     private final ProductClickPublisher productClickPublisher;
     private final ProductRepository productRepository;
 
@@ -27,22 +31,20 @@ public class ProductClickInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
+        if(!Boolean.parseBoolean(initialize)) {
+            return;
+        }
+
         Thread.sleep(Duration.ofMinutes(1).toMillis());
         List<Product> products = productRepository.findAll();
         for (Product p : products) {
             p.setViewCount(0);
         }
         productRepository.saveAll(products);
-        Random random = new Random();
 
-        for (Product p: products) {
-            int i = random.nextInt(15, 50);
-            while (i > 0) {
-                productClickPublisher.publish("test-user", p.getProductId());
-                i--;
-                Thread.sleep(10);
-            }
-            Thread.sleep(100);
+        for (Product p : products) {
+            productClickPublisher.publish("test-user", p.getProductId());
+            Thread.sleep(200);
         }
 
     }

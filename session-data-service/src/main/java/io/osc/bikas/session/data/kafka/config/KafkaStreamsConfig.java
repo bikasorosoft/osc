@@ -48,14 +48,6 @@ public class KafkaStreamsConfig {
     }
 
     @Bean
-    public KTable<SessionTopicKey, CharSequence> registrationKTable(StreamsBuilder builder) {
-        KTable<SessionTopicKey, CharSequence> registrationKTable =
-                builder.table(KafkaConstants.SESSION_TOPIC,
-                        Materialized.<SessionTopicKey, CharSequence, KeyValueStore<Bytes, byte[]>>as(KafkaConstants.SESSION_STORE));
-        return registrationKTable;
-    }
-
-    @Bean
     public KafkaStreamsInteractiveQueryService kafkaStreamsInteractiveQueryService(StreamsBuilderFactoryBean streamsBuilderFactoryBean) {
         final KafkaStreamsInteractiveQueryService kafkaStreamsInteractiveQueryService =
                 new KafkaStreamsInteractiveQueryService(streamsBuilderFactoryBean);

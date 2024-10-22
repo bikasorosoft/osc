@@ -3,7 +3,7 @@ package io.osc.bikas.cart.data.service;
 import com.osc.bikas.avro.CartItem;
 import com.osc.bikas.avro.CartItemList;
 import io.osc.bikas.cart.data.kafka.producer.KafkaCartPublisher;
-import io.osc.bikas.cart.data.kafka.service.KafkaInteractiveQueryService;
+import io.osc.bikas.cart.data.kafka.service.CartDataInteractiveQueryService;
 import io.osc.bikas.cart.data.model.Cart;
 import io.osc.bikas.cart.data.model.CartPK;
 import io.osc.bikas.cart.data.repo.CartRepository;
@@ -19,20 +19,16 @@ import java.util.*;
 @Slf4j
 public class CartDataService {
 
-    private final KafkaInteractiveQueryService kafkaInteractiveQueryService;
+    private final CartDataInteractiveQueryService cartDataInteractiveQueryService;
     private final KafkaCartPublisher cartPublisher;
     private final CartRepository cartRepository;
 
     public List<CartItem> getCartItemList(String userId) {
-
-        ReadOnlyKeyValueStore<String, CartItemList> store = kafkaInteractiveQueryService.getCartItemReadOnlyKeyValueStore();
-
-        return store.get(userId).getCartItem();
+        return cartDataInteractiveQueryService.get(userId).getCartItem();
     }
 
     public void updateCartItem(String userId, String productId, int count) {
-        ReadOnlyKeyValueStore<String, CartItemList> store = kafkaInteractiveQueryService.getCartItemReadOnlyKeyValueStore();
-        CartItemList cartItemList = store.get(userId);
+        var cartItemList = cartDataInteractiveQueryService.get(userId);
 
         if (cartItemList == null) {
             cartItemList = CartItemList.newBuilder().setCartItem(
@@ -59,8 +55,7 @@ public class CartDataService {
 
     public void removeCartItem(String userId, String productId) {
 
-        ReadOnlyKeyValueStore<String, CartItemList> store = kafkaInteractiveQueryService.getCartItemReadOnlyKeyValueStore();
-        CartItemList cartItemList = store.get(userId);
+        CartItemList cartItemList = cartDataInteractiveQueryService.get(userId);
 
         List<CartItem> cartItem = new ArrayList<>(cartItemList.getCartItem());
         cartItem.removeIf((item) -> Objects.equals(item.getProductId().toString(), productId));
@@ -73,8 +68,12 @@ public class CartDataService {
     }
 
     public void updateCartDataToDb(String userId) {
-        ReadOnlyKeyValueStore<String, CartItemList> store = kafkaInteractiveQueryService.getCartItemReadOnlyKeyValueStore();
-        CartItemList cartItemList = store.get(userId);
+
+        CartItemList cartItemList = cartDataInteractiveQueryService.get(userId);
+
+        if (cartItemList == null || cartItemList.getCartItem().isEmpty()) {
+            return;
+        }
 
         ArrayList<CartItem> cartItems = new ArrayList<>(cartItemList.getCartItem());
 
