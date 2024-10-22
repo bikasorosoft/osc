@@ -18,13 +18,13 @@ public class SessionDataInteractiveQueryService {
     private final KafkaStreamsInteractiveQueryService interactiveQueryService;
 
 
-    public Optional<String> get(String userId, String deviceType) {
+    public Optional<CharSequence> get(String userId, String deviceType) {
         ReadOnlyKeyValueStore<SessionTopicKey, CharSequence> store =
                 interactiveQueryService.retrieveQueryableStore(KafkaConstants.SESSION_STORE, QueryableStoreTypes.keyValueStore());
 
         var key = SessionTopicKey.newBuilder().setUserId(userId).setDevice(deviceType).build();
 
-        return Optional.of(String.valueOf(store.get(key)));
+        return Optional.ofNullable(store.get(key));
 
     }
 

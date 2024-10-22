@@ -29,7 +29,7 @@ public class SessionService {
 
     public boolean sessionExists(String userId, String device) {
 
-        Optional<String> sessionId = sessionDataInteractiveQueryService.get(userId, device);
+        Optional<CharSequence> sessionId = sessionDataInteractiveQueryService.get(userId, device);
 
         return sessionId.isPresent();
     }
