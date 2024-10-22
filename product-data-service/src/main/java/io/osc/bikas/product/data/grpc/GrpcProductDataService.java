@@ -7,6 +7,7 @@ import com.osc.bikas.proto.CategoryDetails;
 import com.osc.bikas.proto.CategoryFilterRequest;
 import com.osc.bikas.proto.CategoryListResponse;
 import com.osc.bikas.proto.GetProductByIdRequest;
+import com.osc.bikas.proto.GetSimilarProductResponse;
 import com.osc.bikas.proto.ProductDetails;
 import com.osc.bikas.proto.ProductIdList;
 import com.osc.bikas.proto.ProductListResponse;

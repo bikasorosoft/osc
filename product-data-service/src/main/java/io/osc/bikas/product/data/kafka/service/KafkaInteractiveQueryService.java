@@ -3,10 +3,13 @@ package io.osc.bikas.product.data.kafka.service;
 import com.osc.bikas.avro.*;
 import io.osc.bikas.product.data.kafka.KafkaConst;
 import lombok.RequiredArgsConstructor;
+import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
 import org.springframework.kafka.streams.KafkaStreamsInteractiveQueryService;
 import org.springframework.stereotype.Service;
+
+import java.util.TreeSet;
 
 @Service
 @RequiredArgsConstructor
@@ -16,7 +19,6 @@ public class KafkaInteractiveQueryService {
 
     private ReadOnlyKeyValueStore<String, ProductDetails> productDetailsReadOnlyKeyValueStore;
     private ReadOnlyKeyValueStore<String, PairList> popularProductReadOnlyKeyValueStore;
-
 
     public ReadOnlyKeyValueStore<String, ProductDetails> getProductDetailsReadOnlyKeyValueStore() {
         if(productDetailsReadOnlyKeyValueStore == null) {

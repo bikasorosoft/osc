@@ -15,7 +15,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Random;
 
-//@Component
+@Component
 @Order(2)
 @RequiredArgsConstructor
 public class ProductClickInitializer implements CommandLineRunner {
