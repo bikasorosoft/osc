@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="osc-multi-run" type="Multirun" separateTabs="false" reuseTabsWithFailures="false" startOneByOne="false" markFailedProcess="true" hideSuccessProcess="false" delayTime="0.0">
+    <runConfiguration name="user-data-service" type="Application" />
+    <runConfiguration name="cart-data-service" type="Application" />
+    <runConfiguration name="view-data-service" type="Application" />
+    <runConfiguration name="product-data-service" type="Application" />
+    <runConfiguration name="session-data-service" type="Application" />
+    <runConfiguration name="mail-service" type="Application" />
+    <runConfiguration name="user-service" type="Application" />
+    <runConfiguration name="dashboard-service" type="Application" />
+    <method v="2" />
+  </configuration>
+</component>

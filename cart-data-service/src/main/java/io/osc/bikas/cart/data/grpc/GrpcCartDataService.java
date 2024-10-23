@@ -9,6 +9,7 @@ import com.osc.bikas.proto.GetCartItemListResponse;
 import com.osc.bikas.proto.RemoveCartItemRequest;
 import com.osc.bikas.proto.UpdateCartItemRequest;
 import io.grpc.stub.StreamObserver;
+import io.osc.bikas.cart.data.dto.CartItemDto;
 import io.osc.bikas.cart.data.service.CartDataService;
 import lombok.RequiredArgsConstructor;
 import net.devh.boot.grpc.server.service.GrpcService;
@@ -70,16 +71,16 @@ public class GrpcCartDataService extends CartDataServiceGrpc.CartDataServiceImpl
         responseObserver.onCompleted();
     }
 
-    private List<GetCartItemListResponse.CartItem> generateCartItem(List<CartItem> items) {
+    private List<GetCartItemListResponse.CartItem> generateCartItem(List<CartItemDto> items) {
         return items.stream()
                 .map(this::generateCartItem)
                 .collect(Collectors.toList());
     }
 
-    private GetCartItemListResponse.CartItem generateCartItem(CartItem item) {
+    private GetCartItemListResponse.CartItem generateCartItem(CartItemDto item) {
         return GetCartItemListResponse.CartItem.newBuilder()
-                .setProductId(item.getProductId().toString())
-                .setCount(item.getCount())
+                .setProductId(item.getProductId())
+                .setCount(item.getQuantity())
                 .build();
     }
 

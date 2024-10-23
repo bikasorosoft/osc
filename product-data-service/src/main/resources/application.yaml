@@ -24,7 +24,7 @@ spring:
       format_sql: true
 
   kafka:
-    bootstrap-servers: localhost:19092
+    bootstrap-servers: 192.168.99.223:19092
 #    streams:
 #      default:
 #        key-serde:  org.apache.kafka.common.serialization.Serdes$StringSerde  # Key Serde (String Serde)
@@ -51,7 +51,7 @@ spring:
       key-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
       value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
     properties:
-      schema.registry.url: http://localhost:18081
+      schema.registry.url: http://192.168.99.223:18081
       specific.avro.reader: true
 
 app.kafka.initialize:

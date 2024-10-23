@@ -18,14 +18,14 @@ public class GrpcProductDataServiceClient {
     @GrpcClient("product-data-service")
     private ProductDataServiceGrpc.ProductDataServiceBlockingStub productDataServiceBlockingStub;
 
-    public ProductDto getProductDetailsById(String userId, String productId) {
+    public ProductDto getProductById(String userId, String productId) {
         ProductDetails productDetails = productDataServiceBlockingStub.getProductById(GetProductByIdRequest.newBuilder()
                 .setUserId(userId)
                 .setProductId(productId).build());
         return generateProductDto(productDetails);
     }
 
-    public List<List<ProductDto>> getSimilarProductsById(List<String> productIds) {
+    public List<List<ProductDto>> getLastViewedProductDetailsAndSimilarProduct(List<String> productIds) {
 
         List<StringValue> stringValues = generateStringValue(productIds);
 
@@ -40,10 +40,22 @@ public class GrpcProductDataServiceClient {
 
     }
 
-    public List<ProductDto> getAllProductById(List<String> productIdList) {
+    public List<ProductDto> getAllProductById(List<String> productIds) {
 
-        var stringValues = generateStringValue(productIdList);
-        ProductListResponse response = productDataServiceBlockingStub.getAllProductById(ProductIdList.newBuilder().addAllProductId(stringValues).build());
+        var stringValues = generateStringValue(productIds);
+
+        ProductIdList request = ProductIdList.newBuilder().addAllProductId(stringValues).build();
+        ProductListResponse response = productDataServiceBlockingStub.getAllProductById(request);
+
+        return generateProductDto(response.getProductsList());
+    }
+
+    public List<ProductDto> getSimilarProductsById(List<String> productIds) {
+
+        var stringValues = generateStringValue(productIds);
+
+        ProductIdList request = ProductIdList.newBuilder().addAllProductId(stringValues).build();
+        ProductListResponse response = productDataServiceBlockingStub.getSimilarProductsById(request);
 
         return generateProductDto(response.getProductsList());
 
@@ -60,16 +72,11 @@ public class GrpcProductDataServiceClient {
         return generateProductDto(filteredProducts.getProductsList());
     }
 
-    public List<CategoryDto> fetchCategoriesOrderByViewCount() {
+    public List<CategoryDto> getCategories() {
 
-        CategoryListResponse categories =
+        CategoryListResponse response =
                 productDataServiceBlockingStub.getCategoriesOrderedByViewCount(Empty.newBuilder().build());
-        return generateCategoryDto(categories.getCategoriesList());
-    }
-
-    public List<ProductDto> getFeaturedProducts() {
-        ProductListResponse filteredProducts = productDataServiceBlockingStub.getFilteredProducts(CategoryFilterRequest.newBuilder().build());
-        return generateProductDto(filteredProducts.getProductsList());
+        return generateCategoryDto(response.getCategoriesList());
     }
 
     private List<CategoryDto> generateCategoryDto(List<CategoryDetails> categoryListResponse) {

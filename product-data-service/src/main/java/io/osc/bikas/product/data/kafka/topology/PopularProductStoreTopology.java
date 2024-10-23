@@ -27,7 +27,8 @@ public class PopularProductStoreTopology {
 
     private static Aggregator<String, String, TreeSet<Pair>> getPairAggregator() {
         return (String categoryId, String productId, TreeSet<Pair> aggregate) -> {
-            Pair existingPair = aggregate.stream().filter(item -> item.getProductId().toString().equals(productId))
+            Pair existingPair = aggregate.stream()
+                    .filter(item -> item.getProductId().toString().equals(productId))
                     .findFirst()
                     .orElse(Pair.newBuilder().setProductId(productId).setViewCount(0).build());
             aggregate.remove(existingPair);

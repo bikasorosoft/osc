@@ -6,7 +6,7 @@ import lombok.Builder;
 import java.util.List;
 
 @Builder
-public record ProductDetailsAndSimilarProductListDto (
+public record ProductDetailsAndSimilarProductResponse(
         @JsonProperty("prodId") String productId,
         @JsonProperty("catId") String categoryId,
         @JsonProperty("prodName") String productName,

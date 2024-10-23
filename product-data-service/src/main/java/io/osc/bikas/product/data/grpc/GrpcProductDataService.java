@@ -31,8 +31,7 @@ public class GrpcProductDataService extends ProductDataServiceGrpc.ProductDataSe
     @Override
     public void getSimilarProducts(ProductIdList request, StreamObserver<GetSimilarProductResponse> responseObserver) {
 
-        List<String> productIds = request.getProductIdList().stream().map(StringValue::getValue)
-                .collect(Collectors.toList());
+        List<String> productIds = generateProductIds(request.getProductIdList());
 
         List<ProductDto> lastVisitedProductsDetails = productDataService.findAllProductById(productIds);
 
@@ -85,8 +84,7 @@ public class GrpcProductDataService extends ProductDataServiceGrpc.ProductDataSe
     @Override
     public void getAllProductById(ProductIdList request, StreamObserver<ProductListResponse> responseObserver) {
 
-        var productIds = request.getProductIdList().stream()
-                .map(StringValue::getValue).collect(Collectors.toList());
+        var productIds = generateProductIds(request.getProductIdList());
 
         var productList = productDataService.findAllProductById(productIds);
 
@@ -98,10 +96,27 @@ public class GrpcProductDataService extends ProductDataServiceGrpc.ProductDataSe
 
     }
 
+    @Override
+    public void getSimilarProductsById(ProductIdList request, StreamObserver<ProductListResponse> responseObserver) {
+        var productIds = generateProductIds(request.getProductIdList());
+        List<ProductDto> similarProducts = productDataService.findSimilarProduct(productIds);
+
+        var productDetailsList = generateProductDetails(similarProducts);
+        var response = buildProductListResponse(productDetailsList);
+
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
+
     private List<ProductDetails> generateProductDetails(List<ProductDto> products) {
         return products.stream()
                 .map(this::generateProductDetails)
                 .toList();
+    }
+
+    private List<String> generateProductIds(List<StringValue> productIds) {
+        return productIds.stream()
+                .map(StringValue::getValue).collect(Collectors.toList());
     }
 
     private ProductDetails generateProductDetails(ProductDto product) {

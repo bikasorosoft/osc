@@ -16,6 +16,7 @@ service ProductDataService {
   rpc GetProductById (GetProductByIdRequest) returns (ProductDetails);
   rpc GetFilteredProducts(CategoryFilterRequest) returns (ProductListResponse);
   rpc GetAllProductById(ProductIdList) returns (ProductListResponse);
+  rpc GetSimilarProductsById(ProductIdList) returns (ProductListResponse);
 }
 
 message GetSimilarProductResponse {

@@ -2,7 +2,6 @@ package io.osc.bikas.dashboard.service;
 
 import io.osc.bikas.dashboard.dto.*;
 import io.osc.bikas.dashboard.exception.InvalidSessionException;
-import io.osc.bikas.dashboard.grpc.GrpcCartDataServiceClient;
 import io.osc.bikas.dashboard.grpc.GrpcProductDataServiceClient;
 import io.osc.bikas.dashboard.grpc.GrpcSessionDataServiceClient;
 import io.osc.bikas.dashboard.grpc.GrpcViewDataServiceClient;
@@ -19,7 +18,8 @@ public class DashboardService {
     private final GrpcProductDataServiceClient productDataServiceClient;
     private final GrpcSessionDataServiceClient sessionDataServiceClient;
     private final GrpcViewDataServiceClient viewDataServiceClient;
-    private final GrpcCartDataServiceClient cartDataServiceClient;
+    private final CategoriesService categoriesService;
+    private final ProductService productService;
 
     private final CartService cartService;
 
@@ -28,47 +28,56 @@ public class DashboardService {
         if (!sessionDataServiceClient.isSessionValid(userId, sessionId)) {
             throw new InvalidSessionException(userId, sessionId);
         }
-
         List<DashboardDto> dashboardDtos = new ArrayList<>();
 
-        List<CategoryDto> categories = productDataServiceClient.fetchCategoriesOrderByViewCount();
+        dashboardDtos.add(getCategoriesDashboard());
 
-        dashboardDtos.add(generateCategoryDataDto(categories));
-
-        //fetch user last viewed product list
         List<String> recentlyViewedProductIdList =
                 viewDataServiceClient.getRecentlyViewedProductIdListBy(userId);
 
-        //check if list is empty (empty list mean user does not have view history)
         if (recentlyViewedProductIdList.isEmpty()) {
-            //get featured products
-            List<ProductDto> featuredProducts =
-                    productDataServiceClient.getFeaturedProducts();
-            //add it to response data dto
-            dashboardDtos.add(generateFeaturedProductDataDto(featuredProducts));
+            dashboardDtos.add(getFeaturedProductsDashboard());
         } else {
-            //user have view history
-            //get last viewed product id list
-            List<List<ProductDto>> lastViewedProductAndSimilarProduct = productDataServiceClient.getSimilarProductsById(recentlyViewedProductIdList);
-            //get last viewed product details by product id
-            dashboardDtos.add(generateRecentlyViewedProductDataDto(lastViewedProductAndSimilarProduct.get(0)));
-            //get similar product details
-            dashboardDtos.add(generateSimilarProductDataDto(lastViewedProductAndSimilarProduct.get(1)));
-            //get cart details
-            CartDto cart = cartService.getCart(userId);
-            dashboardDtos.add(generateDashboardCartDataDto(cart));
-
+//            dashboardDtos.addAll(getLastViewedProductsAndFeaturedProducts(recentlyViewedProductIdList));
+            dashboardDtos.add(getLastViewedProductsDashboardDto(recentlyViewedProductIdList));
+            dashboardDtos.add(getSimilarProductsDashboardDto(recentlyViewedProductIdList));
+            dashboardDtos.add(getCartDashboard(userId));
         }
-
-        //fetch
-
         return new DashboardResponseDto(dashboardDtos);
     }
 
+    private DashboardDto getSimilarProductsDashboardDto(List<String> productIds) {
+        return generateSimilarProductDataDto(productService.getSimilarProductsById(productIds));
+    }
 
+    private DashboardDto getLastViewedProductsDashboardDto(List<String> productIds) {
+        return generateRecentlyViewedProductDataDto(productService.getAllProductById(productIds));
+    }
+
+    private DashboardDto getCategoriesDashboard() {
+        return generateCategoryDataDto(categoriesService.getAllCategories());
+    }
+
+    private DashboardDto getFeaturedProductsDashboard() {
+        return generateFeaturedProductDataDto(productService.getFeaturedProducts());
+    }
 
     private DashboardDto generateCategoryDataDto(List<CategoryDto> categoriesDtos) {
         return new CategoriesDto(categoriesDtos);
+    }
+
+    //no longer needed
+//    private List<DashboardDto> getLastViewedProductsAndFeaturedProducts(List<String> recentlyViewedProductIdList) {
+//        List<List<ProductDto>> lastViewedProductAndSimilarProduct =
+//                productDataServiceClient.getLastViewedProductDetailsAndSimilarProduct(recentlyViewedProductIdList);
+//        return List.of(
+//                generateRecentlyViewedProductDataDto(lastViewedProductAndSimilarProduct.get(0)),
+//                generateSimilarProductDataDto(lastViewedProductAndSimilarProduct.get(1))
+//        );
+//    }
+
+    private DashboardDto getCartDashboard(String userId) {
+        return generateDashboardCartDataDto(cartService.getCartById(userId));
     }
 
     private DashboardDto generateFeaturedProductDataDto(List<ProductDto> featuredProducts) {

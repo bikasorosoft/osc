@@ -40,7 +40,7 @@ public class CartController {
 
     @PostMapping("/view")
     public ResponseEntity<ResponseDto> getCart(@RequestBody GetCartRequestDto getCartRequestDto) {
-        CartDto response = cartService.getCart(getCartRequestDto.userId());
+        CartDto response = cartService.getCartById(getCartRequestDto.userId());
         return ResponseEntity.ok(new ResponseDto(200, response));
     }
 }

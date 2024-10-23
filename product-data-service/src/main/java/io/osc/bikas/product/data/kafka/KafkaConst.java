@@ -2,8 +2,8 @@ package io.osc.bikas.product.data.kafka;
 
 public class KafkaConst {
 
-    public static final String SCHEMA_REGISTRY = "http://localhost:18081";
-    public static final String BOOTSTRAP_SERVER = "localhost:19092";
+    public static final String SCHEMA_REGISTRY = "http://192.168.99.223:18081";
+    public static final String BOOTSTRAP_SERVER = "192.168.99.223:19092";
 
     public static final String APPLICATION_NAME = "product-data-service";
 

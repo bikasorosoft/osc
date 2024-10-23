@@ -19,6 +19,8 @@ public class CartService {
     private final GrpcCartDataServiceClient cartDataServiceClient;
     private final GrpcProductDataServiceClient productDataServiceClient;
 
+    private final ProductService productService;
+
     public void updateCartItem(String userId, String productId, Integer count) {
         cartDataServiceClient.updateCartItem(userId, productId, count);
     }
@@ -27,13 +29,14 @@ public class CartService {
         cartDataServiceClient.removeItemFromCart(userId, productId);
     }
 
-    public CartDto getCart(String userId) {
+    public CartDto getCartById(String userId) {
 
         //get user cart details bu user id from cart data service
         List<CartItemDto> cartItems = cartDataServiceClient.getCartItemsDetail(userId);
 
         List<String> productIdList = cartItems.stream().map(CartItemDto::getProductId).collect(Collectors.toList());
-        Map<String, ProductDto> productDtoMap = productDataServiceClient.getAllProductById(productIdList).stream()
+
+        Map<String, ProductDto> productDtoMap = productService.getAllProductById(productIdList).stream()
                 .collect(Collectors.toMap(ProductDto::productId, productDto -> productDto));
 
         int totalQuantity = 0;
