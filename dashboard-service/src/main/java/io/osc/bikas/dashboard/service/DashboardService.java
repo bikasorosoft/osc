@@ -15,7 +15,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DashboardService {
 
-    private final GrpcProductDataServiceClient productDataServiceClient;
     private final GrpcSessionDataServiceClient sessionDataServiceClient;
     private final GrpcViewDataServiceClient viewDataServiceClient;
     private final CategoriesService categoriesService;
@@ -66,15 +65,6 @@ public class DashboardService {
         return new CategoriesDto(categoriesDtos);
     }
 
-    //no longer needed
-//    private List<DashboardDto> getLastViewedProductsAndFeaturedProducts(List<String> recentlyViewedProductIdList) {
-//        List<List<ProductDto>> lastViewedProductAndSimilarProduct =
-//                productDataServiceClient.getLastViewedProductDetailsAndSimilarProduct(recentlyViewedProductIdList);
-//        return List.of(
-//                generateRecentlyViewedProductDataDto(lastViewedProductAndSimilarProduct.get(0)),
-//                generateSimilarProductDataDto(lastViewedProductAndSimilarProduct.get(1))
-//        );
-//    }
 
     private DashboardDto getCartDashboard(String userId) {
         return generateDashboardCartDataDto(cartService.getCartById(userId));

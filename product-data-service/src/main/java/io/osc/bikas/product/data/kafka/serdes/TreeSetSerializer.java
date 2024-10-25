@@ -1,4 +1,4 @@
-package io.osc.bikas.product.data.kafka.utils;
+package io.osc.bikas.product.data.kafka.serdes;
 
 import org.apache.kafka.common.serialization.Serializer;
 
@@ -6,14 +6,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.TreeSet;
 import java.util.Map;
-import java.util.ArrayList;
 
-public class ArrayListSerializer<T> implements Serializer<ArrayList<T>> {
+public class TreeSetSerializer<T> implements Serializer<TreeSet<T>> {
 
     private final Serializer<T> valueSerializer;
 
-    public ArrayListSerializer(Serializer<T> valuerSerializer) {
+    public TreeSetSerializer(Serializer<T> valuerSerializer) {
         this.valueSerializer = valuerSerializer;
     }
 
@@ -23,7 +23,7 @@ public class ArrayListSerializer<T> implements Serializer<ArrayList<T>> {
     }
 
     @Override
-    public byte[] serialize(String topic, ArrayList<T> ts) {
+    public byte[] serialize(String topic, TreeSet<T> ts) {
         final int size = ts.size();
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         final DataOutputStream out = new DataOutputStream(baos);
@@ -46,5 +46,4 @@ public class ArrayListSerializer<T> implements Serializer<ArrayList<T>> {
     public void close() {
         Serializer.super.close();
     }
-    
 }

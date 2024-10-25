@@ -14,6 +14,7 @@ import com.osc.bikas.proto.ProductListResponse;
 import io.grpc.stub.StreamObserver;
 import io.osc.bikas.product.data.dto.CategoryDto;
 import io.osc.bikas.product.data.dto.ProductDto;
+import io.osc.bikas.product.data.service.CategoryDataService;
 import io.osc.bikas.product.data.service.ProductDataService;
 import lombok.RequiredArgsConstructor;
 import net.devh.boot.grpc.server.service.GrpcService;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 public class GrpcProductDataService extends ProductDataServiceGrpc.ProductDataServiceImplBase {
 
     private final ProductDataService productDataService;
+    private final CategoryDataService categoryDataService;
 
     @Override
     public void getSimilarProducts(ProductIdList request, StreamObserver<GetSimilarProductResponse> responseObserver) {
@@ -62,7 +64,7 @@ public class GrpcProductDataService extends ProductDataServiceGrpc.ProductDataSe
     @Override
     public void getCategoriesOrderedByViewCount(Empty request, StreamObserver<CategoryListResponse> responseObserver) {
 
-        var categoryDtoList = productDataService.findCategoriesOrderedByProductViewCount();
+        var categoryDtoList = categoryDataService.findCategoriesOrderedByProductViewCount();
         var categoryDetailsList = generateCategoryDetails(categoryDtoList);
 
         var response = buildCategoryListResponse(categoryDetailsList);

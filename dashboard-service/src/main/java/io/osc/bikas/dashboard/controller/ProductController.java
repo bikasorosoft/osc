@@ -1,6 +1,7 @@
 package io.osc.bikas.dashboard.controller;
 
 import io.osc.bikas.dashboard.dto.FilterProductRequest;
+import io.osc.bikas.dashboard.dto.FilterProductResponse;
 import io.osc.bikas.dashboard.dto.ProductDetailsRequestDto;
 import io.osc.bikas.dashboard.dto.ResponseDto;
 import io.osc.bikas.dashboard.service.ProductService;
@@ -25,8 +26,9 @@ public class ProductController {
 
     @PostMapping("/filter/product")
     public ResponseEntity<ResponseDto> getFilteredProducts(@RequestBody FilterProductRequest filterProductRequest) {
-        var responseData = productService.getProductsFilterBy(filterProductRequest.categoryId(), filterProductRequest.filter());
-        return ResponseEntity.ok(new ResponseDto(200, responseData));
+        var products = productService.getProductsFilterBy(filterProductRequest.categoryId(), filterProductRequest.filter());
+        FilterProductResponse response = new FilterProductResponse(products);
+        return ResponseEntity.ok(new ResponseDto(200, response));
     }
 
 }

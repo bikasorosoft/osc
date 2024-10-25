@@ -2,6 +2,7 @@ package io.osc.bikas.kafka.service;
 
 import io.osc.bikas.kafka.KafkaConst;
 import lombok.RequiredArgsConstructor;
+import org.apache.kafka.streams.state.KeyValueIterator;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
 import org.springframework.kafka.streams.KafkaStreamsInteractiveQueryService;
@@ -20,6 +21,13 @@ public class ViewHistoryInteractiveQuery {
                 KafkaConst.PRODUCT_VIEW_HISTORY,
                 QueryableStoreTypes.keyValueStore());
         return store.get(userId);
+    }
+
+    public KeyValueIterator<String, LinkedList<String>> getAll() {
+        ReadOnlyKeyValueStore<String, LinkedList<String>> store = kafkaStreamsInteractiveQueryService.retrieveQueryableStore(
+                KafkaConst.PRODUCT_VIEW_HISTORY,
+                QueryableStoreTypes.keyValueStore());
+        return store.all();
     }
 
 }

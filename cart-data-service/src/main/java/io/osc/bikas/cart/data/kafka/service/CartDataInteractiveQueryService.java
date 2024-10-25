@@ -2,11 +2,10 @@ package io.osc.bikas.cart.data.kafka.service;
 
 import com.osc.bikas.avro.CartItem;
 import com.osc.bikas.avro.CartItemList;
-import io.osc.bikas.cart.data.dto.CartDto;
 import io.osc.bikas.cart.data.dto.CartItemDto;
 import io.osc.bikas.cart.data.kafka.KafkaConst;
-import io.osc.bikas.cart.data.model.Cart;
 import lombok.RequiredArgsConstructor;
+import org.apache.kafka.streams.state.KeyValueIterator;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
 import org.springframework.kafka.streams.KafkaStreamsInteractiveQueryService;
@@ -37,6 +36,16 @@ public class CartDataInteractiveQueryService {
         }
 
         return generateCartDto(cartItemList.getCartItem());
+    }
+
+    public KeyValueIterator<String, CartItemList> getAll() {
+        ReadOnlyKeyValueStore<String, CartItemList> store =
+                this.kafkaStreamsInteractiveQueryService
+                        .retrieveQueryableStore(
+                                KafkaConst.CART_STORE,
+                                QueryableStoreTypes.keyValueStore()
+                        );
+        return store.all();
     }
 
     private CartItemDto generateCartDto(CartItem cartItem) {

@@ -1,22 +1,8 @@
 package io.osc.bikas.kafka.config;
 
-import com.osc.bikas.avro.UserProductViewTopicValue;
-import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
-import io.confluent.kafka.streams.serdes.avro.PrimitiveAvroSerde;
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
-import io.osc.bikas.kafka.KafkaConst;
-import io.osc.bikas.kafka.utils.LinkedListSerde;
-import org.apache.kafka.clients.admin.NewTopic;
-import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.common.utils.Bytes;
-import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
-import org.apache.kafka.streams.kstream.Consumed;
-import org.apache.kafka.streams.kstream.KStream;
-import org.apache.kafka.streams.kstream.KTable;
-import org.apache.kafka.streams.kstream.Materialized;
-import org.apache.kafka.streams.state.KeyValueStore;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafkaStreams;
@@ -24,7 +10,6 @@ import org.springframework.kafka.annotation.KafkaStreamsDefaultConfiguration;
 import org.springframework.kafka.config.KafkaStreamsConfiguration;
 import org.springframework.kafka.config.StreamsBuilderFactoryBean;
 import org.springframework.kafka.config.StreamsBuilderFactoryBeanConfigurer;
-import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.streams.KafkaStreamsInteractiveQueryService;
 
 import java.util.*;

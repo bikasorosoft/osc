@@ -1,21 +1,20 @@
-package io.osc.bikas.product.data.kafka.utils;
+package io.osc.bikas.kafka.serdes;
 
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.serialization.Serializer;
 
-import java.util.Comparator;
-import java.util.TreeSet;
+import java.util.LinkedList;
 import java.util.Map;
 
-public class TreeSetSerde<T> implements Serde<TreeSet<T>> {
+public class LinkedListSerde<T> implements Serde<LinkedList<T>> {
 
-    private final Serde<TreeSet<T>> inner;
+    private final Serde<LinkedList<T>> inner;
 
-    public TreeSetSerde( final Serde<T> avroSerde, final Comparator<T> comparator) {
-        inner = Serdes.serdeFrom(new TreeSetSerializer<>(avroSerde.serializer()),
-                new TreeSetDeserializer<>(comparator, avroSerde.deserializer()));
+    public LinkedListSerde( final Serde<T> avroSerde) {
+        inner = Serdes.serdeFrom(new LinkedListSerializer<>(avroSerde.serializer()),
+                new LinkedListDeserializer<>(avroSerde.deserializer()));
     }
 
     @Override
@@ -31,12 +30,12 @@ public class TreeSetSerde<T> implements Serde<TreeSet<T>> {
     }
 
     @Override
-    public Serializer<TreeSet<T>> serializer() {
+    public Serializer<LinkedList<T>> serializer() {
         return inner.serializer();
     }
 
     @Override
-    public Deserializer<TreeSet<T>> deserializer() {
+    public Deserializer<LinkedList<T>> deserializer() {
         return inner.deserializer();
     }
 }

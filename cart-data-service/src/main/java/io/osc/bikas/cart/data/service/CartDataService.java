@@ -75,4 +75,8 @@ public class CartDataService {
         cartRepository.saveAll(cartListDto);
 
     }
+
+    public void saveAll(ArrayList<Cart> cartList) {
+        cartRepository.saveAll(cartList);
+    }
 }

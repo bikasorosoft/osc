@@ -1,8 +1,8 @@
 package io.osc.bikas.product.data.kafka.service;
 
 import com.osc.bikas.avro.Pair;
-import com.osc.bikas.avro.PairList;
 import io.osc.bikas.product.data.dto.PairDto;
+import io.osc.bikas.product.data.dto.ProductDto;
 import io.osc.bikas.product.data.kafka.KafkaConst;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.streams.KeyValue;
@@ -24,36 +24,33 @@ public class PopularProductsInteractiveQueryService {
             .thenComparing(item -> item.getProductId().toString());
 
     private final KafkaStreamsInteractiveQueryService kafkaStreamsInteractiveQueryService;
+    private final ProductDetailsInteractiveQuery productDetailsInteractiveQuery;
 
-    public List<PairDto> get(String categoryId) {
+    public List<ProductDto> getPopularProductsBy(String categoryId) {
         ReadOnlyKeyValueStore<String, TreeSet<Pair>> store =
-                this.kafkaStreamsInteractiveQueryService
-                        .retrieveQueryableStore(
-                                KafkaConst.POPULAR_PRODUCT_STORE,
-                                QueryableStoreTypes.keyValueStore()
-                        );
-        TreeSet<Pair> pairList = new TreeSet<>(comparator);
-        pairList.addAll(store.get(categoryId));
-        return generatePairDto(new ArrayList<>(pairList));
+                this.kafkaStreamsInteractiveQueryService.retrieveQueryableStore(KafkaConst.POPULAR_PRODUCT_STORE, QueryableStoreTypes.keyValueStore());
+
+        TreeSet<Pair> pairs = new TreeSet<>(comparator);
+
+        pairs.addAll(store.get(categoryId));
+
+        return getAllProductsBy(pairs);
+
     }
 
-    public List<PairDto> getAll() {
+    public List<ProductDto> getAllProducts() {
 
         ReadOnlyKeyValueStore<String, TreeSet<Pair>> store =
-                this.kafkaStreamsInteractiveQueryService
-                        .retrieveQueryableStore(
-                                KafkaConst.POPULAR_PRODUCT_STORE,
-                                QueryableStoreTypes.keyValueStore()
-                        );
+                this.kafkaStreamsInteractiveQueryService.retrieveQueryableStore(KafkaConst.POPULAR_PRODUCT_STORE, QueryableStoreTypes.keyValueStore());
 
         KeyValueIterator<String, TreeSet<Pair>> pairList = store.all();
 
-        TreeSet<Pair> sortedPair = new TreeSet<>(comparator);
+        TreeSet<Pair> pairs = new TreeSet<>(comparator);
         while (pairList.hasNext()) {
-            sortedPair.addAll(pairList.next().value);
+            pairs.addAll(pairList.next().value);
         }
 
-        return generatePairDto(sortedPair.stream().toList());
+        return getAllProductsBy(pairs);
 
     }
 
@@ -64,10 +61,26 @@ public class PopularProductsInteractiveQueryService {
                                 KafkaConst.POPULAR_PRODUCT_STORE,
                                 QueryableStoreTypes.keyValueStore()
                         );
+
         KeyValueIterator<String, TreeSet<Pair>> keyValuePairList = store.all();
 
+        return getSortedCategoriesBy(keyValuePairList);
+    }
 
+    private List<ProductDto> getAllProductsBy(TreeSet<Pair> pairs) {
 
+        List<ProductDto> products = new ArrayList<>();
+
+        for (Pair pair : pairs) {
+            ProductDto product = productDetailsInteractiveQuery.get(pair.getProductId().toString());
+            product.setViewCount(pair.getViewCount());
+            products.add(product);
+        }
+
+        return products;
+    }
+
+    private List<String> getSortedCategoriesBy(KeyValueIterator<String, TreeSet<Pair>> keyValuePairList ) {
         Map<String, Long> categoryCountMap = new HashMap<>();
 
         while (keyValuePairList.hasNext()) {
@@ -85,15 +98,6 @@ public class PopularProductsInteractiveQueryService {
                 .sorted((entry1, entry2) -> Long.compare(entry2.getValue(), entry1.getValue()))
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
-    }
-
-    private List<PairDto> generatePairDto(List<Pair> pairs) {
-        return pairs.stream().map(this::generatePairDto)
-                .collect(Collectors.toList());
-    }
-
-    private PairDto generatePairDto(Pair pair) {
-        return PairDto.builder().productId(pair.getProductId().toString()).viewCount(pair.getViewCount()).build();
     }
 
 }

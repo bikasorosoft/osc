@@ -1,4 +1,4 @@
-package io.osc.bikas.kafka.utils;
+package io.osc.bikas.kafka.serdes;
 
 import org.apache.kafka.common.serialization.Serializer;
 

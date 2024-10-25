@@ -1,4 +1,4 @@
-package io.osc.bikas.product.data.kafka.utils;
+package io.osc.bikas.kafka.serdes;
 
 
 import org.apache.kafka.common.serialization.Deserializer;
@@ -7,19 +7,15 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.nio.BufferUnderflowException;
-import java.util.Comparator;
-import java.util.TreeSet;
+import java.util.LinkedList;
 import java.util.Map;
-import java.util.TreeSet;
 
-public class TreeSetDeserializer<T> implements Deserializer<TreeSet<T>> {
+public class LinkedListDeserializer<T> implements Deserializer<LinkedList<T>> {
 
     private final Deserializer<T> valueDeserializer;
-    private final Comparator<T> comparator;
 
-    public TreeSetDeserializer(final Comparator<T> comparator, final Deserializer<T> valueDeserializer) {
+    public LinkedListDeserializer(Deserializer<T> valueDeserializer) {
         this.valueDeserializer = valueDeserializer;
-        this.comparator = comparator;
     }
 
     @Override
@@ -28,11 +24,11 @@ public class TreeSetDeserializer<T> implements Deserializer<TreeSet<T>> {
     }
 
     @Override
-    public TreeSet<T> deserialize(String s, byte[] bytes) {
+    public LinkedList<T> deserialize(String s, byte[] bytes) {
         if (bytes == null || bytes.length == 0) {
             return null;
         }
-        final TreeSet<T> TreeSet = new TreeSet<>(comparator);
+        final LinkedList<T> linkedList = new LinkedList<>();
         final DataInputStream dataInputStream = new DataInputStream(new ByteArrayInputStream(bytes));
         try {
             final int records = dataInputStream.readInt();
@@ -41,12 +37,12 @@ public class TreeSetDeserializer<T> implements Deserializer<TreeSet<T>> {
                 if (dataInputStream.read(valueBytes) != valueBytes.length) {
                     throw new BufferUnderflowException();
                 };
-                TreeSet.add(valueDeserializer.deserialize(s, valueBytes));
+                linkedList.add(valueDeserializer.deserialize(s, valueBytes));
             }
         } catch (final IOException e) {
-            throw new RuntimeException("Unable to deserialize TreeSet", e);
+            throw new RuntimeException("Unable to deserialize PriorityQueue", e);
         }
-        return TreeSet;
+        return linkedList;
     }
 
     @Override

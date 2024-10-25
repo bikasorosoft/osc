@@ -5,7 +5,7 @@ import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import io.confluent.kafka.streams.serdes.avro.PrimitiveAvroSerde;
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde;
 import io.osc.bikas.product.data.kafka.KafkaConst;
-import io.osc.bikas.product.data.kafka.utils.TreeSetSerde;
+import io.osc.bikas.product.data.kafka.serdes.TreeSetSerde;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.serialization.Serde;
@@ -78,44 +78,5 @@ public class PopularProductStoreTopology {
 
         return aggregate;
     }
-
-
-    /*
-    private static Aggregator<String, Pair, PairList> getPairAggregator() {
-        Comparator<Pair> viewCountComparator =
-                Comparator
-                        .comparingLong(Pair::getViewCount)
-                        .reversed()
-                        .thenComparing(pair -> pair.getProductId().toString());
-
-        return (String key, Pair pair, PairList aggregate) -> {
-
-            String productId = pair.getProductId().toString();
-            TreeSet<Pair> pairTreeSet = new TreeSet<>(viewCountComparator);
-
-            pairTreeSet.addAll(aggregate.getPairList());
-
-            Pair existingPair = pairTreeSet.stream()
-                    .filter(item -> item.getProductId().toString().equals(productId))
-                    .findFirst().orElse(null);
-
-            // Remove existing pair if it exists
-            if (existingPair != null) {
-                pairTreeSet.remove(existingPair);
-            }
-
-            // Create a new pair with incremented view count
-            Pair updatedPair = Pair.newBuilder()
-                    .setProductId(pair.getProductId())
-                    .setViewCount(existingPair == null ? 1L : existingPair.getViewCount() + 1L)
-                    .build();
-
-            // Add the updated pair back to the TreeSet
-            pairTreeSet.add(updatedPair);
-            return PairList.newBuilder().setPairList(pairTreeSet.stream().toList()).build();
-        };
-    }
-
-     */
 
 }

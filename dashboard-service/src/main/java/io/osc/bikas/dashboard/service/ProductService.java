@@ -37,16 +37,14 @@ public class ProductService {
         return generateProductRetailsAndSimilarProductResponse(productDto, similarProducts);
     }
 
-    public FilterProductResponse getProductsFilterBy(String categoryId, String filterString) {
-
-        var productList = switch (filterString) {
+    public  List<ProductDto> getProductsFilterBy(String categoryId, String filterString) {
+        return switch (filterString) {
             case "P" -> getProductsFilterBy(categoryId, POPULAR);
             case "LH" -> getProductsFilterBy(categoryId, LOW_TO_HIGH);
             case "HL" -> getProductsFilterBy(categoryId, HIGH_TO_LOW);
             case "NF" -> getProductsFilterBy(categoryId, NEW_FIRST);
             default -> throw new IllegalStateException("Unexpected value: " + filterString);
         };
-        return new FilterProductResponse(productList);
     }
 
     private List<ProductDto> getProductsFilterBy(String categoryId, CategoryFilterRequest.FILTER filter) {
@@ -55,6 +53,10 @@ public class ProductService {
 
     public List<ProductDto> getFeaturedProducts() {
         return getProductsFilterBy("", POPULAR);
+    }
+
+    public List<ProductDto> getSimilarProductsById(List<String> productIds) {
+        return productDataServiceClient.getSimilarProductsById(productIds);
     }
 
     private ProductDetailsAndSimilarProductResponse generateProductRetailsAndSimilarProductResponse(ProductDto productDto, List<ProductDto> similarProducts) {
@@ -68,7 +70,4 @@ public class ProductService {
                 .build();
     }
 
-    public List<ProductDto> getSimilarProductsById(List<String> productIds) {
-        return productDataServiceClient.getSimilarProductsById(productIds);
-    }
 }

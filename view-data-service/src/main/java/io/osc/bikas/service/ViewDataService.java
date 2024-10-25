@@ -21,12 +21,16 @@ public class ViewDataService {
         return viewHistoryInteractiveQuery.get(userId);
     }
 
+    public void saveUserViewData(List<ViewHistory> viewHistories) {
+        viewHistoryRepository.saveAll(viewHistories);
+    }
+
     public void saveUserViewData(String userId) {
         final LinkedList<String> viewHistory = viewHistoryInteractiveQuery.get(userId);
         if (viewHistory == null || viewHistory.isEmpty()) {
             return;
         }
-        final JSONArray jsonObject = new JSONArray(viewHistory);
-        viewHistoryRepository.save(new ViewHistory(userId, jsonObject.toString()));
+        viewHistoryRepository.save(new ViewHistory(userId, viewHistory.toString()));
     }
+
 }

@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="osc-compount" type="CompoundRunConfigurationType">
+    <toRun name="cart-data-service" type="Application" />
+    <toRun name="dashboard-service" type="Application" />
+    <toRun name="mail-service" type="Application" />
+    <toRun name="product-data-service" type="Application" />
+    <toRun name="session-data-service" type="Application" />
+    <toRun name="user-data-service" type="Application" />
+    <toRun name="user-service" type="Application" />
+    <toRun name="view-data-service" type="Application" />
+    <method v="2" />
+  </configuration>
+</component>

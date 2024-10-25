@@ -3,7 +3,7 @@ package io.osc.bikas.kafka.topology;
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import io.confluent.kafka.streams.serdes.avro.PrimitiveAvroSerde;
 import io.osc.bikas.kafka.KafkaConst;
-import io.osc.bikas.kafka.utils.LinkedListSerde;
+import io.osc.bikas.kafka.serdes.LinkedListSerde;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.utils.Bytes;
